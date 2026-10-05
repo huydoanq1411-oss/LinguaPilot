@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📗 Bài Kiểm Tra N4 — JLPT N2→N1</title>
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --washi:#F6F1E4;
+  --washi-2:#EFE7D3;
+  --sumi:#2A2722;
+  --sumi-soft:#5B554A;
+  --ai:#1B4A6B;       /* indigo */
+  --ai-deep:#0F3349;
+  --hanko:#B33A2E;    /* hanko red */
+  --kin:#B6862C;       /* gold */
+  --line:#DCD2B8;
+  --card:#FFFDF8;
+  --radius:10px;
+  --shadow:0 2px 10px rgba(42,39,34,.08);
+  --font-display:'Shippori Mincho','Noto Serif JP',serif;
+  --font-body:'Noto Sans JP','Hiragino Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Courier New',monospace;
+}
+[data-theme="dark"]{
+  --washi:#1B1916;
+  --washi-2:#222019;
+  --sumi:#EDE6D6;
+  --sumi-soft:#B8AF9C;
+  --ai:#6FA8D6;
+  --ai-deep:#3A75A0;
+  --hanko:#E0695A;
+  --kin:#D9B25E;
+  --line:#3A362C;
+  --card:#221F1A;
+  --shadow:0 2px 14px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--washi); color:var(--sumi);
+  font-family:var(--font-body); line-height:1.7;
+  transition:background .3s,color .3s;
+}
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ===== BẢNG CHỮ CÁI TƯƠNG TÁC ===== */
+.kana-ref-section { scroll-margin-top: 20px; }
+.kana-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+.kana-tab { padding:8px 18px; border-radius:20px; border:2px solid var(--line); background:var(--card);
+  cursor:pointer; font-family:var(--font-display); font-size:.9rem; transition:.2s; color:var(--sumi); }
+.kana-tab.active { background:var(--ai); color:#fff; border-color:var(--ai); }
+.kana-tab:hover:not(.active) { border-color:var(--ai); color:var(--ai); }
+.kana-panel { display:none; }
+.kana-panel.active { display:block; }
+.kana-master-grid { display:grid; grid-template-columns: 60px repeat(5,1fr); gap:4px; }
+.kana-master-grid .kana-header { background:var(--ai); color:#fff; padding:6px 4px;
+  text-align:center; font-size:.72rem; font-weight:700; border-radius:4px; }
+.kana-master-grid .kana-row-label { background:var(--washi-2); display:flex; align-items:center;
+  justify-content:center; font-size:.7rem; color:var(--sumi-soft); border-radius:4px; font-weight:600; }
+.kana-cell-full { background:var(--card); border:1px solid var(--line); border-radius:6px;
+  padding:8px 4px; text-align:center; cursor:pointer; transition:.15s; position:relative; }
+.kana-cell-full:hover { border-color:var(--hanko); transform:scale(1.06); z-index:2; box-shadow:var(--shadow); }
+.kana-cell-full .main-char { font-family:var(--font-display); font-size:1.4rem; line-height:1.2;
+  display:block; }
+.kana-cell-full .sub-char { font-size:.75rem; color:var(--hanko); display:block; }
+.kana-cell-full .roma { font-size:.65rem; color:var(--sumi-soft); display:block; }
+.kana-cell-full.exception { background:linear-gradient(135deg,#fff5f5,#fff); border-color:var(--hanko); }
+[data-theme="dark"] .kana-cell-full.exception { background:linear-gradient(135deg,#2d1b17,#1e1510); }
+.kana-cell-full.empty { background:transparent; border:1px dashed var(--line); opacity:.4; cursor:default; }
+.kana-cell-full.empty:hover { transform:none; box-shadow:none; }
+.kanji-ref-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
+.kanji-ref-card { background:var(--card); border:1px solid var(--line); border-radius:8px;
+  padding:10px 8px; text-align:center; cursor:pointer; transition:.15s; }
+.kanji-ref-card:hover { border-color:var(--kin); transform:translateY(-2px); box-shadow:var(--shadow); }
+.kanji-ref-card .k-char { font-family:var(--font-display); font-size:2rem; color:var(--sumi); display:block; }
+.kanji-ref-card .k-on { font-size:.65rem; color:var(--hanko); }
+.kanji-ref-card .k-kun { font-size:.65rem; color:var(--ai); }
+.kanji-ref-card .k-mean { font-size:.72rem; color:var(--sumi-soft); margin-top:3px; font-style:italic; }
+.kana-search { width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:8px;
+  background:var(--card); color:var(--sumi); font-size:.95rem; margin-bottom:14px; }
+.kana-search:focus { outline:none; border-color:var(--ai); }
+.highlight-card { border-color:var(--kin) !important; background:rgba(182,134,44,.08) !important; }
+[data-theme="dark"] .highlight-card { background:rgba(182,134,44,.15) !important; }
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:var(--ai);}
+
+a{color:var(--ai);}
+
+/* ============ LAYOUT ============ */
+.app{display:flex; min-height:100vh;}
+.sidebar{
+  width:270px; flex-shrink:0; background:var(--ai-deep); color:#F6F1E4;
+  position:sticky; top:0; height:100vh; overflow-y:auto; padding:20px 0;
+}
+.sidebar h2{color:#F6F1E4; font-size:1.1rem; padding:0 20px; margin-bottom:4px;}
+.sidebar .sub{padding:0 20px; font-size:.78rem; color:#C9D7E2; margin-bottom:20px;}
+.sidebar nav a{
+  display:block; padding:9px 20px; color:#E4ECF1; text-decoration:none;
+  font-size:.92rem; border-left:3px solid transparent;
+}
+.sidebar nav a:hover, .sidebar nav a.active{
+  background:rgba(255,255,255,.08); border-left-color:var(--kin); color:#fff;
+}
+.sidebar nav .group-label{
+  padding:14px 20px 4px; font-size:.7rem; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--kin); font-weight:600;
+}
+
+main{flex:1; padding:32px 40px 80px; max-width:880px;}
+.topbar{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:24px; gap:12px; flex-wrap:wrap;
+}
+.controls{display:flex; gap:10px; align-items:center;}
+.btn{
+  border:1px solid var(--line); background:var(--card); color:var(--sumi);
+  padding:8px 14px; border-radius:var(--radius); cursor:pointer;
+  font-family:var(--font-body); font-size:.85rem; transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.btn:hover{border-color:var(--ai); color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08);}
+
+/* progress bar */
+.progress-wrap{background:var(--washi-2); border-radius:20px; height:10px; overflow:hidden; flex:1; max-width:260px;}
+.progress-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--ai),var(--kin));
+  width:4%;
+  transition:width .6s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+}
+.progress-bar::after {
+  content:'';
+  position:absolute;
+  right:0; top:0; bottom:0;
+  width:8px;
+  background:rgba(255,255,255,0.4);
+  border-radius:0 20px 20px 0;
+}
+.progress-label{font-size:.78rem; color:var(--sumi-soft); white-space:nowrap;}
+
+/* section card */
+.section{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px 28px; margin-bottom:22px; box-shadow:var(--shadow); scroll-margin-top:20px;
+  transition: all 0.35s ease;
+  animation: sectionFadeIn 0.6s ease-out both;
+}
+@keyframes sectionFadeIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section:hover {
+  box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+  border-color: var(--kin);
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .section:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.55); }
+.section .eyebrow{
+  font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--hanko); font-weight:600; margin-bottom:6px;
+}
+
+/* stamp / hero */
+.hero{
+  border:2px solid var(--ai); border-radius:var(--radius); padding:26px 28px;
+  background:linear-gradient(135deg,var(--card) 60%,var(--washi-2)); margin-bottom:26px; position:relative;
+  box-shadow: 0 4px 20px rgba(27,74,107,0.08);
+  transition: box-shadow 0.3s ease;
+}
+.hero:hover {
+  box-shadow: 0 8px 32px rgba(27,74,107,0.14);
+}
+.hanko-stamp{
+  position:absolute; top:20px; right:24px; width:60px; height:60px; border:2.5px solid var(--hanko);
+  border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--hanko);
+  font-family:var(--font-display); font-size:1.4rem; transform:rotate(-6deg); opacity:.85;
+}
+
+/* tables */
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.93rem;}
+th,td{border:1px solid var(--line); padding:8px 12px; text-align:left;}
+th{background:var(--washi-2); color:var(--ai); font-family:var(--font-display);}
+tr:nth-child(even) td{background:var(--washi);}
+
+/* note boxes */
+.box{
+  border-radius:var(--radius); padding:14px 18px; margin:16px 0; border-left:4px solid; font-size:.92rem;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.box:hover {
+  transform: translateX(3px);
+  box-shadow: 2px 4px 12px rgba(0,0,0,0.07);
+}
+.box.tip{background:#EAF3EC; border-color:#3F8C5C;}
+.box.warn{background:#FBEAE6; border-color:var(--hanko);}
+.box.note{background:#EAF1F7; border-color:var(--ai);}
+[data-theme="dark"] .box.tip{background:#1E2A20;}
+[data-theme="dark"] .box.warn{background:#2D1B17;}
+[data-theme="dark"] .box.note{background:#17222B;}
+.box b{display:block; margin-bottom:4px; font-family:var(--font-display);}
+
+/* code block */
+.code-wrap{position:relative; margin:14px 0;}
+pre{
+  background:var(--sumi); color:#F4F0E2; padding:16px 18px; border-radius:8px;
+  overflow-x:auto; font-family:var(--font-mono); font-size:.85rem; line-height:1.6;
+}
+[data-theme="dark"] pre{background:#0E0D0B;}
+.copy-btn{
+  position:absolute; top:8px; right:8px; background:rgba(255,255,255,.12); color:#fff;
+  border:none; padding:5px 10px; border-radius:6px; font-size:.72rem; cursor:pointer;
+}
+.copy-btn:hover{background:rgba(255,255,255,.22);}
+
+/* accordion */
+.accordion-item{border:1px solid var(--line); border-radius:8px; margin-bottom:8px; overflow:hidden;}
+.accordion-head{
+  background:var(--washi-2); padding:12px 16px; cursor:pointer; display:flex;
+  justify-content:space-between; align-items:center; font-weight:600; font-family:var(--font-display);
+  transition:all 0.2s ease;
+}
+.accordion-head:hover{color:var(--ai); background:var(--washi); padding-left:20px;}
+.accordion-item.open .accordion-head{
+  background:linear-gradient(90deg,var(--washi),var(--washi-2));
+  border-left:3px solid var(--ai); padding-left:13px;
+  color:var(--ai);
+}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 16px;}
+.accordion-body.open{padding:14px 16px;}
+.accordion-arrow{transition:transform .3s;}
+.accordion-item.open .accordion-arrow{transform:rotate(180deg);}
+
+/* flashcards */
+.flash-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; margin:14px 0;}
+.flashcard{
+  perspective:1000px; height:90px; cursor:pointer;
+}
+.flashcard-inner{
+  position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;
+}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+.flashcard-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-weight:600; text-align:center; padding:6px;
+  border:1px solid var(--line);
+}
+.flashcard-front{
+  background:linear-gradient(135deg,var(--ai),var(--ai-deep)); color:#fff;
+  font-family:var(--font-display); font-size:1.4rem;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+}
+.flashcard-back{
+  background:linear-gradient(135deg,var(--kin),#8B6520); color:#fff;
+  transform:rotateY(180deg); font-size:.85rem;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+}
+
+/* quiz */
+.quiz-q{margin-bottom:18px; padding-bottom:14px; border-bottom:1px dashed var(--line);}
+.quiz-q:last-child{border-bottom:none;}
+.quiz-opts label{
+  display:block; padding:8px 12px; margin:5px 0; border:1px solid var(--line); border-radius:6px; cursor:pointer; font-size:.9rem;
+}
+.quiz-opts label:hover{border-color:var(--ai);}
+.quiz-opts input{margin-right:8px;}
+.quiz-feedback{font-size:.85rem; margin-top:6px; font-weight:600; display:none;}
+.quiz-feedback.correct{color:#3F8C5C;}
+.quiz-feedback.wrong{color:var(--hanko);}
+.quiz-result{margin-top:14px; font-weight:700; font-family:var(--font-display); color:var(--ai); font-size:1.05rem;}
+
+/* roadmap table phase tags */
+.tag{display:inline-block; padding:2px 10px; border-radius:20px; font-size:.72rem; font-weight:600; color:#fff;}
+.tag.t1{background:#7C9A8C;} .tag.t2{background:#3F7CA0;} .tag.t3{background:#B6862C;}
+.tag.t4{background:#B33A2E;} .tag.t5{background:#6B4E9C;}
+
+/* back to top */
+#topBtn{
+  position:fixed; bottom:26px; right:26px; background:var(--ai); color:#fff; border:none;
+  width:46px; height:46px; border-radius:50%; font-size:1.2rem; cursor:pointer; box-shadow:var(--shadow);
+  display:none; align-items:center; justify-content:center; z-index:50;
+}
+#topBtn:hover{background:var(--hanko);}
+
+.kana-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:14px 0; text-align:center;}
+.kana-cell{
+  background:var(--washi-2); border:1px solid var(--line); border-radius:8px; padding:14px 4px;
+  transition: all 0.25s ease;
+}
+.kana-cell:hover {
+  transform: translateY(-3px) scale(1.05);
+  border-color: var(--ai);
+  box-shadow: 0 6px 16px rgba(27,74,107,0.12);
+  background: var(--card);
+}
+.kana-cell .ch{font-family:var(--font-display); font-size:1.8rem; color:var(--ai);}
+.kana-cell .rj{font-size:.78rem; color:var(--sumi-soft);}
+
+footer.lesson-nav{
+  display:flex; justify-content:space-between; align-items:center; margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
+}
+.next-hint{font-size:.85rem; color:var(--sumi-soft);}
+
+@media(max-width:780px){
+  .sidebar{position:fixed; left:-280px; z-index:100; transition:left .3s;}
+  .sidebar.open{left:0;}
+  main{padding:20px 16px 80px;}
+  .menu-toggle{display:inline-block !important;}
+}
+.menu-toggle{display:none; background:var(--ai); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;}
+</style>
+<style>
+@keyframes slideBg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.chapter-header{
+  background:linear-gradient(135deg, var(--ai-deep), var(--ai), #2A4A60);
+  background-size: 200% 200%;
+  animation: slideBg 12s ease infinite;
+  color:var(--washi); padding:32px 40px 28px; margin-bottom:28px;
+  border-radius:0 0 20px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-bottom: 2px solid var(--kin);
+}
+.chapter-header h1{color:#fff;font-size:1.8rem;margin:0 0 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.2);}
+.chapter-header p{color:rgba(255,255,255,0.9);margin:0;font-size:.95rem}
+.chapter-nav{
+  display:flex;gap:10px;padding:16px 40px;
+  background:var(--card);border-bottom:1px solid var(--line);
+  flex-wrap:wrap;align-items:center;
+}
+.chapter-nav a{
+  padding:6px 14px;border-radius:20px;font-size:.8rem;
+  border:1.5px solid var(--line);color:var(--sumi);text-decoration:none;
+  transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.chapter-nav a:hover{background:var(--ai);color:#fff;border-color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.chapter-nav a.active{background:var(--ai);color:#fff;border-color:var(--ai); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.back-home{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 18px;border-radius:20px;
+  background:rgba(255,255,255,.12);color:#fff;
+  text-decoration:none;font-size:.85rem;margin-bottom:14px;
+  border:1px solid rgba(255,255,255,.25);
+  transition:all 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+.back-home:hover{background:rgba(255,255,255,.25); transform:translateX(-3px);}
+.ch-progress{
+  height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:14px;
+}
+.ch-progress-bar{
+  height:100%;background:var(--kin);border-radius:2px;
+  width:16%;
+}
+/* ===== NAV GỌN (DROPDOWN) — thay thế chapter-nav dài ===== */
+.nav-main{
+  display:flex; gap:6px; padding:14px 40px; background:var(--card); border-bottom:1px solid var(--line);
+  flex-wrap:wrap; align-items:center; position:relative; z-index:40;
+}
+.nav-main > a{
+  padding:8px 16px; border-radius:20px; font-size:.85rem; border:1.5px solid var(--line);
+  color:var(--sumi); text-decoration:none; transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.nav-main > a:hover, .nav-main > a.active{background:var(--ai); color:#fff; border-color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.nav-dd{position:relative;}
+.nav-dd-trigger{
+  padding:8px 16px; border-radius:20px; font-size:.85rem; border:1.5px solid var(--line);
+  color:var(--sumi); background:var(--card); cursor:pointer; transition:.15s; font-family:inherit;
+}
+.nav-dd-trigger:hover, .nav-dd-trigger.active, .nav-dd.open .nav-dd-trigger{background:var(--ai); color:#fff; border-color:var(--ai);}
+.nav-dd-menu{
+  position:absolute; top:calc(100% + 8px); left:0; min-width:230px; max-height:70vh; overflow-y:auto;
+  background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+  padding:8px; display:none; flex-direction:column; gap:2px; z-index:41;
+}
+.nav-dd.open .nav-dd-menu{display:flex;}
+.nav-dd-menu a{
+  padding:8px 12px; border-radius:8px; font-size:.83rem; color:var(--sumi); text-decoration:none; transition:.1s;
+}
+.nav-dd-menu a:hover{background:var(--washi-2);}
+.nav-dd-menu a.active{background:var(--ai); color:#fff;}
+.nav-dd-menu .nav-dd-divider{font-size:.68rem; text-transform:uppercase; letter-spacing:.04em; color:var(--sumi-soft);
+  padding:8px 12px 2px; font-weight:700;}
+
+</style>
+<body>
+<div class="chapter-header">
+  <a href="index.html" class="back-home">← Trang chủ</a>
+  <h1>📗 Bài Kiểm Tra N4</h1>
+  <p>25 câu hỏi ngữ pháp & từ vựng N4 — kiểm tra trước khi lên N3</p>
+  <div class="ch-progress"><div class="ch-progress-bar" style="width:100%"></div></div>
+</div>
+
+<div class="nav-main">
+  <a href="index.html">🏠 Trang chủ</a>
+  <div class="nav-dd">
+    <button type="button" class="nav-dd-trigger">📚 Học Bài ▾</button>
+    <div class="nav-dd-menu">
+      <a href="bang-chu-cai.html">📖 Bảng chữ cái</a>
+      <a href="tra-kanji.html">🔍 Tra Kanji trực tuyến</a>
+      <div class="nav-dd-divider">10 Phần Học</div>
+      <a href="phan01.html">Phần 01 — Kana</a>
+      <a href="phan02.html">Phần 02 — N5</a>
+      <a href="phan03.html">Phần 03 — N4</a>
+      <a href="phan04.html">Phần 04 — N3→N2</a>
+      <a href="phan05.html">Phần 05 — N2</a>
+      <a href="phan06.html">Phần 06 — N2+</a>
+      <a href="phan07.html">Phần 07 — N1-1</a>
+      <a href="phan08.html">Phần 08 — N1-2</a>
+      <a href="phan09.html">Phần 09 — N1-3</a>
+      <a href="phan10.html">Phần 10 — N1-4</a>
+    </div>
+  </div>
+  <div class="nav-dd">
+    <button type="button" class="nav-dd-trigger active">📝 Kiểm Tra ▾</button>
+    <div class="nav-dd-menu">
+      <a href="kiem-tra-thang-cap.html">🎯 Test Tổng Hợp (30 câu)</a>
+      <a href="test-n5.html">Test N5 (25 câu)</a>
+      <a href="test-n4.html" class="active">Test N4 (25 câu)</a>
+      <a href="test-n3.html">Test N3→N2 (25 câu)</a>
+      <a href="test-n2.html">Test N2 (25 câu)</a>
+      <a href="test-n1.html">Test N1 (25 câu)</a>
+    </div>
+  </div>
+  <a href="tra-kanji.html">🔍 Tra Kanji</a>
+</div>
+
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:24px 20px 80px">
+
+<section class="section">
+  <div class="box note"><b>📌 Cách làm bài</b> Chọn đáp án đúng nhất cho mỗi câu, sau đó bấm "Nộp bài" ở cuối trang để xem điểm và đánh giá.</div>
+</section>
+
+<form id="singleQuiz">
+<section class="section">
+
+<div class="quiz-q"><p><b>1.</b> 先生に褒め＿＿＿。（Được thầy khen — thể bị động）</p><div class="quiz-opts">
+  <label><input type="radio" name="q1" value="c">られました</label>
+  <label><input type="radio" name="q1" value="w">させました</label>
+  <label><input type="radio" name="q1" value="w">かかりました</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>2.</b> 母は私に部屋を掃除＿＿＿。（Mẹ bắt tôi dọn phòng — sai khiến）</p><div class="quiz-opts">
+  <label><input type="radio" name="q2" value="w">された</label>
+  <label><input type="radio" name="q2" value="c">させた</label>
+  <label><input type="radio" name="q2" value="w">してくれた</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>3.</b> 雨が降り＿＿＿。（Trông có vẻ sắp mưa — dựa vào quan sát mây đen）</p><div class="quiz-opts">
+  <label><input type="radio" name="q3" value="c">そうです</label>
+  <label><input type="radio" name="q3" value="w">だそうです</label>
+  <label><input type="radio" name="q3" value="w">みたいだそうです</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>4.</b> 弟は新しいゲームを＿＿＿。（Em trai có vẻ muốn mua — nói về người khác）</p><div class="quiz-opts">
+  <label><input type="radio" name="q4" value="w">買いたいです</label>
+  <label><input type="radio" name="q4" value="c">買いたがっています</label>
+  <label><input type="radio" name="q4" value="w">買いますたい</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>5.</b> 一生懸命勉強した＿＿＿、試験に落ちてしまいました。（Bất ngờ/thất vọng）</p><div class="quiz-opts">
+  <label><input type="radio" name="q5" value="w">けど</label>
+  <label><input type="radio" name="q5" value="c">のに</label>
+  <label><input type="radio" name="q5" value="w">から</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>6.</b> 春になる＿＿＿、桜が咲きます。（Quy luật tự nhiên, luôn đúng — không dùng khi vế sau là mệnh lệnh）</p><div class="quiz-opts">
+  <label><input type="radio" name="q6" value="c">と</label>
+  <label><input type="radio" name="q6" value="w">ように</label>
+  <label><input type="radio" name="q6" value="w">のに</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>7.</b> 漢字が読める＿＿＿。（Đã đọc được Kanji rồi — thay đổi khả năng dần dần）</p><div class="quiz-opts">
+  <label><input type="radio" name="q7" value="c">ようになりました</label>
+  <label><input type="radio" name="q7" value="w">ことになりました</label>
+  <label><input type="radio" name="q7" value="w">はずになりました</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>8.</b> 来月転勤する＿＿＿。（Quyết định khách quan từ công ty, không phải ý chí cá nhân）</p><div class="quiz-opts">
+  <label><input type="radio" name="q8" value="w">ようになりました</label>
+  <label><input type="radio" name="q8" value="c">ことになりました</label>
+  <label><input type="radio" name="q8" value="w">つもりです</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>9.</b> 謝る＿＿＿。（Nên xin lỗi — nghĩa vụ đạo đức, lời khuyên mạnh）</p><div class="quiz-opts">
+  <label><input type="radio" name="q9" value="c">べきです</label>
+  <label><input type="radio" name="q9" value="w">はずです</label>
+  <label><input type="radio" name="q9" value="w">ようです</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>10.</b> 引っ越し＿＿＿、忙しくなりました。（Kể từ khi ~ có thay đổi rõ rệt, kéo dài）</p><div class="quiz-opts">
+  <label><input type="radio" name="q10" value="c">てからというもの</label>
+  <label><input type="radio" name="q10" value="w">てから五分後</label>
+  <label><input type="radio" name="q10" value="w">たまま</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>11.</b> 「手続き」の意味は？</p><div class="quiz-opts">
+  <label><input type="radio" name="q11" value="w">tài khoản</label>
+  <label><input type="radio" name="q11" value="c">thủ tục</label>
+  <label><input type="radio" name="q11" value="w">con dấu</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>12.</b> 「市役所」の読み方は？</p><div class="quiz-opts">
+  <label><input type="radio" name="q12" value="c">しやくしょ</label>
+  <label><input type="radio" name="q12" value="w">しやくじょ</label>
+  <label><input type="radio" name="q12" value="w">しえきしょ</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>13.</b> 「待って」と先生が言いました。→ 先生は待っ＿＿＿言いました。（Câu tường thuật mệnh lệnh gián tiếp）</p><div class="quiz-opts">
+  <label><input type="radio" name="q13" value="c">てくれと</label>
+  <label><input type="radio" name="q13" value="w">ていると</label>
+  <label><input type="radio" name="q13" value="w">てあると</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>14.</b> 電車に乗り＿＿＿。（Lỡ chuyến tàu）</p><div class="quiz-opts">
+  <label><input type="radio" name="q14" value="w">そびれた</label>
+  <label><input type="radio" name="q14" value="c">損なった</label>
+  <label><input type="radio" name="q14" value="w">かねた</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>15.</b> 大切な本をなくし＿＿＿。（Lỡ làm mất — tiếc nuối, ngoài ý muốn）</p><div class="quiz-opts">
+  <label><input type="radio" name="q15" value="c">てしまいました</label>
+  <label><input type="radio" name="q15" value="w">ておきました</label>
+  <label><input type="radio" name="q15" value="w">てみました</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>16.</b> 雨が降っ＿＿＿、試合は中止です。（Nếu trời mưa thì hủy — điều kiện tự do, việc 1 lần）</p><div class="quiz-opts">
+  <label><input type="radio" name="q16" value="c">たら</label>
+  <label><input type="radio" name="q16" value="w">と</label>
+  <label><input type="radio" name="q16" value="w">ては</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>17.</b> 頑張れ＿＿＿、できます。（Nếu cố gắng thì sẽ làm được — nhấn mạnh điều kiện logic）</p><div class="quiz-opts">
+  <label><input type="radio" name="q17" value="c">ば</label>
+  <label><input type="radio" name="q17" value="w">ては</label>
+  <label><input type="radio" name="q17" value="w">なら</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>18.</b> 行く＿＿＿、早く準備してください。（Nếu bạn định đi thì — dựa trên thông tin đã nghe）</p><div class="quiz-opts">
+  <label><input type="radio" name="q18" value="c">なら</label>
+  <label><input type="radio" name="q18" value="w">と</label>
+  <label><input type="radio" name="q18" value="w">ければ</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>19.</b> 彼はもう着いた＿＿＿。（Chắc chắn đã đến — suy đoán dựa trên căn cứ khách quan）</p><div class="quiz-opts">
+  <label><input type="radio" name="q19" value="c">はずです</label>
+  <label><input type="radio" name="q19" value="w">べきです</label>
+  <label><input type="radio" name="q19" value="w">たがります</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>20.</b> 来週の会議を来月に＿＿＿ことにしました。（Quyết định tự thân — đổi lịch họp）</p><div class="quiz-opts">
+  <label><input type="radio" name="q20" value="c">変える</label>
+  <label><input type="radio" name="q20" value="w">変わる</label>
+  <label><input type="radio" name="q20" value="w">変われる</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>21.</b> 私はグエンと＿＿＿。（Tôi tên là Nguyễn ạ — 謙譲語II khiêm nhường）</p><div class="quiz-opts">
+  <label><input type="radio" name="q21" value="c">申します</label>
+  <label><input type="radio" name="q21" value="w">言われます</label>
+  <label><input type="radio" name="q21" value="w">おっしゃいます</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>22.</b> 「症状」の読み方は？</p><div class="quiz-opts">
+  <label><input type="radio" name="q22" value="c">しょうじょう</label>
+  <label><input type="radio" name="q22" value="w">しょうじょ</label>
+  <label><input type="radio" name="q22" value="w">じょうしょう</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>23.</b> 弟は私＿＿＿部屋を掃除させられました。（Em trai bị tôi bắt dọn phòng — sai khiến-bị động）</p><div class="quiz-opts">
+  <label><input type="radio" name="q23" value="c">に</label>
+  <label><input type="radio" name="q23" value="w">を</label>
+  <label><input type="radio" name="q23" value="w">が</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>24.</b> 「祭り」の意味は？</p><div class="quiz-opts">
+  <label><input type="radio" name="q24" value="c">lễ hội</label>
+  <label><input type="radio" name="q24" value="w">pháo hoa</label>
+  <label><input type="radio" name="q24" value="w">sự kiện</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div class="quiz-q"><p><b>25.</b> 説明する＿＿＿。（Không cần phải giải thích — việc hiển nhiên）</p><div class="quiz-opts">
+  <label><input type="radio" name="q25" value="c">までもない</label>
+  <label><input type="radio" name="q25" value="w">に限らない</label>
+  <label><input type="radio" name="q25" value="w">ものではない</label>
+</div><div class="quiz-feedback"></div></div>
+
+<div style="text-align:center;margin-top:20px">
+  <button type="button" class="btn" style="font-size:1.05rem;padding:14px 32px" onclick="runSingleQuiz()">📝 Nộp Bài & Xem Kết Quả</button>
+  <div id="singleResult" style="margin-top:24px"></div>
+</div>
+
+</section>
+</form>
+
+</div>
+
+<script>
+function runSingleQuiz(){
+  const form = document.getElementById('singleQuiz');
+  const names = [...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score = 0;
+  names.forEach(name=>{
+    const sel = form.querySelector(`input[name="${name}"]:checked`);
+    const questionDiv = form.querySelector(`input[name="${name}"]`).closest('.quiz-q');
+    const fb = questionDiv.querySelector('.quiz-feedback');
+    if(!sel){
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='⚠️ Chưa chọn.';
+      return;
+    }
+    if(sel.value === 'c'){
+      score++;
+      fb.style.display='block'; fb.className='quiz-feedback correct'; fb.textContent='✓ Chính xác!';
+    } else {
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='✗ Sai rồi.';
+    }
+  });
+  const total = names.length;
+  const pct = Math.round(score/total*100);
+  let verdict='', color='';
+  if(pct >= 85){color='#3F8C5C'; verdict='🏆 Xuất sắc! Bạn đã nắm rất vững kiến thức cấp độ này — sẵn sàng chuyển sang cấp độ tiếp theo.';}
+  else if(pct >= 70){color='#3F8C5C'; verdict='✅ Khá tốt! Nắm được phần lớn kiến thức, nên ôn lại những câu sai trước khi lên cấp độ tiếp theo.';}
+  else if(pct >= 50){color='var(--kin)'; verdict='📖 Trung bình. Nên quay lại ôn tập kỹ phần này trước khi tiếp tục.';}
+  else {color='var(--hanko)'; verdict='💪 Cần ôn tập thêm nhiều. Hãy xem lại các bài học liên quan trước khi làm lại bài test.';}
+  const resultDiv = document.getElementById('singleResult');
+  resultDiv.innerHTML = `
+    <div class="box note" style="text-align:left"><b>📊 Kết quả: ${score}/${total} (${pct}%)</b></div>
+    <div class="box tip" style="text-align:left;border-color:${color}"><b>Đánh giá</b>${verdict}</div>
+  `;
+  resultDiv.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+/* ===== NAV DROPDOWN TOGGLE ===== */
+document.querySelectorAll('.nav-dd-trigger').forEach(trigger=>{
+  trigger.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const dd = trigger.closest('.nav-dd');
+    const wasOpen = dd.classList.contains('open');
+    document.querySelectorAll('.nav-dd.open').forEach(d=>d.classList.remove('open'));
+    if(!wasOpen) dd.classList.add('open');
+  });
+});
+document.addEventListener('click', ()=>{
+  document.querySelectorAll('.nav-dd.open').forEach(d=>d.classList.remove('open'));
+});
+
+</script>
+
+<button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+</body></html>

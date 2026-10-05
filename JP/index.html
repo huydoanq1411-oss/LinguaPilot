@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JLPT N2→N1 — Học Tiếng Nhật Từ 0 Đến N1</title>
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --washi:#F6F1E4;
+  --washi-2:#EFE7D3;
+  --sumi:#2A2722;
+  --sumi-soft:#5B554A;
+  --ai:#1B4A6B;       /* indigo */
+  --ai-deep:#0F3349;
+  --hanko:#B33A2E;    /* hanko red */
+  --kin:#B6862C;       /* gold */
+  --line:#DCD2B8;
+  --card:#FFFDF8;
+  --radius:10px;
+  --shadow:0 2px 10px rgba(42,39,34,.08);
+  --font-display:'Shippori Mincho','Noto Serif JP',serif;
+  --font-body:'Noto Sans JP','Hiragino Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Courier New',monospace;
+}
+[data-theme="dark"]{
+  --washi:#1B1916;
+  --washi-2:#222019;
+  --sumi:#EDE6D6;
+  --sumi-soft:#B8AF9C;
+  --ai:#6FA8D6;
+  --ai-deep:#3A75A0;
+  --hanko:#E0695A;
+  --kin:#D9B25E;
+  --line:#3A362C;
+  --card:#221F1A;
+  --shadow:0 2px 14px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--washi); color:var(--sumi);
+  font-family:var(--font-body); line-height:1.7;
+  transition:background .3s,color .3s;
+}
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ===== BẢNG CHỮ CÁI TƯƠNG TÁC ===== */
+.kana-ref-section { scroll-margin-top: 20px; }
+.kana-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+.kana-tab { padding:8px 18px; border-radius:20px; border:2px solid var(--line); background:var(--card);
+  cursor:pointer; font-family:var(--font-display); font-size:.9rem; transition:.2s; color:var(--sumi); }
+.kana-tab.active { background:var(--ai); color:#fff; border-color:var(--ai); }
+.kana-tab:hover:not(.active) { border-color:var(--ai); color:var(--ai); }
+.kana-panel { display:none; }
+.kana-panel.active { display:block; }
+.kana-master-grid { display:grid; grid-template-columns: 60px repeat(5,1fr); gap:4px; }
+.kana-master-grid .kana-header { background:var(--ai); color:#fff; padding:6px 4px;
+  text-align:center; font-size:.72rem; font-weight:700; border-radius:4px; }
+.kana-master-grid .kana-row-label { background:var(--washi-2); display:flex; align-items:center;
+  justify-content:center; font-size:.7rem; color:var(--sumi-soft); border-radius:4px; font-weight:600; }
+.kana-cell-full { background:var(--card); border:1px solid var(--line); border-radius:6px;
+  padding:8px 4px; text-align:center; cursor:pointer; transition:.15s; position:relative; }
+.kana-cell-full:hover { border-color:var(--hanko); transform:scale(1.06); z-index:2; box-shadow:var(--shadow); }
+.kana-cell-full .main-char { font-family:var(--font-display); font-size:1.4rem; line-height:1.2;
+  display:block; }
+.kana-cell-full .sub-char { font-size:.75rem; color:var(--hanko); display:block; }
+.kana-cell-full .roma { font-size:.65rem; color:var(--sumi-soft); display:block; }
+.kana-cell-full.exception { background:linear-gradient(135deg,#fff5f5,#fff); border-color:var(--hanko); }
+[data-theme="dark"] .kana-cell-full.exception { background:linear-gradient(135deg,#2d1b17,#1e1510); }
+.kana-cell-full.empty { background:transparent; border:1px dashed var(--line); opacity:.4; cursor:default; }
+.kana-cell-full.empty:hover { transform:none; box-shadow:none; }
+.kanji-ref-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
+.kanji-ref-card { background:var(--card); border:1px solid var(--line); border-radius:8px;
+  padding:10px 8px; text-align:center; cursor:pointer; transition:.15s; }
+.kanji-ref-card:hover { border-color:var(--kin); transform:translateY(-2px); box-shadow:var(--shadow); }
+.kanji-ref-card .k-char { font-family:var(--font-display); font-size:2rem; color:var(--sumi); display:block; }
+.kanji-ref-card .k-on { font-size:.65rem; color:var(--hanko); }
+.kanji-ref-card .k-kun { font-size:.65rem; color:var(--ai); }
+.kanji-ref-card .k-mean { font-size:.72rem; color:var(--sumi-soft); margin-top:3px; font-style:italic; }
+.kana-search { width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:8px;
+  background:var(--card); color:var(--sumi); font-size:.95rem; margin-bottom:14px; }
+.kana-search:focus { outline:none; border-color:var(--ai); }
+.highlight-card { border-color:var(--kin) !important; background:rgba(182,134,44,.08) !important; }
+[data-theme="dark"] .highlight-card { background:rgba(182,134,44,.15) !important; }
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:var(--ai);}
+
+a{color:var(--ai);}
+
+/* ============ LAYOUT ============ */
+.app{display:flex; min-height:100vh;}
+.sidebar{
+  width:270px; flex-shrink:0; background:var(--ai-deep); color:#F6F1E4;
+  position:sticky; top:0; height:100vh; overflow-y:auto; padding:20px 0;
+}
+.sidebar h2{color:#F6F1E4; font-size:1.1rem; padding:0 20px; margin-bottom:4px;}
+.sidebar .sub{padding:0 20px; font-size:.78rem; color:#C9D7E2; margin-bottom:20px;}
+.sidebar nav a{
+  display:block; padding:9px 20px; color:#E4ECF1; text-decoration:none;
+  font-size:.92rem; border-left:3px solid transparent;
+}
+.sidebar nav a:hover, .sidebar nav a.active{
+  background:rgba(255,255,255,.08); border-left-color:var(--kin); color:#fff;
+}
+.sidebar nav .group-label{
+  padding:14px 20px 4px; font-size:.7rem; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--kin); font-weight:600;
+}
+
+main{flex:1; padding:32px 40px 80px; max-width:880px;}
+.topbar{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:24px; gap:12px; flex-wrap:wrap;
+}
+.controls{display:flex; gap:10px; align-items:center;}
+.btn{
+  border:1px solid var(--line); background:var(--card); color:var(--sumi);
+  padding:8px 14px; border-radius:var(--radius); cursor:pointer;
+  font-family:var(--font-body); font-size:.85rem; transition:.2s;
+}
+.btn:hover{border-color:var(--ai); color:var(--ai);}
+
+/* progress bar */
+.progress-wrap{background:var(--washi-2); border-radius:20px; height:10px; overflow:hidden; flex:1; max-width:260px;}
+.progress-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--ai),var(--kin));
+  width:4%;
+  transition:width .6s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+}
+.progress-bar::after {
+  content:'';
+  position:absolute;
+  right:0; top:0; bottom:0;
+  width:8px;
+  background:rgba(255,255,255,0.4);
+  border-radius:0 20px 20px 0;
+}
+.progress-label{font-size:.78rem; color:var(--sumi-soft); white-space:nowrap;}
+
+/* section card */
+.section{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px 28px; margin-bottom:22px; box-shadow:var(--shadow); scroll-margin-top:20px;
+}
+.section .eyebrow{
+  font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--hanko); font-weight:600; margin-bottom:6px;
+}
+
+/* stamp / hero */
+.hero{
+  border:2px solid var(--ai); border-radius:var(--radius); padding:26px 28px;
+  background:linear-gradient(135deg,var(--card),var(--washi-2)); margin-bottom:26px; position:relative;
+}
+.hanko-stamp{
+  position:absolute; top:20px; right:24px; width:60px; height:60px; border:2.5px solid var(--hanko);
+  border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--hanko);
+  font-family:var(--font-display); font-size:1.4rem; transform:rotate(-6deg); opacity:.85;
+}
+
+/* tables */
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.93rem;}
+th,td{border:1px solid var(--line); padding:8px 12px; text-align:left;}
+th{background:var(--washi-2); color:var(--ai); font-family:var(--font-display);}
+tr:nth-child(even) td{background:var(--washi);}
+
+/* note boxes */
+.box{border-radius:var(--radius); padding:14px 18px; margin:16px 0; border-left:4px solid; font-size:.92rem;}
+.box.tip{background:#EAF3EC; border-color:#3F8C5C;}
+.box.warn{background:#FBEAE6; border-color:var(--hanko);}
+.box.note{background:#EAF1F7; border-color:var(--ai);}
+[data-theme="dark"] .box.tip{background:#1E2A20;}
+[data-theme="dark"] .box.warn{background:#2D1B17;}
+[data-theme="dark"] .box.note{background:#17222B;}
+.box b{display:block; margin-bottom:4px; font-family:var(--font-display);}
+
+/* code block */
+.code-wrap{position:relative; margin:14px 0;}
+pre{
+  background:var(--sumi); color:#F4F0E2; padding:16px 18px; border-radius:8px;
+  overflow-x:auto; font-family:var(--font-mono); font-size:.85rem; line-height:1.6;
+}
+[data-theme="dark"] pre{background:#0E0D0B;}
+.copy-btn{
+  position:absolute; top:8px; right:8px; background:rgba(255,255,255,.12); color:#fff;
+  border:none; padding:5px 10px; border-radius:6px; font-size:.72rem; cursor:pointer;
+}
+.copy-btn:hover{background:rgba(255,255,255,.22);}
+
+/* accordion */
+.accordion-item{border:1px solid var(--line); border-radius:8px; margin-bottom:8px; overflow:hidden;}
+.accordion-head{
+  background:var(--washi-2); padding:12px 16px; cursor:pointer; display:flex;
+  justify-content:space-between; align-items:center; font-weight:600; font-family:var(--font-display);
+}
+.accordion-head:hover{color:var(--ai);}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 16px;}
+.accordion-body.open{padding:14px 16px;}
+.accordion-arrow{transition:transform .3s;}
+.accordion-item.open .accordion-arrow{transform:rotate(180deg);}
+
+/* flashcards */
+.flash-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; margin:14px 0;}
+.flashcard{
+  perspective:1000px; height:90px; cursor:pointer;
+}
+.flashcard-inner{
+  position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;
+}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+.flashcard-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-weight:600; text-align:center; padding:6px;
+  border:1px solid var(--line);
+}
+.flashcard-front{background:var(--ai); color:#fff; font-family:var(--font-display); font-size:1.4rem;}
+.flashcard-back{background:var(--kin); color:#2A2722; transform:rotateY(180deg); font-size:.85rem;}
+
+/* quiz */
+.quiz-q{margin-bottom:18px; padding-bottom:14px; border-bottom:1px dashed var(--line);}
+.quiz-q:last-child{border-bottom:none;}
+.quiz-opts label{
+  display:block; padding:8px 12px; margin:5px 0; border:1px solid var(--line); border-radius:6px; cursor:pointer; font-size:.9rem;
+}
+.quiz-opts label:hover{border-color:var(--ai);}
+.quiz-opts input{margin-right:8px;}
+.quiz-feedback{font-size:.85rem; margin-top:6px; font-weight:600; display:none;}
+.quiz-feedback.correct{color:#3F8C5C;}
+.quiz-feedback.wrong{color:var(--hanko);}
+.quiz-result{margin-top:14px; font-weight:700; font-family:var(--font-display); color:var(--ai); font-size:1.05rem;}
+
+/* roadmap table phase tags */
+.tag{display:inline-block; padding:2px 10px; border-radius:20px; font-size:.72rem; font-weight:600; color:#fff;}
+.tag.t1{background:#7C9A8C;} .tag.t2{background:#3F7CA0;} .tag.t3{background:#B6862C;}
+.tag.t4{background:#B33A2E;} .tag.t5{background:#6B4E9C;}
+
+/* back to top */
+#topBtn{
+  position:fixed; bottom:26px; right:26px; background:var(--ai); color:#fff; border:none;
+  width:46px; height:46px; border-radius:50%; font-size:1.2rem; cursor:pointer; box-shadow:var(--shadow);
+  display:none; align-items:center; justify-content:center; z-index:50;
+}
+#topBtn:hover{background:var(--hanko);}
+
+.kana-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:14px 0; text-align:center;}
+.kana-cell{background:var(--washi-2); border:1px solid var(--line); border-radius:8px; padding:14px 4px;}
+.kana-cell .ch{font-family:var(--font-display); font-size:1.8rem; color:var(--ai);}
+.kana-cell .rj{font-size:.78rem; color:var(--sumi-soft);}
+
+footer.lesson-nav{
+  display:flex; justify-content:space-between; align-items:center; margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
+}
+.next-hint{font-size:.85rem; color:var(--sumi-soft);}
+
+@media(max-width:780px){
+  .sidebar{position:fixed; left:-280px; z-index:100; transition:left .3s;}
+  .sidebar.open{left:0;}
+  main{padding:20px 16px 80px;}
+  .menu-toggle{display:inline-block !important;}
+}
+.menu-toggle{display:none; background:var(--ai); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;}
+</style>
+<style>
+/* ── Index page styles (Elegant & Animated Edition) ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+@keyframes slideBg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.idx-hero {
+  background: linear-gradient(135deg, var(--card) 0%, var(--washi-2) 100%);
+  color: var(--sumi); 
+  padding: 80px 40px 70px; text-align: center;
+  position: relative; overflow: hidden;
+  border-bottom: 2px solid var(--line);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+.idx-hero::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.4) 0%, transparent 70%);
+  pointer-events: none;
+}
+[data-theme="dark"] .idx-hero::before {
+  background: radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, transparent 70%);
+}
+.idx-hero h1 {
+  font-family: var(--font-display); font-size: 3.5rem;
+  margin: 0 0 15px; color: var(--ai);
+  animation: fadeInUp 1s ease-out backwards;
+  letter-spacing: 1px;
+}
+.idx-hero p {
+  color: var(--sumi-soft); font-size: 1.15rem; max-width: 600px; margin: 0 auto 30px;
+  animation: fadeInUp 1s ease-out 0.3s backwards;
+}
+.idx-badges { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 25px; animation: fadeInUp 1s ease-out backwards; }
+.idx-badge {
+  padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+  background: rgba(182,134,44,.1); color: var(--kin); 
+  border: 1px solid var(--kin);
+}
+.idx-stats {
+  display: flex; gap: 40px; justify-content: center; margin-top: 40px; flex-wrap: wrap;
+  animation: fadeInUp 1s ease-out 0.6s backwards;
+}
+.idx-stat { text-align: center; animation: float 6s ease-in-out infinite; }
+.idx-stat:nth-child(2) { animation-delay: 1s; }
+.idx-stat:nth-child(3) { animation-delay: 2s; }
+.idx-stat:nth-child(4) { animation-delay: 3s; }
+.idx-stat:nth-child(5) { animation-delay: 4s; }
+.idx-stat .num { font-size: 2.5rem; font-weight: 700; color: var(--ai); font-family: var(--font-display); }
+.idx-stat .lbl { font-size: 0.85rem; color: var(--sumi-soft); margin-top: 5px; font-weight: 600; }
+
+.idx-body { max-width: 1120px; margin: 0 auto; padding: 60px 24px 100px; }
+.idx-section-label {
+  font-size: 1.2rem; font-weight: 700; letter-spacing: 0.05em;
+  color: var(--ai); margin: 50px 0 25px;
+  border-left: 4px solid var(--kin); padding-left: 15px;
+  font-family: var(--font-display);
+}
+.idx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+.idx-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 12px; padding: 30px; display: flex; flex-direction: column; gap: 15px;
+  position: relative; overflow: hidden;
+  transform: translateY(0) scale(1); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: var(--shadow);
+}
+.idx-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  border-color: var(--ai); z-index: 10;
+}
+[data-theme="dark"] .idx-card:hover { box-shadow: 0 12px 30px rgba(0,0,0,0.6); }
+.idx-card::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 4px;
+  background: linear-gradient(90deg, transparent, var(--kin), transparent);
+  transition: 0.5s;
+}
+.idx-card:hover::after { left: 100%; }
+
+.idx-card.n5 { border-top: 4px solid #7C9A8C; }
+.idx-card.n4 { border-top: 4px solid #3F7CA0; }
+.idx-card.n3 { border-top: 4px solid #B6862C; }
+.idx-card.n2 { border-top: 4px solid #B33A2E; }
+.idx-card.n1, .idx-card.n1-adv { border-top: 4px solid #6B4E9C; }
+.idx-card.tool { border-top: 4px solid var(--sumi-soft); }
+
+.idx-card-num { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; color: var(--hanko); }
+.idx-card h2 { font-size: 1.3rem; margin: 0; color: var(--ai); line-height: 1.4; font-family: var(--font-display); }
+.idx-card p { font-size: 0.95rem; color: var(--sumi-soft); margin: 0; line-height: 1.7; flex: 1; }
+.idx-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.idx-tag {
+  padding: 4px 12px; border-radius: 6px; font-size: 0.75rem;
+  background: var(--washi-2); color: var(--sumi-soft); border: 1px solid var(--line);
+  font-weight: 500;
+}
+.idx-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px; border-radius: 8px; background: var(--washi); color: var(--ai);
+  text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: 0.3s;
+  border: 1px solid var(--line); cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.idx-btn:hover { background: var(--ai); color: #fff; border-color: var(--ai); transform: translateX(4px); }
+.idx-btn.red { color: var(--hanko); }
+.idx-btn.red:hover { background: var(--hanko); color: #fff; border-color: var(--hanko); }
+
+.idx-check {
+  position: absolute; top: 20px; right: 20px; width: 28px; height: 28px; border-radius: 6px;
+  border: 2px solid var(--line); background: var(--washi);
+  cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+}
+.idx-check:hover { border-color: var(--kin); background: var(--card); transform: scale(1.1); }
+.idx-check.done { background: var(--kin); border-color: var(--kin); }
+.idx-check.done::after { content: "✓"; color: #fff; font-size: 1rem; font-weight: 900; }
+
+#ai-btn-idx {
+  position: fixed; bottom: 30px; right: 30px; z-index: 999; width: 60px; height: 60px; border-radius: 50%;
+  background: var(--card); color: var(--ai); border: 2px solid var(--ai); font-size: 1.5rem; cursor: pointer;
+  box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center;
+  transition: 0.3s; animation: float 4s ease-in-out infinite;
+}
+#ai-btn-idx:hover { transform: scale(1.1) rotate(10deg); background: var(--ai); color: #fff; }
+#ai-tip {
+  position: fixed; bottom: 100px; right: 30px; z-index: 998;
+  background: var(--card); color: var(--ai); padding: 10px 18px; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600; white-space: nowrap; border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+#ai-tip::after {
+  content: ''; position: absolute; bottom: -8px; right: 20px; width: 0; height: 0;
+  border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 8px solid var(--card);
+}
+
+.idx-topbar {
+  display: flex; align-items: center; justify-content: space-between; padding: 15px 30px;
+  background: var(--card); color: var(--sumi); border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 100; box-shadow: var(--shadow);
+}
+.idx-topbar-logo { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--ai); }
+.idx-topbar-btns { display: flex; gap: 12px; }
+.idx-topbar-btns button, .idx-topbar-btns a {
+  padding: 8px 16px; border-radius: 20px; border: 1px solid var(--line);
+  background: var(--washi); color: var(--sumi); font-size: 0.85rem; font-weight: 500; cursor: pointer; text-decoration: none;
+  transition: 0.3s;
+}
+.idx-topbar-btns button:hover, .idx-topbar-btns a:hover { background: var(--ai); color: #fff; border-color: var(--ai); }
+
+/* Custom Scrollbar - keeping it simple based on theme */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--washi); }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--sumi-soft); }
+
+@media(max-width:600px){
+  .idx-hero h1{font-size:2rem;}
+  .idx-body{padding:40px 16px 80px;}
+  .idx-grid{grid-template-columns:1fr;}
+}
+
+/* Animations for scroll reveal */
+.reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<!-- Topbar -->
+<div class="idx-topbar">
+  <div class="idx-topbar-logo">🎌 JLPT N2→N1</div>
+  <div class="idx-topbar-btns">
+    <button onclick="document.body.setAttribute('data-theme',document.body.getAttribute('data-theme')==='dark'?'light':'dark')">🌙 Dark</button>
+    <a href="phan01.html">📄 Bắt đầu học</a>
+  </div>
+</div>
+
+<!-- Hero -->
+<div class="idx-hero">
+  <div class="idx-badges">
+    <span class="idx-badge">382 Bài học</span>
+    <span class="idx-badge">N5 → N1</span>
+    <span class="idx-badge">1h30 phút / ngày</span>
+    <span class="idx-badge">🤖 AI Sensei</span>
+  </div>
+  <h1>Học Tiếng Nhật Từ 0 Đến N1</h1>
+  <p>Hệ thống học tiếng Nhật toàn diện nhất — từ Hiragana đầu tiên đến văn học Soseki & kỳ thi JLPT N1. Học theo đúng thứ tự.</p>
+  <div class="idx-stats">
+    <div class="idx-stat"><div class="num">382</div><div class="lbl">Bài học</div></div>
+    <div class="idx-stat"><div class="num">350+</div><div class="lbl">Cấu trúc ngữ pháp</div></div>
+    <div class="idx-stat"><div class="num">15.000+</div><div class="lbl">Từ vựng</div></div>
+    <div class="idx-stat"><div class="num">1.500+</div><div class="lbl">Flashcard</div></div>
+    <div class="idx-stat"><div class="num">8</div><div class="lbl">Đề thi thử</div></div>
+  </div>
+  <div id="myProgressBar" style="max-width:400px;margin:20px auto 0;font-size:.85rem;color:var(--sumi-soft)"></div>
+</div>
+
+<!-- Body -->
+<div class="idx-body">
+
+  <div class="idx-section-label">🌱 Nền Tảng — Bắt Đầu Từ Đây</div>
+  <div class="idx-grid">
+
+    <div class="idx-card n5">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 01</div>
+      <h2>Hệ Thống Kana & Phát Âm</h2>
+      <p>Hiragana (46 âm) · Katakana (46 âm) · Dakuten · Yōon · Số · Ngày tháng — nền tảng bắt buộc trước khi học bất cứ điều gì.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Phát âm</span>
+        <span class="idx-tag">Kana</span>
+        <span class="idx-tag">Bài 1–18 +18</span>
+      </div>
+      <a href="phan01.html" class="idx-btn">Mở phần học →</a>
+    </div>
+
+    <div class="idx-card n5">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 02</div>
+      <h2>Ngữ Pháp N5 Toàn Diện</h2>
+      <p>Trợ từ · Tính từ い/な · Động từ 3 nhóm · Thì quá khứ/phủ định · て形 · So sánh · Kanji N5 khởi đầu · Thi thử N5.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Ngữ pháp</span>
+        <span class="idx-tag">N5</span>
+        <span class="idx-tag">Bài 19–37 +18</span>
+      </div>
+      <a href="phan02.html" class="idx-btn">Mở phần học →</a>
+    </div>
+
+    <div class="idx-card n4">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 03</div>
+      <h2>N4 Ngữ Pháp & Kanji Nâng Cao</h2>
+      <p>Kanji N5-N4 · Từ vựng N4 · Kính ngữ cơ bản · Bị động · Sai khiến · 4 điều kiện · Kanji N3 khởi đầu · Thi thử N4.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Ngữ pháp</span>
+        <span class="idx-tag">N4</span>
+        <span class="idx-tag">Bài 38–55 +19</span>
+      </div>
+      <a href="phan03.html" class="idx-btn">Mở phần học →</a>
+    </div>
+
+    <div class="idx-card tool">
+      <div class="idx-card-num">CÔNG CỤ</div>
+      <h2>📖 Bảng Chữ Cái</h2>
+      <p>Tra cứu nhanh Hiragana, Katakana, Dakuten, Yōon và Kanji N5/N4/N2 — dùng song song với Phần 01-03 ở trên.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Kana</span>
+        <span class="idx-tag">Kanji</span>
+        <span class="idx-tag">Tra cứu</span>
+      </div>
+      <a href="bang-chu-cai.html" class="idx-btn">Mở bảng tra cứu →</a>
+    </div>
+
+  </div>
+
+  <div class="idx-section-label">📗 Trung Cấp — Xây Dựng Nền Tảng Vững</div>
+  <div class="idx-grid">
+
+    <div class="idx-card n3">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 04</div>
+      <h2>N3→N2: Cầu Nối & Ngữ Pháp Nhóm 1-3</h2>
+      <p>ことにする・ようになる · N2 nhóm 1-3 · Từ vựng học thuật · Đọc/nghe hiểu N2 · Kanji N2 · Hội thoại · Thi thử N2 đề 1&2.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Ngữ pháp</span>
+        <span class="idx-tag">N3→N2</span>
+        <span class="idx-tag">Bài 56–77 +19</span>
+      </div>
+      <a href="phan04.html" class="idx-btn">Mở phần học →</a>
+    </div>
+
+    <div class="idx-card n2">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 05</div>
+      <h2>N2 Hoàn Thiện & Mở Rộng</h2>
+      <p>Thi thử N2 đề 3 · Phân tích lỗi toàn diện · Hoàn thành 100 bài · + Ngữ pháp và từ vựng bổ sung chuyên sâu.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">N2</span>
+        <span class="idx-tag">Luyện đề</span>
+        <span class="idx-tag">Bài 78–100 +18</span>
+      </div>
+      <a href="phan05.html" class="idx-btn">Mở phần học →</a>
+    </div>
+
+    <div class="idx-card n2">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 06</div>
+      <h2>N2 Chuyên Sâu & Hoàn Chỉnh</h2>
+      <p>N2 nhóm 7–17 (170+ cấu trúc) · Từ vựng kinh tế/y tế/giáo dục · Mega Test 30 câu · Kanji N2 · Siêu đề 50 câu + bổ sung.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">N2 nâng cao</span>
+        <span class="idx-tag">Luyện đề</span>
+        <span class="idx-tag">Bài 101–120 +18</span>
+      </div>
+      <a href="phan06.html" class="idx-btn">Mở phần học →</a>
+    </div>
+
+  </div>
+
+  <div class="idx-section-label">🔴 JLPT N1 — Đỉnh Cao</div>
+  <div class="idx-grid">
+
+    <div class="idx-card n1">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 07</div>
+      <h2>N1 Chương 1: Nhóm Ngữ Pháp Nền Tảng</h2>
+      <p>Nhóm đầu của 50 cấu trúc N1 cốt lõi · Lý do & điều kiện trang trọng · Kanji N1 · Từ vựng học thuật.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Ngữ pháp N1</span>
+        <span class="idx-tag">Kanji N1</span>
+        <span class="idx-tag">Bài 121–140 +18</span>
+      </div>
+      <a href="phan07.html" class="idx-btn red">Mở phần học →</a>
+    </div>
+
+    <div class="idx-card n1">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 08</div>
+      <h2>N1 Cơ Bản: Hoàn Thiện & Luyện Đề</h2>
+      <p>Hoàn thiện 50 cấu trúc N1 · Đọc hiểu N1 · Từ vựng học thuật nâng cao · Đề thi N1 Đề 1 & 2.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Ngữ pháp N1</span>
+        <span class="idx-tag">Luyện đề</span>
+        <span class="idx-tag">Bài 141–160 +18</span>
+      </div>
+      <a href="phan08.html" class="idx-btn red">Mở phần học →</a>
+    </div>
+
+    <div class="idx-card n1-adv">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 09</div>
+      <h2>N1 Nâng Cao: Cấu Trúc Chương 2</h2>
+      <p>Ngữ pháp N1 nâng cao (〜に即して・〜といえども...) · Thành ngữ · Từ vựng cao cấp · Kính ngữ cấp cao.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">N1 nâng cao</span>
+        <span class="idx-tag">Thành ngữ</span>
+        <span class="idx-tag">Bài 161–180 +18</span>
+      </div>
+      <a href="phan09.html" class="idx-btn red">Mở phần học →</a>
+    </div>
+
+    <div class="idx-card n1-adv">
+      <div class="idx-check" onclick="this.classList.toggle('done')" title="Đánh dấu hoàn thành"></div>
+      <div class="idx-card-num">PHẦN 10</div>
+      <h2>N1 Siêu Nâng Cao: Hoàn Thiện Toàn Trình</h2>
+      <p>Chương 3 · Văn học Soseki · Haiku · Siêu đề 40 câu · Kế hoạch sau N1: Du học · Việc làm · Business Japanese.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">N1 siêu nâng cao</span>
+        <span class="idx-tag">Văn học</span>
+        <span class="idx-tag">Bài 181–200 +18</span>
+      </div>
+      <a href="phan10.html" class="idx-btn red">Mở phần học →</a>
+    </div>
+
+  </div>
+
+
+  <div class="idx-section-label">📅 Kế Hoạch Học Tập</div>
+  <div style="background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:28px;margin-bottom:20px">
+    <h3 style="margin:0 0 18px;font-size:1.05rem">⏱️ Lịch học 1 giờ 30 phút / ngày → JLPT N1</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+      <div style="background:var(--washi-2);border-radius:10px;padding:14px">
+        <div style="font-size:.7rem;font-weight:700;color:var(--sumi-soft);margin-bottom:4px">SÁNG SỚM · 20 PHÚT</div>
+        <div style="font-size:.88rem;color:var(--sumi)">📱 Anki flashcard<br>10–15 từ mới/ngày</div>
+      </div>
+      <div style="background:var(--washi-2);border-radius:10px;padding:14px">
+        <div style="font-size:.7rem;font-weight:700;color:var(--sumi-soft);margin-bottom:4px">BUỔI TRƯA · 20 PHÚT</div>
+        <div style="font-size:.88rem;color:var(--sumi)">🗞️ Đọc báo NHK<br>Ghi chú từ mới</div>
+      </div>
+      <div style="background:var(--washi-2);border-radius:10px;padding:14px">
+        <div style="font-size:.7rem;font-weight:700;color:var(--sumi-soft);margin-bottom:4px">BUỔI TỐI · 50 PHÚT</div>
+        <div style="font-size:.88rem;color:var(--sumi)">📖 1 bài học/ngày<br>Ngữ pháp + Luyện đề</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:14px;background:linear-gradient(135deg,rgba(42,82,138,.08),rgba(179,58,46,.06));border-radius:10px;font-size:.85rem;color:var(--sumi)">
+      🎯 <b>Mục tiêu:</b> N2 sau 18 tháng · N1 sau 30 tháng · 90 phút/ngày · Không bỏ ngày nào!
+    </div>
+  </div>
+
+  <!-- Tools -->
+  <div class="idx-section-label">🛠️ Công Cụ Hỗ Trợ</div>
+  <div class="idx-grid" style="margin-bottom:40px">
+
+    <div class="idx-card tool">
+      <div class="idx-card-num">CÔNG CỤ</div>
+      <h2>📄 10 Phần Học</h2>
+      <p>Toàn bộ 382 bài chia sẵn theo 10 phần từ Kana đến N1 siêu nâng cao — mở nhanh đúng trình độ bạn đang học.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">382 bài</span>
+        <span class="idx-tag">10 phần</span>
+      </div>
+      <a href="phan01.html" class="idx-btn">Mở phần học →</a>
+    </div>
+
+    <div class="idx-card tool">
+      <div class="idx-card-num">CÔNG CỤ</div>
+      <h2>🎯 Kiểm Tra Thăng Cấp N1</h2>
+      <p>30 câu hỏi tổng hợp từ N5 đến N1 — chấm điểm từng cấp độ riêng và đánh giá bạn đã sẵn sàng thi N1 chưa.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">30 câu</span>
+        <span class="idx-tag">5 cấp độ</span>
+      </div>
+      <a href="kiem-tra-thang-cap.html" class="idx-btn">Làm bài kiểm tra →</a>
+    </div>
+
+    <div class="idx-card n5">
+      <div class="idx-card-num">TEST RIÊNG</div>
+      <h2>🌱 Test N5</h2>
+      <p>25 câu kiểm tra riêng cấp độ N5 — dùng khi vừa học xong Phần 01-02.</p>
+      <div class="idx-tags"><span class="idx-tag">25 câu</span></div>
+      <a href="test-n5.html" class="idx-btn">Làm test N5 →</a>
+    </div>
+
+    <div class="idx-card n4">
+      <div class="idx-card-num">TEST RIÊNG</div>
+      <h2>📗 Test N4</h2>
+      <p>25 câu kiểm tra riêng cấp độ N4 — dùng khi vừa học xong Phần 03.</p>
+      <div class="idx-tags"><span class="idx-tag">25 câu</span></div>
+      <a href="test-n4.html" class="idx-btn">Làm test N4 →</a>
+    </div>
+
+    <div class="idx-card n3">
+      <div class="idx-card-num">TEST RIÊNG</div>
+      <h2>📙 Test N3→N2</h2>
+      <p>25 câu kiểm tra riêng cầu nối N3-N2 — dùng khi vừa học xong Phần 04.</p>
+      <div class="idx-tags"><span class="idx-tag">25 câu</span></div>
+      <a href="test-n3.html" class="idx-btn">Làm test N3→N2 →</a>
+    </div>
+
+    <div class="idx-card n2">
+      <div class="idx-card-num">TEST RIÊNG</div>
+      <h2>📔 Test N2</h2>
+      <p>25 câu kiểm tra riêng cấp độ N2 chuyên sâu — dùng khi vừa học xong Phần 05-06.</p>
+      <div class="idx-tags"><span class="idx-tag">25 câu</span></div>
+      <a href="test-n2.html" class="idx-btn">Làm test N2 →</a>
+    </div>
+
+    <div class="idx-card n1">
+      <div class="idx-card-num">TEST RIÊNG</div>
+      <h2>🔴 Test N1</h2>
+      <p>25 câu kiểm tra riêng cấp độ N1 — dùng khi vừa học xong Phần 07-10.</p>
+      <div class="idx-tags"><span class="idx-tag">25 câu</span></div>
+      <a href="test-n1.html" class="idx-btn red">Làm test N1 →</a>
+    </div>
+
+    <div class="idx-card tool">
+      <div class="idx-card-num">CÔNG CỤ · CẦN INTERNET</div>
+      <h2>🔍 Tra Cứu Kanji Trực Tuyến</h2>
+      <p>Nhập bất kỳ chữ Kanji nào để tra số nét, âm On/Kun, nghĩa — dữ liệu lấy trực tiếp từ kanjiapi.dev (miễn phí, cần Internet).</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Tra cứu trực tuyến</span>
+      </div>
+      <a href="tra-kanji.html" class="idx-btn">Mở công cụ tra cứu →</a>
+    </div>
+
+    <div class="idx-card tool">
+      <div class="idx-card-num">CÔNG CỤ</div>
+      <h2>🤖 AI Sensei</h2>
+      <p>Chatbot Claude luôn sẵn sàng — hỏi ngữ pháp, dịch câu, hoặc nhờ giải thích lại bất kỳ bài nào 24/7.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Chatbot</span>
+        <span class="idx-tag">24/7</span>
+      </div>
+      <a href="phan10.html#bai200" class="idx-btn red">Hỏi AI Sensei →</a>
+    </div>
+
+    <div class="idx-card tool">
+      <div class="idx-card-num">NGOÀI TRANG</div>
+      <h2>🗞️ NHK Web Easy</h2>
+      <p>Báo tiếng Nhật viết bằng câu đơn giản, có furigana — luyện đọc hiểu thực tế song song với lộ trình.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Đọc hiểu</span>
+        <span class="idx-tag">Miễn phí</span>
+      </div>
+      <a href="https://www.nhk.or.jp/news/easy/" target="_blank" class="idx-btn">Mở trang báo →</a>
+    </div>
+
+    <div class="idx-card tool">
+      <div class="idx-card-num">NGOÀI TRANG</div>
+      <h2>📚 青空文庫</h2>
+      <p>Thư viện văn học Nhật Bản miễn phí — luyện đọc nâng cao khi đã vững N2, tiến gần văn phong N1.</p>
+      <div class="idx-tags">
+        <span class="idx-tag">Văn học</span>
+        <span class="idx-tag">N2→N1</span>
+      </div>
+      <a href="https://www.aozora.gr.jp/" target="_blank" class="idx-btn">Mở thư viện →</a>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- AI tip -->
+<div id="ai-tip">🤖 Hỏi AI Sensei về bất kỳ bài nào!</div>
+<button id="ai-btn-idx" title="AI Sensei" onclick="window.location.href='phan10.html#bai200'">🤖</button>
+
+<script>
+// Safe localStorage wrapper (một số trình duyệt chặn localStorage khi mở file trực tiếp)
+function safeGet(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
+function safeSet(key,val){ try{ localStorage.setItem(key,val); }catch(e){} }
+
+// Dark mode
+const saved=safeGet('theme')||'light';
+document.body.setAttribute('data-theme',saved);
+document.querySelector('[onclick*="dark"]').addEventListener('click',function(){
+  const t=document.body.getAttribute('data-theme')==='dark'?'light':'dark';
+  document.body.setAttribute('data-theme',t);
+  safeSet('theme',t);
+});
+
+// Hide AI tip after 4s
+setTimeout(()=>{
+  const tip=document.getElementById('ai-tip');
+  if(tip){tip.style.opacity='0';tip.style.transition='opacity .5s';
+  setTimeout(()=>tip.remove(),500);}
+},4000);
+
+// Persist checkboxes
+document.querySelectorAll('.idx-check').forEach((el,i)=>{
+  if(safeGet('ch_done_'+i)==='1') el.classList.add('done');
+  el.addEventListener('click',()=>{
+    safeSet('ch_done_'+i, el.classList.contains('done')?'1':'0');
+  });
+});
+
+/* Tổng tiến độ học tập (đọc từ toàn bộ localStorage key done_bai*) */
+function renderMyProgress(){
+  let done = 0;
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const key = localStorage.key(i);
+      if(key && key.startsWith('done_bai') && localStorage.getItem(key)==='1') done++;
+    }
+  }catch(e){}
+  const total = 382;
+  const pct = Math.round(done/total*100);
+  const bar = document.getElementById('myProgressBar');
+  if(!bar) return;
+  if(done === 0){
+    bar.innerHTML = `<span style="color:var(--sumi-soft)">💡 Bấm "☐ Đánh dấu đã học" trong mỗi bài để theo dõi tiến độ của bạn tại đây.</span>`;
+    return;
+  }
+  bar.innerHTML = `
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+      <span>📊 Tiến độ của bạn</span><span><b>${done}/${total}</b> (${pct}%)</span>
+    </div>
+    <div style="height:8px;background:var(--line);border-radius:4px;overflow:hidden">
+      <div style="height:100%;width:${pct}%;background:var(--kin);border-radius:4px;transition:width .3s"></div>
+    </div>`;
+}
+renderMyProgress();
+
+// --- Tương lai Animation (Scroll Reveal) ---
+function initScrollReveal() {
+  const revealElements = document.querySelectorAll('.idx-card, .idx-section-label, .idx-body > div[style*="background:var(--card)"]');
+  revealElements.forEach(el => el.classList.add('reveal'));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+// Chạy hàm khi trang load xong
+window.addEventListener('DOMContentLoaded', initScrollReveal);
+</script>
+</body></html>

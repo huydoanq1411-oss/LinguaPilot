@@ -1,0 +1,3147 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phần 02 — Ngữ Pháp N5 Toàn Diện — JLPT N2→N1</title>
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --washi:#F6F1E4;
+  --washi-2:#EFE7D3;
+  --sumi:#2A2722;
+  --sumi-soft:#5B554A;
+  --ai:#1B4A6B;       /* indigo */
+  --ai-deep:#0F3349;
+  --hanko:#B33A2E;    /* hanko red */
+  --kin:#B6862C;       /* gold */
+  --line:#DCD2B8;
+  --card:#FFFDF8;
+  --radius:10px;
+  --shadow:0 2px 10px rgba(42,39,34,.08);
+  --font-display:'Shippori Mincho','Noto Serif JP',serif;
+  --font-body:'Noto Sans JP','Hiragino Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Courier New',monospace;
+}
+[data-theme="dark"]{
+  --washi:#1B1916;
+  --washi-2:#222019;
+  --sumi:#EDE6D6;
+  --sumi-soft:#B8AF9C;
+  --ai:#6FA8D6;
+  --ai-deep:#3A75A0;
+  --hanko:#E0695A;
+  --kin:#D9B25E;
+  --line:#3A362C;
+  --card:#221F1A;
+  --shadow:0 2px 14px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--washi); color:var(--sumi);
+  font-family:var(--font-body); line-height:1.7;
+  transition:background .3s,color .3s;
+}
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ===== BẢNG CHỮ CÁI TƯƠNG TÁC ===== */
+.kana-ref-section { scroll-margin-top: 20px; }
+.kana-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+.kana-tab { padding:8px 18px; border-radius:20px; border:2px solid var(--line); background:var(--card);
+  cursor:pointer; font-family:var(--font-display); font-size:.9rem; transition:.2s; color:var(--sumi); }
+.kana-tab.active { background:var(--ai); color:#fff; border-color:var(--ai); }
+.kana-tab:hover:not(.active) { border-color:var(--ai); color:var(--ai); }
+.kana-panel { display:none; }
+.kana-panel.active { display:block; }
+.kana-master-grid { display:grid; grid-template-columns: 60px repeat(5,1fr); gap:4px; }
+.kana-master-grid .kana-header { background:var(--ai); color:#fff; padding:6px 4px;
+  text-align:center; font-size:.72rem; font-weight:700; border-radius:4px; }
+.kana-master-grid .kana-row-label { background:var(--washi-2); display:flex; align-items:center;
+  justify-content:center; font-size:.7rem; color:var(--sumi-soft); border-radius:4px; font-weight:600; }
+.kana-cell-full { background:var(--card); border:1px solid var(--line); border-radius:6px;
+  padding:8px 4px; text-align:center; cursor:pointer; transition:.15s; position:relative; }
+.kana-cell-full:hover { border-color:var(--hanko); transform:scale(1.06); z-index:2; box-shadow:var(--shadow); }
+.kana-cell-full .main-char { font-family:var(--font-display); font-size:1.4rem; line-height:1.2;
+  display:block; }
+.kana-cell-full .sub-char { font-size:.75rem; color:var(--hanko); display:block; }
+.kana-cell-full .roma { font-size:.65rem; color:var(--sumi-soft); display:block; }
+.kana-cell-full.exception { background:linear-gradient(135deg,#fff5f5,#fff); border-color:var(--hanko); }
+[data-theme="dark"] .kana-cell-full.exception { background:linear-gradient(135deg,#2d1b17,#1e1510); }
+.kana-cell-full.empty { background:transparent; border:1px dashed var(--line); opacity:.4; cursor:default; }
+.kana-cell-full.empty:hover { transform:none; box-shadow:none; }
+.kanji-ref-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
+.kanji-ref-card { background:var(--card); border:1px solid var(--line); border-radius:8px;
+  padding:10px 8px; text-align:center; cursor:pointer; transition:.15s; }
+.kanji-ref-card:hover { border-color:var(--kin); transform:translateY(-2px); box-shadow:var(--shadow); }
+.kanji-ref-card .k-char { font-family:var(--font-display); font-size:2rem; color:var(--sumi); display:block; }
+.kanji-ref-card .k-on { font-size:.65rem; color:var(--hanko); }
+.kanji-ref-card .k-kun { font-size:.65rem; color:var(--ai); }
+.kanji-ref-card .k-mean { font-size:.72rem; color:var(--sumi-soft); margin-top:3px; font-style:italic; }
+.kana-search { width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:8px;
+  background:var(--card); color:var(--sumi); font-size:.95rem; margin-bottom:14px; }
+.kana-search:focus { outline:none; border-color:var(--ai); }
+.highlight-card { border-color:var(--kin) !important; background:rgba(182,134,44,.08) !important; }
+[data-theme="dark"] .highlight-card { background:rgba(182,134,44,.15) !important; }
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:var(--ai);}
+
+a{color:var(--ai);}
+
+/* ============ LAYOUT ============ */
+.app{display:flex; min-height:100vh;}
+.sidebar{
+  width:270px; flex-shrink:0; background:var(--ai-deep); color:#F6F1E4;
+  position:sticky; top:0; height:100vh; overflow-y:auto; padding:20px 0;
+}
+.sidebar h2{color:#F6F1E4; font-size:1.1rem; padding:0 20px; margin-bottom:4px;}
+.sidebar .sub{padding:0 20px; font-size:.78rem; color:#C9D7E2; margin-bottom:20px;}
+.sidebar nav a{
+  display:block; padding:9px 20px; color:#E4ECF1; text-decoration:none;
+  font-size:.92rem; border-left:3px solid transparent;
+}
+.sidebar nav a:hover, .sidebar nav a.active{
+  background:rgba(255,255,255,.08); border-left-color:var(--kin); color:#fff;
+}
+.sidebar nav .group-label{
+  padding:14px 20px 4px; font-size:.7rem; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--kin); font-weight:600;
+}
+
+main{flex:1; padding:32px 40px 80px; max-width:880px;}
+.topbar{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:24px; gap:12px; flex-wrap:wrap;
+}
+.controls{display:flex; gap:10px; align-items:center;}
+.btn{
+  border:1px solid var(--line); background:var(--card); color:var(--sumi);
+  padding:8px 14px; border-radius:var(--radius); cursor:pointer;
+  font-family:var(--font-body); font-size:.85rem; transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.btn:hover{border-color:var(--ai); color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08);}
+
+/* progress bar */
+.progress-wrap{background:var(--washi-2); border-radius:20px; height:10px; overflow:hidden; flex:1; max-width:260px;}
+.progress-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--ai),var(--kin));
+  width:4%;
+  transition:width .6s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+}
+.progress-bar::after {
+  content:'';
+  position:absolute;
+  right:0; top:0; bottom:0;
+  width:8px;
+  background:rgba(255,255,255,0.4);
+  border-radius:0 20px 20px 0;
+}
+.progress-label{font-size:.78rem; color:var(--sumi-soft); white-space:nowrap;}
+
+/* section card */
+.section{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px 28px; margin-bottom:22px; box-shadow:var(--shadow); scroll-margin-top:20px;
+  transition: all 0.35s ease;
+  animation: sectionFadeIn 0.6s ease-out both;
+}
+@keyframes sectionFadeIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section:hover {
+  box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+  border-color: var(--kin);
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .section:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.55); }
+.section .eyebrow{
+  font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--hanko); font-weight:600; margin-bottom:6px;
+}
+
+/* stamp / hero */
+.hero{
+  border:2px solid var(--ai); border-radius:var(--radius); padding:26px 28px;
+  background:linear-gradient(135deg,var(--card) 60%,var(--washi-2)); margin-bottom:26px; position:relative;
+  box-shadow: 0 4px 20px rgba(27,74,107,0.08);
+  transition: box-shadow 0.3s ease;
+}
+.hero:hover {
+  box-shadow: 0 8px 32px rgba(27,74,107,0.14);
+}
+.hanko-stamp{
+  position:absolute; top:20px; right:24px; width:60px; height:60px; border:2.5px solid var(--hanko);
+  border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--hanko);
+  font-family:var(--font-display); font-size:1.4rem; transform:rotate(-6deg); opacity:.85;
+}
+
+/* tables */
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.93rem;}
+th,td{border:1px solid var(--line); padding:8px 12px; text-align:left;}
+th{background:var(--washi-2); color:var(--ai); font-family:var(--font-display);}
+tr:nth-child(even) td{background:var(--washi);}
+
+/* note boxes */
+.box{
+  border-radius:var(--radius); padding:14px 18px; margin:16px 0; border-left:4px solid; font-size:.92rem;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.box:hover {
+  transform: translateX(3px);
+  box-shadow: 2px 4px 12px rgba(0,0,0,0.07);
+}
+.box.tip{background:#EAF3EC; border-color:#3F8C5C;}
+.box.warn{background:#FBEAE6; border-color:var(--hanko);}
+.box.note{background:#EAF1F7; border-color:var(--ai);}
+[data-theme="dark"] .box.tip{background:#1E2A20;}
+[data-theme="dark"] .box.warn{background:#2D1B17;}
+[data-theme="dark"] .box.note{background:#17222B;}
+.box b{display:block; margin-bottom:4px; font-family:var(--font-display);}
+
+/* code block */
+.code-wrap{position:relative; margin:14px 0;}
+pre{
+  background:var(--sumi); color:#F4F0E2; padding:16px 18px; border-radius:8px;
+  overflow-x:auto; font-family:var(--font-mono); font-size:.85rem; line-height:1.6;
+}
+[data-theme="dark"] pre{background:#0E0D0B;}
+.copy-btn{
+  position:absolute; top:8px; right:8px; background:rgba(255,255,255,.12); color:#fff;
+  border:none; padding:5px 10px; border-radius:6px; font-size:.72rem; cursor:pointer;
+}
+.copy-btn:hover{background:rgba(255,255,255,.22);}
+
+/* accordion */
+.accordion-item{border:1px solid var(--line); border-radius:8px; margin-bottom:8px; overflow:hidden;}
+.accordion-head{
+  background:var(--washi-2); padding:12px 16px; cursor:pointer; display:flex;
+  justify-content:space-between; align-items:center; font-weight:600; font-family:var(--font-display);
+  transition:all 0.2s ease;
+}
+.accordion-head:hover{color:var(--ai); background:var(--washi); padding-left:20px;}
+.accordion-item.open .accordion-head{
+  background:linear-gradient(90deg,var(--washi),var(--washi-2));
+  border-left:3px solid var(--ai); padding-left:13px;
+  color:var(--ai);
+}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 16px;}
+.accordion-body.open{padding:14px 16px;}
+.accordion-arrow{transition:transform .3s;}
+.accordion-item.open .accordion-arrow{transform:rotate(180deg);}
+
+/* flashcards */
+.flash-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; margin:14px 0;}
+.flashcard{
+  perspective:1000px; height:90px; cursor:pointer;
+}
+.flashcard-inner{
+  position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;
+}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+.flashcard-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-weight:600; text-align:center; padding:6px;
+  border:1px solid var(--line);
+}
+.flashcard-front{
+  background:linear-gradient(135deg,var(--ai),var(--ai-deep)); color:#fff;
+  font-family:var(--font-display); font-size:1.4rem;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+}
+.flashcard-back{
+  background:linear-gradient(135deg,var(--kin),#8B6520); color:#fff;
+  transform:rotateY(180deg); font-size:.85rem;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+}
+
+/* quiz */
+.quiz-q{margin-bottom:18px; padding-bottom:14px; border-bottom:1px dashed var(--line);}
+.quiz-q:last-child{border-bottom:none;}
+.quiz-opts label{
+  display:block; padding:8px 12px; margin:5px 0; border:1px solid var(--line); border-radius:6px; cursor:pointer; font-size:.9rem;
+}
+.quiz-opts label:hover{border-color:var(--ai);}
+.quiz-opts input{margin-right:8px;}
+.quiz-feedback{font-size:.85rem; margin-top:6px; font-weight:600; display:none;}
+.quiz-feedback.correct{color:#3F8C5C;}
+.quiz-feedback.wrong{color:var(--hanko);}
+.quiz-result{margin-top:14px; font-weight:700; font-family:var(--font-display); color:var(--ai); font-size:1.05rem;}
+
+/* roadmap table phase tags */
+.tag{display:inline-block; padding:2px 10px; border-radius:20px; font-size:.72rem; font-weight:600; color:#fff;}
+.tag.t1{background:#7C9A8C;} .tag.t2{background:#3F7CA0;} .tag.t3{background:#B6862C;}
+.tag.t4{background:#B33A2E;} .tag.t5{background:#6B4E9C;}
+
+/* back to top */
+#topBtn{
+  position:fixed; bottom:26px; right:26px; background:var(--ai); color:#fff; border:none;
+  width:46px; height:46px; border-radius:50%; font-size:1.2rem; cursor:pointer; box-shadow:var(--shadow);
+  display:none; align-items:center; justify-content:center; z-index:50;
+}
+#topBtn:hover{background:var(--hanko);}
+
+.kana-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:14px 0; text-align:center;}
+.kana-cell{
+  background:var(--washi-2); border:1px solid var(--line); border-radius:8px; padding:14px 4px;
+  transition: all 0.25s ease;
+}
+.kana-cell:hover {
+  transform: translateY(-3px) scale(1.05);
+  border-color: var(--ai);
+  box-shadow: 0 6px 16px rgba(27,74,107,0.12);
+  background: var(--card);
+}
+.kana-cell .ch{font-family:var(--font-display); font-size:1.8rem; color:var(--ai);}
+.kana-cell .rj{font-size:.78rem; color:var(--sumi-soft);}
+
+footer.lesson-nav{
+  display:flex; justify-content:space-between; align-items:center; margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
+}
+.next-hint{font-size:.85rem; color:var(--sumi-soft);}
+
+@media(max-width:780px){
+  .sidebar{position:fixed; left:-280px; z-index:100; transition:left .3s;}
+  .sidebar.open{left:0;}
+  main{padding:20px 16px 80px;}
+  .menu-toggle{display:inline-block !important;}
+}
+.menu-toggle{display:none; background:var(--ai); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;}
+</style>
+<style>
+@keyframes slideBg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.chapter-header{
+  background:linear-gradient(135deg, var(--ai-deep), var(--ai), #2A4A60);
+  background-size: 200% 200%;
+  animation: slideBg 12s ease infinite;
+  color:var(--washi); padding:32px 40px 28px; margin-bottom:28px;
+  border-radius:0 0 20px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-bottom: 2px solid var(--kin);
+}
+.chapter-header h1{color:#fff;font-size:1.8rem;margin:0 0 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.2);}
+.chapter-header p{color:rgba(255,255,255,0.9);margin:0;font-size:.95rem}
+.chapter-nav{
+  display:flex;gap:10px;padding:16px 40px;
+  background:var(--card);border-bottom:1px solid var(--line);
+  flex-wrap:wrap;align-items:center;
+}
+.chapter-nav a{
+  padding:6px 14px;border-radius:20px;font-size:.8rem;
+  border:1.5px solid var(--line);color:var(--sumi);text-decoration:none;
+  transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.chapter-nav a:hover{background:var(--ai);color:#fff;border-color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.chapter-nav a.active{background:var(--ai);color:#fff;border-color:var(--ai); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.back-home{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 18px;border-radius:20px;
+  background:rgba(255,255,255,.12);color:#fff;
+  text-decoration:none;font-size:.85rem;margin-bottom:14px;
+  border:1px solid rgba(255,255,255,.25);
+  transition:all 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+.back-home:hover{background:rgba(255,255,255,.25); transform:translateX(-3px);}
+.ch-progress{
+  height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:14px;
+}
+.ch-progress-bar{
+  height:100%;background:var(--kin);border-radius:2px;
+  width:33%;
+}
+/* ===== MỤC LỤC NHANH (TOC) ===== */
+.toc-btn{
+  position:fixed; bottom:84px; right:26px; background:var(--kin); color:#fff; border:none;
+  width:46px; height:46px; border-radius:50%; font-size:1.15rem; cursor:pointer; box-shadow:var(--shadow);
+  display:flex; align-items:center; justify-content:center; z-index:60; transition:.15s;
+}
+.toc-btn:hover{background:var(--hanko); transform:scale(1.06);}
+.toc-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:99; opacity:0; pointer-events:none; transition:.25s;
+}
+.toc-overlay.open{opacity:1; pointer-events:auto;}
+.toc-panel{
+  position:fixed; top:0; right:-360px; width:340px; max-width:88vw; height:100%; background:var(--card);
+  box-shadow:-4px 0 30px rgba(0,0,0,.18); z-index:100; transition:right .35s cubic-bezier(0.4,0,0.2,1); display:flex; flex-direction:column;
+}
+.toc-panel.open{right:0;}
+.toc-panel-header{
+  padding:18px 20px; background:var(--ai-deep); color:#fff; display:flex; justify-content:space-between; align-items:center;
+}
+.toc-panel-header h3{margin:0; font-size:1.05rem; font-family:var(--font-display);}
+.toc-close-btn{background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; line-height:1; padding:2px 6px;}
+.toc-panel-body{flex:1; overflow-y:auto; padding:10px 0;}
+.toc-group-label{
+  padding:10px 20px 6px; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  color:var(--sumi-soft); background:var(--washi-2); position:sticky; top:0;
+}
+.toc-item{
+  display:block; padding:9px 20px; font-size:.85rem; color:var(--sumi); text-decoration:none;
+  border-bottom:1px solid var(--washi-2); transition:all .2s ease;
+  border-left: 3px solid transparent;
+}
+.toc-item:hover{background:var(--washi-2); color:var(--ai); padding-left:24px; border-left-color:var(--kin);}
+.toc-item .toc-num{color:var(--ai); font-weight:700; margin-right:6px;}
+
+/* ===== NAV GỌN (DROPDOWN) — thay thế chapter-nav dài ===== */
+.nav-main{
+  display:flex; gap:6px; padding:14px 40px; background:var(--card); border-bottom:1px solid var(--line);
+  flex-wrap:wrap; align-items:center; position:relative; z-index:40;
+}
+.nav-main > a{
+  padding:8px 16px; border-radius:20px; font-size:.85rem; border:1.5px solid var(--line);
+  color:var(--sumi); text-decoration:none; transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.nav-main > a:hover, .nav-main > a.active{background:var(--ai); color:#fff; border-color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.nav-dd{position:relative;}
+.nav-dd-trigger{
+  padding:8px 16px; border-radius:20px; font-size:.85rem; border:1.5px solid var(--line);
+  color:var(--sumi); background:var(--card); cursor:pointer; transition:.15s; font-family:inherit;
+}
+.nav-dd-trigger:hover, .nav-dd-trigger.active, .nav-dd.open .nav-dd-trigger{background:var(--ai); color:#fff; border-color:var(--ai);}
+.nav-dd-menu{
+  position:absolute; top:calc(100% + 8px); left:0; min-width:230px; max-height:70vh; overflow-y:auto;
+  background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+  padding:8px; display:none; flex-direction:column; gap:2px; z-index:41;
+}
+.nav-dd.open .nav-dd-menu{display:flex;}
+.nav-dd-menu a{
+  padding:8px 12px; border-radius:8px; font-size:.83rem; color:var(--sumi); text-decoration:none; transition:.1s;
+}
+.nav-dd-menu a:hover{background:var(--washi-2);}
+.nav-dd-menu a.active{background:var(--ai); color:#fff;}
+.nav-dd-menu .nav-dd-divider{font-size:.68rem; text-transform:uppercase; letter-spacing:.04em; color:var(--sumi-soft);
+  padding:8px 12px 2px; font-weight:700;}
+
+/* ===== THEO DÕI TIẾN ĐỘ HỌC TẬP ===== */
+.lesson-done-toggle{
+  display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:16px;
+  border:1.5px solid var(--line); background:var(--card); color:var(--sumi-soft); cursor:pointer;
+  font-size:.78rem; font-family:var(--font-body); transition:.15s; float:right; margin:2px 0 8px 12px;
+}
+.lesson-done-toggle:hover{border-color:var(--ai); color:var(--ai);}
+.lesson-done-toggle.done{background:#3F8C5C; border-color:#3F8C5C; color:#fff;}
+.section.lesson-completed{border-left:4px solid #3F8C5C; padding-left:16px; margin-left:-16px;}
+.progress-summary{
+  display:flex; align-items:center; gap:10px; margin-top:10px; font-size:.82rem; color:rgba(255,255,255,.9);
+}
+.progress-summary .psum-bar{flex:1; max-width:220px; height:8px; background:rgba(255,255,255,.25); border-radius:4px; overflow:hidden;}
+.progress-summary .psum-fill{height:100%; background:var(--kin); border-radius:4px; transition:width .3s;}
+.toc-item.done-item{color:#3F8C5C;}
+.toc-item .toc-check{margin-right:4px;}
+
+</style>
+</head>
+<body>
+<div class="chapter-header">
+  <a href="index.html" class="back-home">← Trang chủ</a>
+  <h1>📗 Phần 02 — Ngữ Pháp N5 Toàn Diện</h1>
+  <p>Trợ từ · Tính từ · Động từ 3 nhóm · Thì quá khứ/phủ định · て形 · So sánh · Kanji N5 — Bài 19→37 · +18 bài bổ sung</p>
+  <div class="ch-progress"><div class="ch-progress-bar"></div></div>
+  <div class="progress-summary" id="progressSummary"></div>
+</div>
+
+<div class="nav-main">
+  <a href="index.html">🏠 Trang chủ</a>
+  <div class="nav-dd">
+    <button type="button" class="nav-dd-trigger active">📚 Học Bài ▾</button>
+    <div class="nav-dd-menu">
+      <a href="bang-chu-cai.html">📖 Bảng chữ cái</a>
+      <a href="tra-kanji.html">🔍 Tra Kanji trực tuyến</a>
+      <div class="nav-dd-divider">10 Phần Học</div>
+      <a href="phan01.html">Phần 01 — Kana</a>
+      <a href="phan02.html" class="active">Phần 02 — N5</a>
+      <a href="phan03.html">Phần 03 — N4</a>
+      <a href="phan04.html">Phần 04 — N3→N2</a>
+      <a href="phan05.html">Phần 05 — N2</a>
+      <a href="phan06.html">Phần 06 — N2+</a>
+      <a href="phan07.html">Phần 07 — N1-1</a>
+      <a href="phan08.html">Phần 08 — N1-2</a>
+      <a href="phan09.html">Phần 09 — N1-3</a>
+      <a href="phan10.html">Phần 10 — N1-4</a>
+    </div>
+  </div>
+  <div class="nav-dd">
+    <button type="button" class="nav-dd-trigger">📝 Kiểm Tra ▾</button>
+    <div class="nav-dd-menu">
+      <a href="kiem-tra-thang-cap.html">🎯 Test Tổng Hợp (30 câu)</a>
+      <a href="test-n5.html">Test N5 (25 câu)</a>
+      <a href="test-n4.html">Test N4 (25 câu)</a>
+      <a href="test-n3.html">Test N3→N2 (25 câu)</a>
+      <a href="test-n2.html">Test N2 (25 câu)</a>
+      <a href="test-n1.html">Test N1 (25 câu)</a>
+    </div>
+  </div>
+  <a href="tra-kanji.html">🔍 Tra Kanji</a>
+</div>
+
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:24px 20px 80px">
+  
+  <section class="section" id="bai19">
+      <div class="eyebrow">Chương 2 · Tháng 2 · Tuần 1 · Ngày 1</div>
+      <h2>第19課 — Câu Cơ Bản: N は N です・じゃありません・ですか</h2>
+      <div class="box note"><b>📌 Đây là 3 câu nền tảng nhất tiếng Nhật!</b> Mọi cuộc hội thoại đều dùng những cấu trúc này.</div>
+
+      <h3>📐 Ngữ pháp 1: Câu khẳng định 〜は〜です</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>N₁ は N₂ です。</b></td><td>N₁ là N₂.</td><td>わたし<b>は</b>がくせい<b>です</b>。= Tôi là học sinh.<br>これ<b>は</b>ほん<b>です</b>。= Đây là sách.<br>たなかさん<b>は</b>せんせい<b>です</b>。= Anh Tanaka là giáo viên.</td></tr>
+      </table>
+
+      <h3>📐 Ngữ pháp 2: Câu phủ định 〜じゃありません</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>N₁ は N₂ じゃありません。</b><br><small>(hoặc: ではありません — trang trọng hơn)</small></td><td>N₁ không phải là N₂.</td><td>わたしはせんせい<b>じゃありません</b>。= Tôi không phải giáo viên.<br>これはざっし<b>じゃありません</b>。= Đây không phải tạp chí.</td></tr>
+      </table>
+
+      <h3>📐 Ngữ pháp 3: Câu hỏi 〜ですか</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ + Trả lời</th></tr>
+        <tr><td><b>N₁ は N₂ ですか。</b></td><td>N₁ có phải là N₂ không?</td><td>たなかさんはがくせい<b>ですか</b>。<br>→ はい、がくせいです。(Vâng, đúng.)<br>→ いいえ、がくせいじゃありません。(Không, không phải.)</td></tr>
+      </table>
+
+      <div class="box warn">
+        <b>⚠️ Lỗi thường gặp của người Việt</b><br>
+        ① Quên「は」: ❌ "わたしがくせいです" → ✅ "わたし<b>は</b>がくせいです"<br>
+        ② Dùng「が」thay「は」cho chủ ngữ câu giới thiệu: Mặc dù が cũng đúng về mặt kỹ thuật, は mang sắc thái "chủ đề" phù hợp hơn khi giới thiệu bản thân.<br>
+        ③ Quên dấu「。」khi viết — tiếng Nhật có dấu câu riêng.
+      </div>
+
+      <h3>📝 Từ vựng chủ đề: Nghề nghiệp & Danh hiệu</h3>
+      <table>
+        <tr><th>Từ</th><th>Romaji</th><th>Nghĩa</th></tr>
+        <tr><td>がくせい (学生)</td><td>gakusei</td><td>học sinh / sinh viên</td></tr>
+        <tr><td>かいしゃいん (会社員)</td><td>kaishain</td><td>nhân viên công ty</td></tr>
+        <tr><td>いしゃ (医者)</td><td>isha</td><td>bác sĩ</td></tr>
+        <tr><td>エンジニア</td><td>enjinia</td><td>kỹ sư</td></tr>
+        <tr><td>りゅうがくせい (留学生)</td><td>ryuugakusei</td><td>du học sinh</td></tr>
+        <tr><td>にほんじん (日本人)</td><td>nihonjin</td><td>người Nhật</td></tr>
+        <tr><td>ベトナムじん</td><td>Betonamu-jin</td><td>người Việt Nam</td></tr>
+        <tr><td>〜さん</td><td>-san</td><td>anh/chị/ông/bà (kính ngữ phổ biến nhất)</td></tr>
+      </table>
+
+      <h3>💬 Hội thoại thực tế</h3>
+      <div class="code-wrap"><pre><code>A: はじめまして。たなかです。にほんじんです。
+   (Hajimemashite. Tanaka desu. Nihonjin desu.
+    — Xin chào. Tôi là Tanaka. Tôi là người Nhật.)
+
+B: はじめまして。ナムです。ベトナムじんです。
+   りゅうがくせいですか？
+   (Hajimemashite. Namu desu. Betonamu-jin desu.
+    Ryuugakusei desu ka?
+    — Xin chào. Tôi là Nam. Tôi là người Việt.
+    Bạn có phải là du học sinh không?)
+
+A: いいえ、かいしゃいんです。
+   (Iie, kaishain desu. — Không, tôi là nhân viên công ty.)
+
+B: そうですか！どうぞよろしくおねがいします。
+   (Sou desu ka! Douzo yoroshiku onegaishimasu. — Vậy à! Rất vui được làm quen.)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg19"></div>
+
+      <h3>✏️ Bài tập</h3>
+      <div class="accordion-item"><div class="accordion-head" onclick="toggleAccordion(this)">Bài tập: Điền vào chỗ trống (bấm xem đáp án) <span class="accordion-arrow">▾</span></div>
+      <div class="accordion-body">
+        1. わたし＿＿がくせいです。→ <b>は</b><br>
+        2. これはほん＿＿。→ <b>です</b><br>
+        3. たなかさんはいしゃ＿＿か？ → <b>です</b><br>
+        4. わたしはせんせい＿＿＿＿＿＿＿。(phủ định) → <b>じゃありません</b><br>
+        5. (Dịch) "Cô Kim có phải là người Hàn Quốc không?" → キムさんはかんこくじんですか？
+      </div></div>
+    </section>
+<section class="section" id="bai20">
+      <div class="eyebrow">Chương 2 · Tuần 1 · Ngày 2</div>
+      <h2>第20課 — Hệ Thống Trợ Từ: が・を・に・で・へ・と・も・か</h2>
+      <div class="box note"><b>📌 Trợ từ (助詞 joshi) là xương sống của tiếng Nhật!</b> Khác tiếng Anh đặt vị trí từ để biết vai trò, tiếng Nhật dùng trợ từ đặt SAU từ để chỉ chức năng. Học thuộc 8 trợ từ này = nền tảng vững chắc.</div>
+
+      <table>
+        <tr><th>Trợ từ</th><th>Chức năng</th><th>Ví dụ đầy đủ</th></tr>
+        <tr><td><b>は</b> (wa)</td><td>Chủ đề câu / Chủ ngữ nhấn mạnh</td><td>わたし<b>は</b>たべます。= Tôi (thì) ăn.</td></tr>
+        <tr><td><b>が</b> (ga)</td><td>Chủ ngữ (nhấn mạnh ai/cái gì thực hiện hành động)</td><td>だれ<b>が</b>きますか？= Ai đến?<br>ねこ<b>が</b>すきです。= Tôi thích mèo. (mèo là đối tượng được thích)</td></tr>
+        <tr><td><b>を</b> (o)</td><td>Tân ngữ (đối tượng của hành động)</td><td>ほん<b>を</b>よみます。= Đọc sách.<br>コーヒー<b>を</b>のみます。= Uống cà phê.</td></tr>
+        <tr><td><b>に</b> (ni)</td><td>① Địa điểm tồn tại<br>② Thời điểm<br>③ Hướng đến (đích)</td><td>①いえ<b>に</b>います。= Ở nhà.<br>②さんじ<b>に</b>きます。= Đến lúc 3 giờ.<br>③とうきょう<b>に</b>いきます。= Đi đến Tokyo.</td></tr>
+        <tr><td><b>で</b> (de)</td><td>① Địa điểm hành động<br>② Phương tiện/công cụ</td><td>①かふぇ<b>で</b>べんきょうします。= Học ở quán cà phê.<br>②でんしゃ<b>で</b>いきます。= Đi bằng tàu điện.</td></tr>
+        <tr><td><b>へ</b> (e)</td><td>Hướng đi (ít cụ thể hơn に)</td><td>にほん<b>へ</b>いきます。= Đi về phía Nhật Bản.</td></tr>
+        <tr><td><b>と</b> (to)</td><td>① "và" (nối danh từ)<br>② "cùng với"</td><td>①ペン<b>と</b>ノート。= Bút và vở.<br>②ともだち<b>と</b>いきます。= Đi cùng bạn.</td></tr>
+        <tr><td><b>も</b> (mo)</td><td>"cũng" — thay thế は hoặc が</td><td>わたし<b>も</b>がくせいです。= Tôi cũng là học sinh.</td></tr>
+        <tr><td><b>か</b> (ka)</td><td>Biến câu thành câu hỏi (đặt cuối câu)</td><td>いきます<b>か</b>？= Bạn có đi không?</td></tr>
+      </table>
+
+      <div class="box warn">
+        <b>⚠️ Phân biệt に và で — Lỗi cực phổ biến!</b><br>
+        ・<b>に</b>: điểm <b>tồn tại</b> hoặc <b>đích đến</b> — "ở đâu có cái gì" hoặc "đi ĐẾN đâu"<br>
+        ・<b>で</b>: nơi <b>xảy ra hành động</b> — "làm gì ở đâu"<br>
+        ✅ としょかん<b>に</b>ほんがあります。= Thư viện <b>có</b> sách. (tồn tại tại thư viện)<br>
+        ✅ としょかん<b>で</b>ほんをよみます。= <b>Đọc</b> sách ở thư viện. (hành động tại thư viện)
+      </div>
+
+      <div class="box warn">
+        <b>⚠️ Phân biệt は và が — Khó nhất cho người Việt!</b><br>
+        ・<b>は</b>: chủ đề đã biết, nói chung, hoặc tương phản<br>
+        ・<b>が</b>: thông tin mới, nhấn mạnh chủ ngữ, hoặc sau "ai/cái nào"<br>
+        ✅ わたし<b>は</b>がくせいです。(Tôi là học sinh — giới thiệu bình thường)<br>
+        ✅ だれ<b>が</b>がくせいですか？(Ai là học sinh? — hỏi về chủ ngữ)
+      </div>
+
+      <h3>💬 Hội thoại tổng hợp</h3>
+      <div class="code-wrap"><pre><code>A: なに<b>を</b>のみますか？ (Nani wo nomimasu ka? — Bạn uống gì?)
+B: コーヒー<b>を</b>のみます。あなたは？
+   (Koohii wo nomimasu. Anata wa? — Tôi uống cà phê. Còn bạn?)
+A: わたし<b>も</b>コーヒーがすきです。どこ<b>で</b>のみますか？
+   (Watashi mo koohii ga suki desu. Doko de nomimasu ka?
+    — Tôi cũng thích cà phê. Bạn uống ở đâu?)
+B: かふぇ<b>で</b>のみます。ともだち<b>と</b>いきます。
+   (Kafe de nomimasu. Tomodachi to ikimasu.
+    — Tôi uống ở quán cà phê. Tôi đi cùng bạn.)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg20"></div>
+      <div class="accordion-item"><div class="accordion-head" onclick="toggleAccordion(this)">✏️ Bài tập trợ từ (bấm xem đáp án) <span class="accordion-arrow">▾</span></div>
+      <div class="accordion-body">
+        Chọn trợ từ đúng (は/が/を/に/で/と):<br>
+        1. としょかん＿＿ほんをよみます。→ <b>で</b><br>
+        2. わたし＿＿すし＿＿たべます。→ <b>は・を</b><br>
+        3. なんじ＿＿おきますか？→ <b>に</b><br>
+        4. ともだち＿＿えいが＿＿みます。→ <b>と・を</b><br>
+        5. だれ＿＿きましたか？→ <b>が</b>
+      </div></div>
+    </section>
+<section class="section" id="bai21">
+      <div class="eyebrow">Chương 2 · Tuần 1 · Ngày 3</div>
+      <h2>第21課 — Tính Từ い (i-adj) và な (na-adj): Chia & Ứng Dụng</h2>
+      <div class="box note"><b>📌 Tiếng Nhật có 2 loại tính từ</b> — hoạt động khác nhau hoàn toàn. Phải phân biệt ngay từ đầu!</div>
+
+      <h3>🔵 Tính từ い (i-adjective)</h3>
+      <div class="box tip"><b>💡 Nhận biết:</b> Tính từ い luôn kết thúc bằng「い」khi ở dạng gốc. Ví dụ: たかい、おいしい、あつい、さむい.</div>
+      <table>
+        <tr><th>Dạng</th><th>Cấu trúc</th><th>Ví dụ (たかい = cao/đắt)</th></tr>
+        <tr><td>Hiện tại khẳng định</td><td>〜い + です</td><td>たかいです。= Đắt lắm.</td></tr>
+        <tr><td>Hiện tại phủ định</td><td>〜い → <b>くない</b> + です</td><td>たか<b>くない</b>です。= Không đắt.</td></tr>
+        <tr><td>Quá khứ khẳng định</td><td>〜い → <b>かった</b> + です</td><td>たか<b>かった</b>です。= Đã đắt.</td></tr>
+        <tr><td>Quá khứ phủ định</td><td>〜い → <b>くなかった</b> + です</td><td>たか<b>くなかった</b>です。= Không đắt (hồi đó).</td></tr>
+        <tr><td>Trước danh từ</td><td>〜い + N (không thêm gì)</td><td><b>たかい</b>ほん。= Sách đắt tiền.</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Ngoại lệ duy nhất:「いい」(tốt) → chia thành「よい」!</b><br>
+        いいです ✅ → いくないです ❌ → <b>よくないです</b> ✅<br>
+        いいです ✅ → いかったです ❌ → <b>よかったです</b> ✅</div>
+
+      <h3>🟠 Tính từ な (na-adjective)</h3>
+      <div class="box tip"><b>💡 Nhận biết:</b> Tính từ な khi đứng trước danh từ phải thêm「な」. Ví dụ: きれい<b>な</b>ひと、しずか<b>な</b>みせ. Khi đứng cuối câu thì giống danh từ + です.</div>
+      <table>
+        <tr><th>Dạng</th><th>Cấu trúc</th><th>Ví dụ (きれい = đẹp)</th></tr>
+        <tr><td>Hiện tại khẳng định</td><td>〜(な) + です</td><td>きれい<b>です</b>。= Đẹp.</td></tr>
+        <tr><td>Hiện tại phủ định</td><td>〜(な) + <b>じゃありません</b></td><td>きれい<b>じゃありません</b>。= Không đẹp.</td></tr>
+        <tr><td>Quá khứ khẳng định</td><td>〜(な) + <b>でした</b></td><td>きれい<b>でした</b>。= Đã đẹp.</td></tr>
+        <tr><td>Quá khứ phủ định</td><td>〜(な) + <b>じゃありませんでした</b></td><td>きれい<b>じゃありませんでした</b>。</td></tr>
+        <tr><td>Trước danh từ</td><td>〜<b>な</b> + N</td><td>きれい<b>な</b>はな。= Bông hoa đẹp.</td></tr>
+      </table>
+
+      <h3>📝 Từ vựng tính từ cơ bản N5</h3>
+      <table>
+        <tr><th colspan="2">Tính từ い</th><th colspan="2">Tính từ な</th></tr>
+        <tr><th>Từ</th><th>Nghĩa</th><th>Từ</th><th>Nghĩa</th></tr>
+        <tr><td>おいしい</td><td>ngon</td><td>きれい(な)</td><td>đẹp / sạch</td></tr>
+        <tr><td>たかい</td><td>cao / đắt</td><td>しずか(な)</td><td>yên tĩnh</td></tr>
+        <tr><td>やすい</td><td>thấp / rẻ</td><td>にぎやか(な)</td><td>sầm uất, ồn ào</td></tr>
+        <tr><td>おおきい</td><td>to, lớn</td><td>べんり(な)</td><td>tiện lợi</td></tr>
+        <tr><td>ちいさい</td><td>nhỏ bé</td><td>すき(な)</td><td>thích ⭐</td></tr>
+        <tr><td>あつい</td><td>nóng (nhiệt độ)</td><td>きらい(な)</td><td>ghét</td></tr>
+        <tr><td>さむい</td><td>lạnh</td><td>じょうず(な)</td><td>giỏi, khéo</td></tr>
+        <tr><td>むずかしい</td><td>khó</td><td>へた(な)</td><td>kém, vụng</td></tr>
+        <tr><td>やさしい</td><td>dễ / hiền</td><td>げんき(な)</td><td>khỏe mạnh</td></tr>
+        <tr><td>たのしい</td><td>vui</td><td>ゆうめい(な)</td><td>nổi tiếng</td></tr>
+      </table>
+
+      <h3>💬 Hội thoại</h3>
+      <div class="code-wrap"><pre><code>A: にほんごはむずかしいですか？
+   (Nihongo wa muzukashii desu ka? — Tiếng Nhật có khó không?)
+B: はい、むずかしいですが、たのしいです！
+   (Hai, muzukashii desu ga, tanoshii desu!
+    — Vâng, khó đấy, nhưng vui!)
+A: きれいなかなをかきますね。じょうずですね！
+   (Kirei na kana wo kakimasu ne. Jouzu desu ne!
+    — Bạn viết Kana đẹp nhỉ. Giỏi ghê!)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <div class="box note"><b>📌 Từ mới:</b>「〜が」(ga) ở đây = "nhưng" khi nối 2 mệnh đề ·「〜ね」(ne) = nhỉ (tìm kiếm sự đồng ý)</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg21"></div>
+    </section>
+<section class="section" id="bai22">
+      <div class="eyebrow">Chương 2 · Tuần 1 · Ngày 4</div>
+      <h2>第22課 — Động Từ: 3 Nhóm & Thì Hiện Tại (ます形)</h2>
+      <div class="box note"><b>📌 Động từ tiếng Nhật chia theo NHÓM, không theo chủ ngữ!</b> "Tôi ăn / Bạn ăn / Anh ấy ăn" đều là たべます — không đổi dạng theo ngôi. Chỉ đổi theo THÌ và MỨC ĐỘ LỊCH SỰ.</div>
+
+      <h3>🔢 3 Nhóm Động Từ</h3>
+      <table>
+        <tr><th>Nhóm</th><th>Tên gọi</th><th>Nhận biết</th><th>Ví dụ</th></tr>
+        <tr><td><b>Nhóm 1</b></td><td>う-động từ (godan)</td><td>Kết thúc bằng う・く・ぐ・す・つ・ぬ・ぶ・む・る (khi る thì âm trước KHÔNG phải i/e)</td><td>かく(書く)=viết, のむ(飲む)=uống, よむ(読む)=đọc, はなす(話す)=nói chuyện, いく(行く)=đi, かえる(帰る)=về nhà</td></tr>
+        <tr><td><b>Nhóm 2</b></td><td>る-động từ (ichidan)</td><td>Kết thúc bằng る, âm trước PHẢI là i hoặc e (iru/eru)</td><td>たべる(食べる)=ăn, みる(見る)=xem, おきる(起きる)=dậy, ねる(寝る)=ngủ, います=có mặt (người/động vật)</td></tr>
+        <tr><td><b>Nhóm 3</b></td><td>Bất quy tắc</td><td>Chỉ có 2 động từ: する và くる</td><td>する=làm, くる(来る)=đến</td></tr>
+      </table>
+
+      <div class="box warn"><b>⚠️ Động từ "bẫy" dễ nhầm nhóm:</b><br>
+        かえる (về nhà) = Nhóm 1 (âm trước る là "e" nhưng đây là ngoại lệ!)<br>
+        はいる (vào) = Nhóm 1 · きる (cắt) = Nhóm 1 · しる (biết) = Nhóm 1<br>
+        Quy tắc ngón tay cái: Nếu không chắc → tra từ điển. Nhóm 2 chỉ bao gồm các động từ phổ biến như たべる・みる・おきる・ねる.</div>
+
+      <h3>📐 Chia động từ thì hiện tại lịch sự (ます形)</h3>
+      <table>
+        <tr><th>Nhóm</th><th>Quy tắc biến đổi</th><th>Ví dụ gốc → ます形</th></tr>
+        <tr><td>Nhóm 1</td><td>Âm cuối う→い + ます<br>(く→き、む→み、す→し、etc.)</td><td>かく→かきます・のむ→のみます・はなす→はなします・いく→いきます</td></tr>
+        <tr><td>Nhóm 2</td><td>Bỏ る + ます</td><td>たべる→たべます・みる→みます・おきる→おきます</td></tr>
+        <tr><td>Nhóm 3</td><td>Học thuộc</td><td>する→します・くる→きます</td></tr>
+      </table>
+      <table>
+        <tr><th>Dạng</th><th>Cấu trúc</th><th>Ví dụ</th></tr>
+        <tr><td>Hiện tại / Tương lai KĐ</td><td>〜ます</td><td>たべ<b>ます</b>。= Ăn. / Sẽ ăn.</td></tr>
+        <tr><td>Hiện tại / Tương lai PĐ</td><td>〜ません</td><td>たべ<b>ません</b>。= Không ăn.</td></tr>
+        <tr><td>Câu hỏi KĐ</td><td>〜ますか</td><td>たべ<b>ますか</b>？= Bạn có ăn không?</td></tr>
+        <tr><td>Câu hỏi PĐ</td><td>〜ませんか</td><td>たべ<b>ませんか</b>？= Ăn (cùng tôi) nhé?</td></tr>
+      </table>
+
+      <h3>📝 Động từ N5 quan trọng nhất</h3>
+      <table>
+        <tr><th>Từ điển</th><th>ます形</th><th>Nghĩa</th><th>Nhóm</th></tr>
+        <tr><td>いく</td><td>いきます</td><td>đi</td><td>1</td></tr>
+        <tr><td>くる</td><td>きます</td><td>đến</td><td>3</td></tr>
+        <tr><td>かえる</td><td>かえります</td><td>về nhà/trở về</td><td>1</td></tr>
+        <tr><td>たべる</td><td>たべます</td><td>ăn</td><td>2</td></tr>
+        <tr><td>のむ</td><td>のみます</td><td>uống</td><td>1</td></tr>
+        <tr><td>よむ</td><td>よみます</td><td>đọc</td><td>1</td></tr>
+        <tr><td>みる</td><td>みます</td><td>xem/nhìn</td><td>2</td></tr>
+        <tr><td>かく</td><td>かきます</td><td>viết</td><td>1</td></tr>
+        <tr><td>きく</td><td>ききます</td><td>nghe / hỏi</td><td>1</td></tr>
+        <tr><td>はなす</td><td>はなします</td><td>nói chuyện</td><td>1</td></tr>
+        <tr><td>おきる</td><td>おきます</td><td>thức dậy</td><td>2</td></tr>
+        <tr><td>ねる</td><td>ねます</td><td>ngủ</td><td>2</td></tr>
+        <tr><td>する</td><td>します</td><td>làm</td><td>3</td></tr>
+        <tr><td>べんきょうする</td><td>べんきょうします</td><td>học bài</td><td>3</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg22"></div>
+    </section>
+<section class="section" id="bai23">
+      <div class="eyebrow">Chương 2 · Tuần 1 · Ngày 5</div>
+      <h2>第23課 — Thì Quá Khứ: ました形 & た形</h2>
+      <table>
+        <tr><th>Dạng</th><th>Cấu trúc</th><th>Ví dụ</th></tr>
+        <tr><td>Quá khứ KĐ (lịch sự)</td><td>ます → <b>ました</b></td><td>たべ<b>ました</b>。= Đã ăn.</td></tr>
+        <tr><td>Quá khứ PĐ (lịch sự)</td><td>ます → <b>ませんでした</b></td><td>たべ<b>ませんでした</b>。= Không ăn (hồi đó).</td></tr>
+        <tr><td>Quá khứ KĐ (thông thường)</td><td>た形 — chia theo quy tắc</td><td>たべた。いった。のんだ。</td></tr>
+      </table>
+
+      <h3>⚙️ Quy tắc chia た形 (Nhóm 1 — phức tạp nhất)</h3>
+      <table>
+        <tr><th>Âm cuối động từ</th><th>→ た形</th><th>Ví dụ</th></tr>
+        <tr><td>く → いた</td><td>かく → か<b>いた</b></td><td>書いた = đã viết</td></tr>
+        <tr><td>ぐ → いだ</td><td>およぐ → およ<b>いだ</b></td><td>泳いだ = đã bơi</td></tr>
+        <tr><td>す → した</td><td>はなす → はな<b>した</b></td><td>話した = đã nói</td></tr>
+        <tr><td>つ・る・う → った</td><td>まつ→ま<b>った</b>・かえる→かえ<b>った</b>・かう→か<b>った</b></td><td>待った=chờ・帰った=về・買った=mua</td></tr>
+        <tr><td>む・ぬ・ぶ → んだ</td><td>のむ→の<b>んだ</b>・しぬ→し<b>んだ</b>・よぶ→よ<b>んだ</b></td><td>飲んだ=uống・死んだ=chết・呼んだ=gọi</td></tr>
+        <tr><td>Nhóm 2: る → た</td><td>たべる→たべ<b>た</b>・みる→み<b>た</b></td><td>食べた=ăn・見た=xem</td></tr>
+        <tr><td>Nhóm 3: bất quy tắc</td><td>する→<b>した</b>・くる→<b>きた</b></td><td>した=đã làm・きた=đã đến</td></tr>
+        <tr><td><b>★ Ngoại lệ いく</b></td><td>いく→<b>いった</b> (không phải いいた)</td><td>行った=đã đi</td></tr>
+      </table>
+
+      <h3>💬 Hội thoại</h3>
+      <div class="code-wrap"><pre><code>A: きのうなにをしましたか？
+   (Kinou nani wo shimashita ka? — Hôm qua bạn đã làm gì?)
+B: ともだちとえいがをみました。それからレストランでたべました。
+   (Tomodachi to eiga wo mimashita. Sorekara resutoran de tabemashita.
+    — Tôi xem phim cùng bạn. Sau đó ăn ở nhà hàng.)
+A: えいがはよかったですか？
+   (Eiga wa yokatta desu ka? — Phim có hay không?)
+B: はい、すごくよかったです！
+   (Hai, sugoku yokatta desu! — Vâng, hay lắm!)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <div class="box note"><b>📌 Từ mới:</b>「きのう」(kinou)=hôm qua ·「それから」(sorekara)=sau đó ·「すごく」(sugoku)=rất, cực kỳ</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg23"></div>
+    </section>
+<section class="section" id="bai24">
+      <div class="eyebrow">Chương 2 · Tuần 2 · Ngày 1</div>
+      <h2>第24課 — Thể Phủ Định: ない形 & Ứng Dụng</h2>
+      <h3>⚙️ Quy tắc chia ない形</h3>
+      <table>
+        <tr><th>Nhóm</th><th>Quy tắc</th><th>Ví dụ</th></tr>
+        <tr><td>Nhóm 1</td><td>Âm cuối う→あ + ない<br>(く→かない、む→まない、す→さない…)</td><td>かく→か<b>かない</b>・のむ→の<b>まない</b>・いく→い<b>かない</b></td></tr>
+        <tr><td>Nhóm 2</td><td>Bỏ る + ない</td><td>たべる→たべ<b>ない</b>・みる→み<b>ない</b></td></tr>
+        <tr><td>Nhóm 3</td><td>Học thuộc</td><td>する→<b>しない</b>・くる→<b>こない</b></td></tr>
+        <tr><td><b>★ Ngoại lệ ある</b></td><td>ある→<b>ない</b> (không phải あらない)</td><td>ない=không có (đồ vật)</td></tr>
+      </table>
+      <div class="box note"><b>📌 Ứng dụng ない形:</b><br>
+        ・Phủ định thông thường: たべない = không ăn (trống mộc)<br>
+        ・〜なければならない: phải làm (bắt buộc) — Bài 32<br>
+        ・〜なくてもいい: không cần làm — Bài 32<br>
+        ・〜ないでください: xin đừng làm — dùng ngay được!</div>
+
+      <h3>📐 〜ないでください — Xin đừng làm</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Ví dụ</th></tr>
+        <tr><td>Vない + でください</td><td>たばこをすわ<b>ないでください</b>。= Xin đừng hút thuốc.<br>しゃしんをとら<b>ないでください</b>。= Xin đừng chụp ảnh.<br>はしら<b>ないでください</b>。= Xin đừng chạy.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg24"></div>
+    </section>
+<section class="section" id="bai25">
+      <div class="eyebrow">Chương 2 · Tuần 2 · Ngày 2</div>
+      <h2>第25課 — て形: Chuỗi Hành Động & Yêu Cầu</h2>
+      <div class="box note"><b>📌 て形 (te-form) là một trong những dạng động từ quan trọng nhất tiếng Nhật!</b> Dùng để: nối hành động, diễn tả đang làm, xin phép, ra lệnh lịch sự, và nhiều cấu trúc khác.</div>
+
+      <h3>⚙️ Quy tắc chia て形 (giống た形 nhưng đổi た→て, だ→で)</h3>
+      <table>
+        <tr><th>Âm cuối</th><th>→ て形</th><th>Ví dụ</th></tr>
+        <tr><td>く → いて</td><td>かく→か<b>いて</b></td><td>書いて</td></tr>
+        <tr><td>ぐ → いで</td><td>およぐ→およ<b>いで</b></td><td>泳いで</td></tr>
+        <tr><td>す → して</td><td>はなす→はな<b>して</b></td><td>話して</td></tr>
+        <tr><td>つ・る・う → って</td><td>まつ→ま<b>って</b>・かえる→かえ<b>って</b>・かう→か<b>って</b></td><td>待って・帰って・買って</td></tr>
+        <tr><td>む・ぬ・ぶ → んで</td><td>のむ→の<b>んで</b>・よぶ→よ<b>んで</b></td><td>飲んで・呼んで</td></tr>
+        <tr><td>Nhóm 2: る → て</td><td>たべる→たべ<b>て</b>・みる→み<b>て</b></td><td>食べて・見て</td></tr>
+        <tr><td>Nhóm 3</td><td>する→<b>して</b>・くる→<b>きて</b></td><td>して・きて</td></tr>
+        <tr><td>★ いく (ngoại lệ)</td><td>いく→<b>いって</b></td><td>行って</td></tr>
+      </table>
+
+      <h3>📐 Ứng dụng て形</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>V て + V て + V ます</td><td>Nối chuỗi hành động ("rồi thì…")</td><td>おき<b>て</b>・シャワーを浴び<b>て</b>・たべます。= Dậy, tắm rồi ăn.</td></tr>
+        <tr><td>V て + ください</td><td>Xin hãy làm (yêu cầu lịch sự)</td><td>ここにすわっ<b>てください</b>。= Xin ngồi đây.</td></tr>
+        <tr><td>V て + もいいですか</td><td>Tôi có thể làm được không? (xin phép)</td><td>しゃしんをとっ<b>てもいいですか</b>？= Tôi chụp ảnh được không?</td></tr>
+      </table>
+
+      <h3>💬 Hội thoại</h3>
+      <div class="code-wrap"><pre><code>A: すみません、ここにすわってもいいですか？
+   (Sumimasen, koko ni suwatte mo ii desu ka? — Xin lỗi, tôi ngồi đây được không?)
+B: はい、どうぞ。
+   (Hai, douzo. — Vâng, mời ngồi.)
+A: ありがとうございます。
+   (Arigatou gozaimasu. — Cảm ơn rất nhiều.)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <div class="box tip"><b>💡「すみません」</b> = "xin lỗi" / "cho hỏi" / "cảm ơn (nhẹ)" — từ đa năng nhất tiếng Nhật!</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg25"></div>
+    </section>
+<section class="section" id="bai26">
+      <div class="eyebrow">Chương 2 · Tuần 2 · Ngày 3</div>
+      <h2>第26課 — ている: Hành Động Đang Diễn Ra & Trạng Thái</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>V<b>て</b> + <b>います</b></td><td>① Đang làm (tiến hành)<br>② Trạng thái kết quả còn đó</td><td>①いまたべ<b>ています</b>。= Đang ăn bây giờ.<br>②けっこん<b>しています</b>。= Đã kết hôn (và vẫn còn).かぶきをみ<b>ています</b>。= Đang xem Kabuki.</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Phân biệt 2 nghĩa của ている:</b><br>
+        ・<b>Tiến hành:</b> Động từ chỉ hành động (たべる, みる, かく…) → đang làm<br>
+        ・<b>Trạng thái:</b> Động từ chỉ thay đổi (けっこんする, しぬ, きる…) → kết quả còn đó<br>
+        ✅ たなかさんはしんでいます。= Ông Tanaka đã mất (và hiện tại không còn sống).<br>
+        ✅ でんきがついています。= Đèn đang bật (trạng thái bật).</div>
+      <table>
+        <tr><th>Dạng</th><th>Lịch sự</th><th>Thông thường</th></tr>
+        <tr><td>KĐ</td><td>〜ています</td><td>〜てる</td></tr>
+        <tr><td>PĐ</td><td>〜ていません</td><td>〜てない</td></tr>
+        <tr><td>Quá khứ KĐ</td><td>〜ていました</td><td>〜てた</td></tr>
+      </table>
+      <h3>📝 Từ vựng thường dùng với ている</h3>
+      <table>
+        <tr><th>Câu</th><th>Nghĩa</th></tr>
+        <tr><td>にほんごをべんきょうしています。</td><td>Tôi đang học tiếng Nhật.</td></tr>
+        <tr><td>かいしゃにつとめています。</td><td>Tôi đang làm việc ở công ty.</td></tr>
+        <tr><td>けっこんしていますか？</td><td>Bạn đã kết hôn chưa?</td></tr>
+        <tr><td>あめがふっています。</td><td>Trời đang mưa.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg26"></div>
+    </section>
+<section class="section" id="bai27">
+      <div class="eyebrow">Chương 2 · Tuần 2 · Ngày 4</div>
+      <h2>第27課 — Từ Chỉ Thị: これ・それ・あれ・どれ / ここ・そこ・あそこ・どこ</h2>
+      <div class="box note"><b>📌 Hệ thống "ko-so-a-do"</b> — tiếng Nhật có 4 cấp độ khoảng cách, không chỉ 2 như tiếng Việt (này/kia).</div>
+      <table>
+        <tr><th>Khoảng cách</th><th>Đồ vật</th><th>Địa điểm</th><th>Hướng</th><th>Tính từ</th></tr>
+        <tr><td>Gần người nói</td><td><b>これ</b> (kore) = cái này</td><td><b>ここ</b> (koko) = ở đây</td><td><b>こちら</b> (kochira) = bên này</td><td><b>この</b>〜 = cái 〜 này</td></tr>
+        <tr><td>Gần người nghe</td><td><b>それ</b> (sore) = cái đó</td><td><b>そこ</b> (soko) = ở đó</td><td><b>そちら</b> (sochira) = bên đó</td><td><b>その</b>〜 = cái 〜 đó</td></tr>
+        <tr><td>Xa cả 2</td><td><b>あれ</b> (are) = cái kia</td><td><b>あそこ</b> (asoko) = ở kia</td><td><b>あちら</b> (achira) = bên kia</td><td><b>あの</b>〜 = cái 〜 kia</td></tr>
+        <tr><td>Hỏi</td><td><b>どれ</b> (dore) = cái nào</td><td><b>どこ</b> (doko) = ở đâu</td><td><b>どちら</b> (dochira) = bên nào</td><td><b>どの</b>〜 = cái 〜 nào</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Phân biệt これ vs この:</b><br>
+        ・<b>これ</b>: đứng một mình — "Cái này là gì?" → これはなんですか？<br>
+        ・<b>この</b>: đứng trước danh từ — "Cái sách này" → <b>この</b>ほん<br>
+        ❌ "このはほんです" → ✅ "<b>これ</b>はほんです" hoặc "<b>この</b>ほんはたかいです"</div>
+      <h3>💬 Hội thoại</h3>
+      <div class="code-wrap"><pre><code>A: すみません、トイレはどこですか？
+   (Sumimasen, toire wa doko desu ka? — Xin lỗi, nhà vệ sinh ở đâu?)
+B: あそこです。あのドアのむこうです。
+   (Asoko desu. Ano doa no mukou desu.
+    — Ở kia kìa. Bên kia cánh cửa đó.)
+A: これはいくらですか？ (Kore wa ikura desu ka? — Cái này bao nhiêu tiền?)
+B: それは500えんです。 (Sore wa go-hyaku en desu. — Cái đó 500 yên.)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <div class="box note"><b>📌 Từ mới:</b>「いくら」(ikura)=bao nhiêu tiền ·「えん」(en)=yên Nhật ·「むこう」(mukou)=bên kia, phía bên kia</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg27"></div>
+    </section>
+<section class="section" id="bai28">
+      <div class="eyebrow">Chương 2 · Tuần 2 · Ngày 5</div>
+      <h2>第28課 — Mời & Xin Phép: ましょう・ませんか・てもいいですか・てはいけません</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>V<b>ましょう</b></td><td>Hãy cùng làm (đề nghị/mời)</td><td>いっしょにたべ<b>ましょう</b>！= Hãy cùng ăn nào!</td></tr>
+        <tr><td>V<b>ませんか</b></td><td>...không? (mời lịch sự hơn)</td><td>コーヒーをのみ<b>ませんか</b>？= Uống cà phê không ạ?</td></tr>
+        <tr><td>Vて + <b>もいいですか</b></td><td>Tôi có thể...không? (xin phép)</td><td>まどをあけ<b>てもいいですか</b>？= Tôi mở cửa sổ được không?</td></tr>
+        <tr><td>Vて + <b>もいいです</b></td><td>Được phép làm (cho phép)</td><td>ここにすわっ<b>てもいいです</b>。= Ngồi đây được.</td></tr>
+        <tr><td>Vて + <b>はいけません</b></td><td>Không được làm (cấm)</td><td>ここでたばこをすっ<b>てはいけません</b>。= Không được hút thuốc ở đây.</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Phân biệt mức độ:</b><br>
+        ましょう (nhiệt tình) > ませんか (lịch sự) > てください (yêu cầu) > てもいいですか (xin phép khiêm tốn)</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg28"></div>
+    </section>
+<section class="section" id="bai29">
+      <div class="eyebrow">Chương 2 · Tuần 3 · Ngày 1</div>
+      <h2>第29課 — Mong Muốn: たい・たがる・ほしい・ほしがる</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>Vます(stem) + <b>たいです</b></td><td>Tôi muốn làm gì</td><td>にほんへいき<b>たいです</b>。= Tôi muốn đi Nhật.<br>すしをたべ<b>たいです</b>。= Tôi muốn ăn sushi.</td></tr>
+        <tr><td>Vます(stem) + <b>たくないです</b></td><td>Tôi không muốn làm</td><td>はたらき<b>たくないです</b>。= Tôi không muốn làm việc.</td></tr>
+        <tr><td>N + <b>がほしいです</b></td><td>Tôi muốn có cái gì (danh từ)</td><td>あたらしいパソコン<b>がほしいです</b>。= Tôi muốn có máy tính mới.</td></tr>
+        <tr><td>N + <b>がほしくないです</b></td><td>Tôi không muốn có</td><td>おかね<b>がほしくないです</b>。(Hiếm dùng)</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ たい vs ほしい:</b><br>
+        ・<b>たい</b>: muốn <b>làm</b> (động từ) → いきたい=muốn ĐI<br>
+        ・<b>ほしい</b>: muốn <b>có</b> (danh từ) → くるまがほしい=muốn CÓ xe<br>
+        ❌ にほんがほしいです (trừ khi bạn muốn "sở hữu" cả nước Nhật! 😄)<br>
+        ✅ にほんへいきたいです</div>
+      <div class="box warn"><b>⚠️ たい chỉ dùng cho ngôi thứ nhất!</b><br>
+        Khi nói về mong muốn của người khác, dùng〜たがっています hoặc〜たいと言っています.<br>
+        ❌ たなかさんはにほんへいきたいです。(nghe có vẻ bạn "đọc tâm trí" Tanaka)<br>
+        ✅ たなかさんはにほんへいき<b>たがっています</b>。</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg29"></div>
+    </section>
+<section class="section" id="bai30">
+      <div class="eyebrow">Chương 2 · Tuần 3 · Ngày 2</div>
+      <h2>第30課 — So Sánh: より・ほうが・いちばん・おなじくらい</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>A は B <b>より</b> 〜</td><td>A … hơn B</td><td>にほんごはえいご<b>より</b>むずかしいです。= Tiếng Nhật khó hơn tiếng Anh.</td></tr>
+        <tr><td>A と B では A <b>のほうが</b> 〜</td><td>Trong A và B thì A … hơn</td><td>コーヒーとおちゃではコーヒー<b>のほうが</b>すきです。= Trong cà phê và trà, tôi thích cà phê hơn.</td></tr>
+        <tr><td>〜の中で A が<b>いちばん</b>〜</td><td>A là ... nhất trong...</td><td>クラスの中でたなかさんが<b>いちばん</b>たかいです。= Trong lớp Tanaka cao nhất.</td></tr>
+        <tr><td>A は B と <b>おなじくらい</b> 〜</td><td>A … ngang bằng B</td><td>このかばんはそれと<b>おなじくらい</b>たかいです。= Cái túi này đắt ngang với cái kia.</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Hỏi so sánh:</b><br>
+        ・A と B と どちらのほうが〜ですか？= Trong A và B, cái nào … hơn?<br>
+        ・〜の中でなにがいちばん〜ですか？= Trong ...cái gì là ... nhất?</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg30"></div>
+    </section>
+<section class="section" id="bai31">
+      <div class="eyebrow">Chương 2 · Tuần 3 · Ngày 3</div>
+      <h2>第31課 — Lý Do & Nguyên Nhân: から・ので・のに</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Sắc thái</th><th>Ví dụ</th></tr>
+        <tr><td>〜<b>から</b>、〜</td><td>Vì... nên... (chủ quan, thường dùng khi nói chuyện)</td><td>あめがふっている<b>から</b>、いえにいます。= Vì trời mưa nên tôi ở nhà.</td></tr>
+        <tr><td>〜<b>ので</b>、〜</td><td>Vì... nên... (khách quan, lịch sự hơn, văn viết)</td><td>びょうき<b>なので</b>、やすみます。= Vì tôi bệnh nên tôi nghỉ.</td></tr>
+        <tr><td>〜<b>のに</b>、〜</td><td>Mặc dù... nhưng... (mang sắc thái tiếc nuối/bất ngờ)</td><td>べんきょうした<b>のに</b>、しけんにおちた。= Mặc dù đã học mà vẫn trượt thi.</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Phân biệt から và ので với tính từ な và danh từ:</b><br>
+        ・な-adj + <b>だから</b> / な-adj + <b>なので</b><br>
+        ・N + <b>だから</b> / N + <b>なので</b><br>
+        ✅ げんき<b>だから</b>、いきます。/ げんき<b>なので</b>、いきます。</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg31"></div>
+    </section>
+<section class="section" id="bai32">
+      <div class="eyebrow">Chương 2 · Tuần 3 · Ngày 4</div>
+      <h2>第32課 — Nghĩa Vụ & Cho Phép: なければならない・なくてもいい</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>Vない + <b>なければなりません</b><br><small>(nói chuyện: なきゃ)</small></td><td>Phải làm / bắt buộc phải</td><td>まいにちべんきょうし<b>なければなりません</b>。= Phải học mỗi ngày.<br>はやくおき<b>なきゃ</b>。= Phải dậy sớm thôi.</td></tr>
+        <tr><td>Vない + <b>なくてもいいです</b></td><td>Không cần phải làm / được phép không làm</td><td>あしたこ<b>なくてもいいです</b>。= Ngày mai bạn không cần đến cũng được.</td></tr>
+        <tr><td>Vて + <b>はいけません</b></td><td>Không được làm (cấm)</td><td>ここではいっ<b>てはいけません</b>。= Không được vào đây.</td></tr>
+        <tr><td>Vて + <b>もいいです</b></td><td>Được phép làm</td><td>ここにすわっ<b>てもいいです</b>。= Được phép ngồi đây.</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Mức độ bắt buộc:</b><br>
+        てはいけない (cấm tuyệt đối) > なければならない (bắt buộc) > たほうがいい (nên) > てもいい (được phép) > なくてもいい (không cần)</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg32"></div>
+    </section>
+<section class="section" id="bai33">
+      <div class="eyebrow">Chương 2 · Tuần 3 · Ngày 5</div>
+      <h2>第33課 — 助数詞 Josūshi: Đếm Đồ Vật Theo Loại</h2>
+      <div class="box note"><b>📌 Tiếng Nhật có loại từ đặc biệt khi đếm — không thể nói "3 con cá" = さかなさん!</b> Phải dùng đúng loại từ tương ứng với loại vật.</div>
+      <table>
+        <tr><th>Loại từ</th><th>Dùng cho</th><th>1~3</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜本 (ほん)</b></td><td>Đồ dài, mỏng (bút, chai, cây)</td><td>いっぽん・にほん・さんぼん</td><td>ペンいっぽん = 1 cây bút</td></tr>
+        <tr><td><b>〜枚 (まい)</b></td><td>Đồ dẹt, mỏng (giấy, áo, đĩa)</td><td>いちまい・にまい・さんまい</td><td>かみにまい = 2 tờ giấy</td></tr>
+        <tr><td><b>〜冊 (さつ)</b></td><td>Sách, tạp chí, vở</td><td>いっさつ・にさつ・さんさつ</td><td>ほんさんさつ = 3 quyển sách</td></tr>
+        <tr><td><b>〜台 (だい)</b></td><td>Máy móc, xe cộ</td><td>いちだい・にだい・さんだい</td><td>くるまにだい = 2 chiếc xe</td></tr>
+        <tr><td><b>〜匹 (ひき)</b></td><td>Động vật nhỏ (mèo, cá, côn trùng)</td><td>いっぴき・にひき・さんびき</td><td>ねこさんびき = 3 con mèo</td></tr>
+        <tr><td><b>〜頭 (とう)</b></td><td>Động vật lớn (bò, ngựa, voi)</td><td>いっとう・にとう・さんとう</td><td>うまにとう = 2 con ngựa</td></tr>
+        <tr><td><b>〜羽 (わ)</b></td><td>Chim, thỏ</td><td>いちわ・にわ・さんわ</td><td>とりいちわ = 1 con chim</td></tr>
+        <tr><td><b>〜杯 (はい)</b></td><td>Đồ đựng trong cốc/tô/bát</td><td>いっぱい・にはい・さんばい</td><td>コーヒーいっぱい = 1 ly cà phê</td></tr>
+        <tr><td><b>〜個 (こ)</b></td><td>Đồ vật tròn, nhỏ (táo, trứng)</td><td>いっこ・にこ・さんこ</td><td>りんごみっつ/さんこ = 3 quả táo</td></tr>
+        <tr><td><b>〜人 (にん)</b></td><td>Người</td><td>ひとり・ふたり・さんにん</td><td>さんにんがくせい = 3 học sinh</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Ngoại lệ đếm người:</b><br>
+        1 người = <b>ひとり</b> (不一人) · 2 người = <b>ふたり</b> · 3 người trở đi = さんにん、よにん…</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg33"></div>
+    </section>
+<section class="section" id="bai34">
+      <div class="eyebrow">Chương 2 · Tuần 4 · Ôn tập</div>
+      <h2>第34課 — Ôn Tập Ngữ Pháp N5 Tổng Hợp + SRS</h2>
+      <h3>📋 Bảng tổng kết ngữ pháp N5</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ ngắn</th></tr>
+        <tr><td>N は N です/じゃありません</td><td>Là / Không là</td><td>がくせいです</td></tr>
+        <tr><td>が・を・に・で・へ・と</td><td>Trợ từ cơ bản</td><td>えきにいきます</td></tr>
+        <tr><td>い-adj / な-adj chia</td><td>Tính từ khẳng/phủ/quá khứ</td><td>たかくない・きれいでした</td></tr>
+        <tr><td>Vます/ません/ましょう</td><td>Hiện tại/phủ/mời</td><td>いきましょう</td></tr>
+        <tr><td>Vました/ませんでした</td><td>Quá khứ</td><td>たべました</td></tr>
+        <tr><td>Vて+ください/もいい/はいけない</td><td>Yêu cầu/cho phép/cấm</td><td>みてください</td></tr>
+        <tr><td>Vている</td><td>Đang làm / trạng thái</td><td>べんきょうしています</td></tr>
+        <tr><td>これ/それ/あれ/どれ</td><td>Chỉ thị</td><td>これはなんですか</td></tr>
+        <tr><td>Vたい/ほしい</td><td>Mong muốn</td><td>いきたいです</td></tr>
+        <tr><td>AよりB/いちばん</td><td>So sánh</td><td>にほんごがいちばんすきです</td></tr>
+        <tr><td>〜から/ので</td><td>Lý do</td><td>あめだから、いません</td></tr>
+        <tr><td>なければならない</td><td>Phải làm</td><td>べんきょうしなければ</td></tr>
+        <tr><td>助数詞</td><td>Đếm đồ vật</td><td>ねこさんびき</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Kế hoạch SRS tháng 2–3:</b><br>
+        Mỗi ngày ôn: 10 flashcard cũ (SRS) + học bài mới 20 phút. Cuối tuần làm 1 đề mini 20 câu. Bạn nên có khoảng <b>1.000–1.500 từ vựng</b> và <b>nắm vững 13 cấu trúc ngữ pháp</b> ở trên trước khi thi N5.</div>
+    </section>
+<section class="section" id="bai35">
+      <div class="eyebrow">🏆 Thi thử JLPT N5 — Chương 2</div>
+      <h2>第35課 — 🏆 Thi Thử JLPT N5 (20 câu mô phỏng)</h2>
+      <p>Đề thi mô phỏng cấu trúc JLPT N5 thực tế. Thời gian chuẩn: <b>25 phút</b>. Đạt <b>70% (14/20)</b> = đủ chuẩn N5!</p>
+      <form id="qfn5">
+        <div class="quiz-q"><p><b>文字・語彙 1.</b> ___はがくせいです。</p><div class="quiz-opts"><label><input type="radio" name="n1" value="c">わたし</label><label><input type="radio" name="n1" value="w">わたしを</label><label><input type="radio" name="n1" value="w">わたしが (không sai nhưng は tự nhiên hơn ở đây)</label><label><input type="radio" name="n1" value="w">わたしで</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>2.</b>「むずかしい」phủ định là?</p><div class="quiz-opts"><label><input type="radio" name="n2" value="w">むずかしくありません</label><label><input type="radio" name="n2" value="c">むずかしくないです</label><label><input type="radio" name="n2" value="w">むずかしじゃないです</label><label><input type="radio" name="n2" value="w">むずかしくないます</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>3.</b> としょかん___ほんをよみます。</p><div class="quiz-opts"><label><input type="radio" name="n3" value="w">に</label><label><input type="radio" name="n3" value="c">で</label><label><input type="radio" name="n3" value="w">を</label><label><input type="radio" name="n3" value="w">が</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>4.</b>「いく」thể た形 là?</p><div class="quiz-opts"><label><input type="radio" name="n4" value="w">いいた</label><label><input type="radio" name="n4" value="c">いった</label><label><input type="radio" name="n4" value="w">いいて</label><label><input type="radio" name="n4" value="w">いた</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>5.</b> にほんへ___たいです。</p><div class="quiz-opts"><label><input type="radio" name="n5" value="w">いきます</label><label><input type="radio" name="n5" value="c">いき</label><label><input type="radio" name="n5" value="w">いく</label><label><input type="radio" name="n5" value="w">いって</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>6.</b>「きれい」は___tính từ。</p><div class="quiz-opts"><label><input type="radio" name="n6" value="w">い-adjective</label><label><input type="radio" name="n6" value="c">な-adjective</label><label><input type="radio" name="n6" value="w">Cả 2</label><label><input type="radio" name="n6" value="w">Không phải tính từ</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>7.</b> まどをあけ___もいいですか。</p><div class="quiz-opts"><label><input type="radio" name="n7" value="w">て</label><label><input type="radio" name="n7" value="c">て (正解)</label><label><input type="radio" name="n7" value="w">ます</label><label><input type="radio" name="n7" value="w">た</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>8.</b> にほんごはえいご___むずかしいです。(tiếng Nhật khó hơn tiếng Anh)</p><div class="quiz-opts"><label><input type="radio" name="n8" value="w">ほど</label><label><input type="radio" name="n8" value="c">より</label><label><input type="radio" name="n8" value="w">から</label><label><input type="radio" name="n8" value="w">のほうが</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>9.</b>「たべる」Nhóm mấy?</p><div class="quiz-opts"><label><input type="radio" name="n9" value="w">Nhóm 1</label><label><input type="radio" name="n9" value="c">Nhóm 2</label><label><input type="radio" name="n9" value="w">Nhóm 3</label><label><input type="radio" name="n9" value="w">Bất quy tắc</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>10.</b> ねこが___います。(Có 3 con mèo)</p><div class="quiz-opts"><label><input type="radio" name="n10" value="w">さんひき</label><label><input type="radio" name="n10" value="c">さんびき</label><label><input type="radio" name="n10" value="w">さんまい</label><label><input type="radio" name="n10" value="w">さんこ</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>読解 11.</b> "Tôi đang học tiếng Nhật mỗi ngày ở thư viện." — Câu nào đúng?</p><div class="quiz-opts"><label><input type="radio" name="n11" value="w">まいにちとしょかんにほんごをべんきょうしています。</label><label><input type="radio" name="n11" value="c">まいにちとしょかんでにほんごをべんきょうしています。</label><label><input type="radio" name="n11" value="w">まいにちとしょかんへにほんごをべんきょうしています。</label><label><input type="radio" name="n11" value="w">まいにちとしょかんがにほんごをべんきょうしています。</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>12.</b>「いい」quá khứ phủ định là?</p><div class="quiz-opts"><label><input type="radio" name="n12" value="w">いくなかったです</label><label><input type="radio" name="n12" value="c">よくなかったです</label><label><input type="radio" name="n12" value="w">いくないでした</label><label><input type="radio" name="n12" value="w">よかないです</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>13.</b> "Bạn không cần đến ngày mai." = あした___。</p><div class="quiz-opts"><label><input type="radio" name="n13" value="w">こなければなりません</label><label><input type="radio" name="n13" value="c">こなくてもいいです</label><label><input type="radio" name="n13" value="w">きてはいけません</label><label><input type="radio" name="n13" value="w">きてもいいです</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>14.</b>「する」thể ない形 là?</p><div class="quiz-opts"><label><input type="radio" name="n14" value="w">さない</label><label><input type="radio" name="n14" value="c">しない</label><label><input type="radio" name="n14" value="w">せない</label><label><input type="radio" name="n14" value="w">そない</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>15.</b> "Mặc dù đã học nhưng vẫn không hiểu." = べんきょうした___、わかりませんでした。</p><div class="quiz-opts"><label><input type="radio" name="n15" value="w">から</label><label><input type="radio" name="n15" value="w">ので</label><label><input type="radio" name="n15" value="c">のに</label><label><input type="radio" name="n15" value="w">が</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>文法 16.</b> ともだち___えいがをみました。(đi xem phim cùng bạn)</p><div class="quiz-opts"><label><input type="radio" name="n16" value="w">を</label><label><input type="radio" name="n16" value="c">と</label><label><input type="radio" name="n16" value="w">に</label><label><input type="radio" name="n16" value="w">が</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>17.</b>「このほん」có nghĩa là?</p><div class="quiz-opts"><label><input type="radio" name="n17" value="w">Có cuốn sách</label><label><input type="radio" name="n17" value="c">Cuốn sách này</label><label><input type="radio" name="n17" value="w">Cuốn sách đó</label><label><input type="radio" name="n17" value="w">Cuốn sách kia</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>18.</b> 1 quyển sách = ほん___</p><div class="quiz-opts"><label><input type="radio" name="n18" value="w">いちほん</label><label><input type="radio" name="n18" value="c">いっさつ</label><label><input type="radio" name="n18" value="w">いっこ</label><label><input type="radio" name="n18" value="w">いちまい</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>聴解 19.</b> A:「えいごとにほんご、どちらのほうがむずかしいですか？」B:「にほんごのほうがむずかしいです。」<br>→ Theo B, ngôn ngữ nào khó hơn?</p><div class="quiz-opts"><label><input type="radio" name="n19" value="w">Tiếng Anh</label><label><input type="radio" name="n19" value="c">Tiếng Nhật</label><label><input type="radio" name="n19" value="w">Cả hai như nhau</label><label><input type="radio" name="n19" value="w">Không biết</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>20.</b> Câu nào ĐÚNG ngữ pháp?</p><div class="quiz-opts"><label><input type="radio" name="n20" value="w">わたしはにほんへたべます。</label><label><input type="radio" name="n20" value="c">わたしはかふぇでコーヒーをのみます。</label><label><input type="radio" name="n20" value="w">わたしはえいががみます。</label><label><input type="radio" name="n20" value="w">わたしはともだちにいきます。</label></div><div class="quiz-feedback"></div></div>
+        <button type="button" class="btn" style="background:var(--ai);color:#fff;border-color:var(--ai);padding:12px 32px;font-size:1.05rem;margin-top:12px;" onclick="runQuizN5()">🏆 Nộp bài Thi thử N5</button>
+        <div class="quiz-result" id="qrn5" style="font-size:1.1rem;margin-top:18px;padding:16px;border-radius:8px;"></div>
+      </form>
+    </section>
+<section class="section" id="bai36">
+      <div class="eyebrow">Chương 3 · Tháng 2–3 · Kanji N5</div>
+      <h2>第36課 — Kanji N5: Người, Số, Phương Hướng (1–25)</h2>
+      <div class="box note"><b>📌 Học Kanji đúng cách:</b> Mỗi Kanji cần nhớ: Hình dạng · Âm On (Hán) · Âm Kun (Nhật) · Nghĩa · Từ ghép phổ biến. Đừng học Kanji riêng lẻ — luôn học kèm từ ghép!</div>
+
+      <h3>👤 Kanji về Con Người</h3>
+      <table>
+        <tr><th>Kanji</th><th>Âm On</th><th>Âm Kun</th><th>Nghĩa</th><th>Từ ghép quan trọng</th></tr>
+        <tr><td style="font-size:1.6rem">人</td><td>ジン・ニン</td><td>ひと</td><td>người</td><td>にほんじん(日本人)=người Nhật · じんこう(人口)=dân số · ひとり=1 người</td></tr>
+        <tr><td style="font-size:1.6rem">女</td><td>ジョ</td><td>おんな</td><td>phụ nữ</td><td>おんなのひと=phụ nữ · じょせい(女性)=nữ giới · かのじょ=cô ấy/bạn gái</td></tr>
+        <tr><td style="font-size:1.6rem">男</td><td>ダン</td><td>おとこ</td><td>đàn ông</td><td>おとこのひと=đàn ông · だんせい(男性)=nam giới · かれ=anh ấy/bạn trai</td></tr>
+        <tr><td style="font-size:1.6rem">子</td><td>シ・ス</td><td>こ</td><td>con, trẻ em</td><td>こども(子供)=trẻ em · おとこのこ=bé trai · おんなのこ=bé gái</td></tr>
+        <tr><td style="font-size:1.6rem">父</td><td>フ</td><td>ちち</td><td>bố (mình)</td><td>ちち=bố tôi · おとうさん=bố (người khác) · ふぼ(父母)=cha mẹ</td></tr>
+        <tr><td style="font-size:1.6rem">母</td><td>ボ</td><td>はは</td><td>mẹ (mình)</td><td>はは=mẹ tôi · おかあさん=mẹ (người khác) · ぼこく(母国)=tổ quốc</td></tr>
+        <tr><td style="font-size:1.6rem">友</td><td>ユウ</td><td>とも</td><td>bạn bè</td><td>ともだち(友達)=bạn bè · ゆうじん(友人)=bạn (trang trọng)</td></tr>
+        <tr><td style="font-size:1.6rem">先</td><td>セン</td><td>さき</td><td>trước, trước đó</td><td>せんせい(先生)=giáo viên · せんしゅう(先週)=tuần trước</td></tr>
+        <tr><td style="font-size:1.6rem">生</td><td>セイ・ショウ</td><td>いきる・うまれる</td><td>sống, sinh</td><td>がくせい(学生)=học sinh · たんじょうび(誕生日)=sinh nhật</td></tr>
+      </table>
+
+      <h3>🔢 Kanji Số (đã biết từ Bài 17 — ôn lại kèm từ ghép)</h3>
+      <table>
+        <tr><th>Kanji</th><th>Đọc</th><th>Từ ghép quan trọng mới</th></tr>
+        <tr><td style="font-size:1.4rem">一</td><td>いち/ひと</td><td>いちにち(一日)=1 ngày · ひとつ=1 cái · いっかい(一回)=1 lần</td></tr>
+        <tr><td style="font-size:1.4rem">二</td><td>に/ふた</td><td>ふたつ=2 cái · にほん(二本)=2 cái dài · にかい(二階)=tầng 2</td></tr>
+        <tr><td style="font-size:1.4rem">三</td><td>さん/みっ</td><td>みっつ=3 cái · さんかい(三回)=3 lần</td></tr>
+        <tr><td style="font-size:1.4rem">百</td><td>ひゃく</td><td>さんびゃく=300 · ひゃくえん(百円)=100 yên</td></tr>
+        <tr><td style="font-size:1.4rem">千</td><td>せん</td><td>いっせん=1000 · せんえん(千円)=1000 yên</td></tr>
+        <tr><td style="font-size:1.4rem">万</td><td>まん</td><td>いちまん=10,000 · まんえん(万円)=10,000 yên</td></tr>
+      </table>
+
+      <h3>🧭 Kanji Phương Hướng & Vị Trí</h3>
+      <table>
+        <tr><th>Kanji</th><th>Đọc</th><th>Nghĩa</th><th>Từ ghép</th></tr>
+        <tr><td style="font-size:1.4rem">上</td><td>ジョウ/うえ・うわ</td><td>trên, trên đây</td><td>うえ=trên · じょうず(上手)=giỏi · いじょう(以上)=trở lên</td></tr>
+        <tr><td style="font-size:1.4rem">下</td><td>カ/した・しも</td><td>dưới</td><td>した=dưới · ちか(地下)=địa dưới · かいか(下降)=đi xuống</td></tr>
+        <tr><td style="font-size:1.4rem">中</td><td>チュウ/なか</td><td>trong, giữa</td><td>なか=trong · ちゅうごく(中国)=Trung Quốc · いちにちじゅう=suốt ngày</td></tr>
+        <tr><td style="font-size:1.4rem">右</td><td>ウ/みぎ</td><td>phải</td><td>みぎ=bên phải · うせつ(右折)=rẽ phải</td></tr>
+        <tr><td style="font-size:1.4rem">左</td><td>サ/ひだり</td><td>trái</td><td>ひだり=bên trái · させつ(左折)=rẽ trái</td></tr>
+        <tr><td style="font-size:1.4rem">前</td><td>ゼン/まえ</td><td>trước</td><td>まえ=phía trước · ごぜん(午前)=buổi sáng</td></tr>
+        <tr><td style="font-size:1.4rem">後</td><td>ゴ・コウ/あと・うしろ</td><td>sau</td><td>あと=sau · ごご(午後)=buổi chiều · うしろ=phía sau</td></tr>
+      </table>
+
+      <div class="box tip"><b>💡 Mẹo học Kanji hiệu quả nhất</b><br>
+        ① Học qua <b>từ ghép</b> (không học chữ đơn lẻ)<br>
+        ② Viết tay ít nhất <b>5 lần</b> mỗi Kanji khi lần đầu gặp<br>
+        ③ Dùng <b>bộ thủ (radical)</b> để nhớ cấu trúc: 人(người)+木(cây)=休(nghỉ ngơi) — người dựa vào cây = nghỉ!<br>
+        ④ App gợi ý: <b>WaniKani</b> (SRS Kanji chuyên dụng) hoặc <b>Anki</b> với deck N5/N4 Kanji</div>
+
+      <h3>🃏 Flashcard Kanji</h3><div class="flash-grid" id="fg36"></div>
+    </section>
+<section class="section" id="bai37">
+      <div class="eyebrow">Chương 3 · Kanji N5</div>
+      <h2>第37課 — Kanji N5: Thời Gian, Thiên Nhiên & Địa Lý (26–60)</h2>
+
+      <h3>⏰ Kanji Thời Gian</h3>
+      <table>
+        <tr><th>Kanji</th><th>Đọc</th><th>Nghĩa</th><th>Từ ghép quan trọng</th></tr>
+        <tr><td style="font-size:1.4rem">日</td><td>ニチ・ジツ/ひ・か</td><td>ngày, mặt trời</td><td>にちようび=Chủ nhật · まいにち=mỗi ngày · きょう(今日)=hôm nay</td></tr>
+        <tr><td style="font-size:1.4rem">月</td><td>ゲツ・ガツ/つき</td><td>tháng, mặt trăng</td><td>げつようび=thứ Hai · いちがつ=tháng 1 · まいつき=mỗi tháng</td></tr>
+        <tr><td style="font-size:1.4rem">年</td><td>ネン/とし</td><td>năm</td><td>ことし(今年)=năm nay · らいねん=năm tới · なんねん=bao nhiêu năm</td></tr>
+        <tr><td style="font-size:1.4rem">時</td><td>ジ/とき</td><td>giờ, thời gian</td><td>いちじ=1 giờ · じかん(時間)=thời gian · ときどき=thỉnh thoảng</td></tr>
+        <tr><td style="font-size:1.4rem">週</td><td>シュウ</td><td>tuần</td><td>こんしゅう(今週)=tuần này · らいしゅう=tuần tới · まいしゅう=mỗi tuần</td></tr>
+        <tr><td style="font-size:1.4rem">今</td><td>コン・キン/いま</td><td>bây giờ, hiện tại</td><td>いま=bây giờ · こんにちは=xin chào · こんばん=tối nay</td></tr>
+        <tr><td style="font-size:1.4rem">半</td><td>ハン/なかば</td><td>nửa, giữa</td><td>さんじはん=3 giờ rưỡi · はんぶん(半分)=một nửa</td></tr>
+      </table>
+
+      <h3>🌿 Kanji Thiên Nhiên</h3>
+      <table>
+        <tr><th>Kanji</th><th>Đọc</th><th>Nghĩa</th><th>Từ ghép</th></tr>
+        <tr><td style="font-size:1.4rem">山</td><td>サン/やま</td><td>núi</td><td>やま=núi · ふじさん=núi Phú Sĩ · やまのぼり=leo núi</td></tr>
+        <tr><td style="font-size:1.4rem">川</td><td>セン/かわ</td><td>sông</td><td>かわ=sông · かわぐち=cửa sông</td></tr>
+        <tr><td style="font-size:1.4rem">海</td><td>カイ/うみ</td><td>biển</td><td>うみ=biển · かいがん(海岸)=bãi biển · にほんかい=biển Nhật Bản</td></tr>
+        <tr><td style="font-size:1.4rem">空</td><td>クウ/そら</td><td>bầu trời, rỗng</td><td>そら=bầu trời · くうこう(空港)=sân bay · からっぽ=rỗng tuếch</td></tr>
+        <tr><td style="font-size:1.4rem">木</td><td>モク・ボク/き</td><td>cây, gỗ</td><td>き=cây · もくようび=thứ Năm · きのした=dưới cây</td></tr>
+        <tr><td style="font-size:1.4rem">花</td><td>カ/はな</td><td>hoa</td><td>はな=hoa · はなみ(花見)=ngắm hoa anh đào · はなや=tiệm hoa</td></tr>
+        <tr><td style="font-size:1.4rem">雨</td><td>ウ/あめ</td><td>mưa</td><td>あめ=mưa · あめがふる=trời mưa · おおあめ=mưa to</td></tr>
+        <tr><td style="font-size:1.4rem">火</td><td>カ/ひ</td><td>lửa</td><td>ひ=lửa · かようび=thứ Ba · かじ(火事)=hỏa hoạn</td></tr>
+        <tr><td style="font-size:1.4rem">水</td><td>スイ/みず</td><td>nước</td><td>みず=nước · すいようび=thứ Tư · おみず=nước (lịch sự)</td></tr>
+      </table>
+
+      <h3>🏙️ Kanji Địa Điểm & Đường đi</h3>
+      <table>
+        <tr><th>Kanji</th><th>Đọc</th><th>Nghĩa</th><th>Từ ghép</th></tr>
+        <tr><td style="font-size:1.4rem">駅</td><td>エキ</td><td>nhà ga</td><td>えき=nhà ga · しゅうてんえき=ga cuối · えきまえ=trước ga</td></tr>
+        <tr><td style="font-size:1.4rem">店</td><td>テン/みせ</td><td>cửa hàng</td><td>みせ=cửa hàng · コンビニ=tiện lợi · きっさてん=quán cà phê</td></tr>
+        <tr><td style="font-size:1.4rem">道</td><td>ドウ・トウ/みち</td><td>đường, con đường</td><td>みち=đường · どうろ(道路)=đường phố · きどう=quỹ đạo</td></tr>
+        <tr><td style="font-size:1.4rem">国</td><td>コク/くに</td><td>nước, quốc gia</td><td>くに=đất nước · にほん(日本)=Nhật Bản · がいこく(外国)=nước ngoài</td></tr>
+        <tr><td style="font-size:1.4rem">東</td><td>トウ/ひがし</td><td>đông</td><td>ひがし=phía đông · とうきょう(東京)=Tokyo · とうなん(東南)=đông nam</td></tr>
+        <tr><td style="font-size:1.4rem">西</td><td>セイ/にし</td><td>tây</td><td>にし=phía tây · かんさい(関西)=Kansai · なんせい(南西)=tây nam</td></tr>
+        <tr><td style="font-size:1.4rem">南</td><td>ナン/みなみ</td><td>nam</td><td>みなみ=phía nam · ベトナム(越南)=Việt Nam · なんきょく=Nam Cực</td></tr>
+        <tr><td style="font-size:1.4rem">北</td><td>ホク/きた</td><td>bắc</td><td>きた=phía bắc · ほっかいどう(北海道)=Hokkaido · ほくせい=tây bắc</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg37"></div>
+    </section>
+<section class="section" id="bai207">
+      <div class="eyebrow">📗 Bài bổ sung · N5 Ngữ Pháp Nhóm Mở Rộng</div>
+      <h2>第207課 — Bổ Sung: 6 Cặp Ngữ Pháp N5 Dễ Nhầm Lẫn Nhất</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Đây là các cặp ngữ pháp N5 học sinh Việt Nam nhầm lẫn nhiều nhất khi làm đề thi — phân biệt kỹ trước khi lên N4.</p>
+      <table>
+        <tr><th>Cặp ngữ pháp</th><th>Phân biệt</th><th>Ví dụ</th></tr>
+        <tr><td><b>は</b> vs <b>が</b></td><td>は: chủ đề đã biết/so sánh · が: thông tin mới/nhấn mạnh chủ ngữ</td><td>私<b>は</b>学生です (giới thiệu) vs 誰<b>が</b>来ましたか (hỏi ai)</td></tr>
+        <tr><td><b>に</b> vs <b>で</b></td><td>に: vị trí tồn tại/thời điểm · で: nơi diễn ra hành động</td><td>教室<b>に</b>います (đang ở trong lớp) vs 教室<b>で</b>勉強します (học trong lớp)</td></tr>
+        <tr><td><b>〜てください</b> vs <b>〜てもいいです</b></td><td>てください: yêu cầu/đề nghị · てもいい: cho phép</td><td>待っ<b>てください</b> (hãy đợi) vs 待っ<b>てもいいです</b> (được phép đợi)</td></tr>
+        <tr><td><b>まだ〜ていません</b> vs <b>もう〜ました</b></td><td>まだ: chưa · もう: đã rồi</td><td><b>まだ</b>食べ<b>ていません</b> (chưa ăn) vs <b>もう</b>食べ<b>ました</b> (đã ăn rồi)</td></tr>
+        <tr><td><b>〜ながら</b> vs <b>〜てから</b></td><td>ながら: đồng thời · てから: làm xong rồi mới</td><td>聞き<b>ながら</b>書く (vừa nghe vừa viết) vs 聞い<b>てから</b>書く (nghe xong rồi viết)</td></tr>
+        <tr><td><b>〜ほうがいい</b> vs <b>〜ばいい</b></td><td>ほうがいい: nên làm gì (lời khuyên) · ばいい: chỉ cần làm gì (điều kiện đủ)</td><td>休んだ<b>ほうがいい</b> (nên nghỉ ngơi) vs 休め<b>ばいい</b> (chỉ cần nghỉ là được)</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Mẹo</b> Khi làm đề thi, đọc kỹ ngữ cảnh trước — は/が và に/で là 2 cặp chiếm nhiều điểm nhất trong phần ngữ pháp N5 nhưng cũng dễ suy luận sai nhất nếu chỉ học thuộc lòng không có ví dụ.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg207"></div>
+    </section>
+<section class="section" id="bai208">
+      <div class="eyebrow">📗 Bài bổ sung · N5 Từ Vựng Mở Rộng</div>
+      <h2>第208課 — Bổ Sung: Từ Vựng Gia Đình & Cảm Xúc Mở Rộng</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng về gia đình người khác (kính ngữ) và tính từ cảm xúc — chủ đề hay xuất hiện trong phần hội thoại N5.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>お父さん / 父</td><td>おとうさん / ちち</td><td>bố người khác / bố mình</td></tr>
+        <tr><td>お母さん / 母</td><td>おかあさん / はは</td><td>mẹ người khác / mẹ mình</td></tr>
+        <tr><td>お兄さん / 兄</td><td>おにいさん / あに</td><td>anh trai người khác / anh trai mình</td></tr>
+        <tr><td>お姉さん / 姉</td><td>おねえさん / あね</td><td>chị gái người khác / chị gái mình</td></tr>
+        <tr><td>嬉しい</td><td>うれしい</td><td>vui mừng</td></tr>
+        <tr><td>悲しい</td><td>かなしい</td><td>buồn</td></tr>
+        <tr><td>寂しい</td><td>さびしい</td><td>cô đơn</td></tr>
+        <tr><td>恥ずかしい</td><td>はずかしい</td><td>xấu hổ, ngại ngùng</td></tr>
+      </table>
+      <div class="box note"><b>📌 Quy tắc kính ngữ gia đình</b> Khi nói về gia đình MÌNH với người ngoài → dùng từ khiêm nhường (父,母,兄,姉). Khi nói về gia đình NGƯỜI KHÁC hoặc gọi trực tiếp bố mẹ mình → dùng từ kính trọng (お父さん,お母さん...).</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg208"></div>
+    </section>
+<section class="section" id="bai223">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 2 · N5</div>
+      <h2>第223課 — Bổ Sung: Thể Lịch Sự (ます形) vs Thể Thông Thường (普通形)</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Bảng chuyển đổi nhanh giữa 2 thể — nền tảng bắt buộc trước khi học các mẫu ngữ pháp N4 phức tạp hơn (vì hầu hết đều gắn sau thể thông thường).</p>
+      <table>
+        <tr><th>Thì</th><th>ます形 (lịch sự)</th><th>普通形 (thông thường)</th></tr>
+        <tr><td>Hiện tại khẳng định</td><td>食べます</td><td>食べる</td></tr>
+        <tr><td>Hiện tại phủ định</td><td>食べません</td><td>食べない</td></tr>
+        <tr><td>Quá khứ khẳng định</td><td>食べました</td><td>食べた</td></tr>
+        <tr><td>Quá khứ phủ định</td><td>食べませんでした</td><td>食べなかった</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Vì sao quan trọng?</b> Hầu hết ngữ pháp N4-N3-N2 (〜と思う, 〜と言う, 〜前に, 〜ようだ...) đều nối vào 普通形, không phải ます形. Nắm chắc bảng này giúp học ngữ pháp cao hơn nhanh hơn rất nhiều.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg223"></div>
+    </section>
+<section class="section" id="bai224">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 2 · N5 Từ Vựng</div>
+      <h2>第224課 — Bổ Sung: Từ Vựng Thời Tiết & Bốn Mùa</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Chủ đề thời tiết/mùa xuất hiện thường xuyên trong hội thoại hàng ngày và phần nghe N5-N4.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>春</td><td>はる</td><td>mùa xuân</td></tr>
+        <tr><td>梅雨</td><td>つゆ</td><td>mùa mưa (tháng 6, đặc trưng Nhật Bản)</td></tr>
+        <tr><td>台風</td><td>たいふう</td><td>bão</td></tr>
+        <tr><td>蒸し暑い</td><td>むしあつい</td><td>nóng ẩm oi bức</td></tr>
+        <tr><td>涼しい</td><td>すずしい</td><td>mát mẻ</td></tr>
+        <tr><td>紅葉</td><td>こうよう</td><td>lá đỏ mùa thu</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg224"></div>
+    </section>
+<section class="section" id="bai243">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 3 · N5</div>
+      <h2>第243課 — Bổ Sung: Phân Biệt へ・に・まで・までに</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Nhóm trợ từ chỉ phương hướng/thời hạn dễ gây nhầm lẫn cho người mới học.</p>
+      <table>
+        <tr><th>Trợ từ</th><th>Ý nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>へ</b></td><td>Hướng đến (nhấn mạnh phương hướng, có thể thay bằng に)</td><td>東京<b>へ</b>行きます。= Đi hướng về Tokyo.</td></tr>
+        <tr><td><b>に</b></td><td>Đích đến cụ thể</td><td>東京<b>に</b>着きます。= Đến (nơi) Tokyo.</td></tr>
+        <tr><td><b>まで</b></td><td>Cho đến (một điểm mốc, kéo dài liên tục đến đó)</td><td>5時<b>まで</b>働きます。= Làm việc đến 5 giờ (liên tục).</td></tr>
+        <tr><td><b>までに</b></td><td>Trước khi đến (hạn chót, chỉ cần xong trước mốc đó)</td><td>5時<b>までに</b>終わります。= Xong trước 5 giờ (deadline).</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Lỗi hay gặp nhất</b> まで vs までに: まで=hành động kéo dài LIÊN TỤC đến mốc thời gian, までに=hành động XẢY RA 1 LẦN trước mốc thời gian (deadline). Đây là điểm hay bị hỏi nhất trong đề thi N5-N4.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg243"></div>
+    </section>
+<section class="section" id="bai244">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 3 · N5 Từ Vựng</div>
+      <h2>第244課 — Bổ Sung: Phương Tiện Giao Thông & Địa Điểm Công Cộng</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng thiết yếu khi di chuyển ở Nhật — hay xuất hiện trong hội thoại và phần nghe N5.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>改札口</td><td>かいさつぐち</td><td>cửa soát vé</td></tr>
+        <tr><td>乗り換え</td><td>のりかえ</td><td>chuyển tuyến/đổi tàu</td></tr>
+        <tr><td>時刻表</td><td>じこくひょう</td><td>bảng giờ tàu/xe</td></tr>
+        <tr><td>交番</td><td>こうばん</td><td>trạm cảnh sát khu vực</td></tr>
+        <tr><td>郵便局</td><td>ゆうびんきょく</td><td>bưu điện</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg244"></div>
+    </section>
+<section class="section" id="bai263">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 4 · N5</div>
+      <h2>第263課 — Bổ Sung: Thể Ý Chí (意向形) 〜よう・〜おう</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Thể ý chí diễn tả quyết tâm/rủ rê "hãy cùng làm gì" — nền tảng cho ngữ pháp 〜(よ)うと思う ở N4.</p>
+      <table>
+        <tr><th>Nhóm động từ</th><th>Cách chia</th><th>Ví dụ</th></tr>
+        <tr><td>Nhóm 1</td><td>Đổi u→o + う</td><td>行く→行こう (hãy đi thôi)</td></tr>
+        <tr><td>Nhóm 2</td><td>Bỏ る + よう</td><td>食べる→食べよう (hãy ăn thôi)</td></tr>
+        <tr><td>Bất quy tắc</td><td>する→しよう · くる→こよう</td><td>勉強しよう (hãy học thôi)</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg263"></div>
+    </section>
+<section class="section" id="bai264">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 4 · N5 Từ Vựng</div>
+      <h2>第264課 — Bổ Sung: Từ Vựng Mua Sắm & Tiền Tệ</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng cần thiết khi đi mua sắm — hay xuất hiện trong hội thoại N5.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>値段</td><td>ねだん</td><td>giá cả</td></tr>
+        <tr><td>お釣り</td><td>おつり</td><td>tiền thừa (tiền thối lại)</td></tr>
+        <tr><td>割引</td><td>わりびき</td><td>giảm giá</td></tr>
+        <tr><td>レジ</td><td>reji</td><td>quầy thu ngân</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg264"></div>
+    </section>
+<section class="section" id="bai283">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 5 · N5</div>
+      <h2>第283課 — Bổ Sung: Thể て Nối Câu Liệt Kê Hành Động Tuần Tự</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Dùng thể て để nối nhiều hành động xảy ra tuần tự trong 1 câu — kỹ năng cơ bản để nói câu dài hơn.</p>
+      <table>
+        <tr><th>Mẫu câu</th><th>Nghĩa</th></tr>
+        <tr><td>朝起き<b>て</b>、顔を洗っ<b>て</b>、朝ごはんを食べます。</td><td>Buổi sáng thức dậy, rửa mặt, rồi ăn sáng.</td></tr>
+        <tr><td>日本へ行っ<b>て</b>、日本語を勉強し<b>て</b>、働きたいです。</td><td>Muốn đi Nhật, học tiếng Nhật, rồi đi làm.</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Lưu ý</b> Chỉ động từ cuối cùng trong chuỗi mới chia theo thì (quá khứ/hiện tại) — các động từ nối bằng て ở giữa luôn giữ nguyên thể て, không chia thì riêng.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg283"></div>
+    </section>
+<section class="section" id="bai284">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 5 · N5 Từ Vựng</div>
+      <h2>第284課 — Bổ Sung: Từ Vựng Nhà Cửa & Đồ Nội Thất</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng mô tả không gian sống — chủ đề quen thuộc trong hội thoại N5.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>台所</td><td>だいどころ</td><td>nhà bếp</td></tr>
+        <tr><td>玄関</td><td>げんかん</td><td>lối vào nhà (nơi để giày)</td></tr>
+        <tr><td>押し入れ</td><td>おしいれ</td><td>tủ âm tường kiểu Nhật</td></tr>
+        <tr><td>畳</td><td>たたみ</td><td>chiếu tatami</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg284"></div>
+    </section>
+<section class="section" id="bai303">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 6 · N5</div>
+      <h2>第303課 — Bổ Sung: 〜てもいいですか vs 〜なければなりません</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Cặp cấu trúc xin phép và bắt buộc — nền tảng giao tiếp lịch sự N5.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜てもいいですか</b></td><td>Xin phép làm gì đó</td><td>写真を撮っ<b>てもいいですか</b>。= Tôi chụp ảnh được không ạ?</td></tr>
+        <tr><td><b>〜なければなりません</b></td><td>Phải làm gì đó (bắt buộc)</td><td>宿題をし<b>なければなりません</b>。= Phải làm bài tập.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg303"></div>
+    </section>
+<section class="section" id="bai304">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 6 · N5 Từ Vựng</div>
+      <h2>第304課 — Bổ Sung: Từ Vựng Cơ Thể & Sức Khỏe Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng bộ phận cơ thể cơ bản — cần thiết để mô tả triệu chứng đơn giản.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>頭</td><td>あたま</td><td>đầu</td></tr>
+        <tr><td>お腹</td><td>おなか</td><td>bụng</td></tr>
+        <tr><td>喉</td><td>のど</td><td>cổ họng</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg304"></div>
+    </section>
+<section class="section" id="bai323">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 7 · N5</div>
+      <h2>第323課 — Bổ Sung: 〜ことがあります (Kinh Nghiệm) vs 〜ことがある (Thỉnh Thoảng)</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Cùng mẫu câu nhưng khác thì động từ đứng trước dẫn đến nghĩa khác hẳn.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>Vた+ことがある</td><td>Đã từng có kinh nghiệm ~</td><td>日本へ行っ<b>たことがあります</b>。= Đã từng đi Nhật.</td></tr>
+        <tr><td>Vる+ことがある</td><td>Thỉnh thoảng có việc ~ xảy ra</td><td>たまに遅刻する<b>ことがあります</b>。= Thỉnh thoảng có bị trễ.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg323"></div>
+    </section>
+<section class="section" id="bai324">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 7 · N5 Từ Vựng</div>
+      <h2>第324課 — Bổ Sung: Từ Vựng Hoạt Động Giải Trí</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng sở thích/giải trí — chủ đề phổ biến trong hội thoại làm quen N5.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>趣味</td><td>しゅみ</td><td>sở thích</td></tr>
+        <tr><td>映画</td><td>えいが</td><td>phim điện ảnh</td></tr>
+        <tr><td>散歩</td><td>さんぽ</td><td>đi dạo</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg324"></div>
+    </section>
+<section class="section" id="bai343">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 8 · N5</div>
+      <h2>第343課 — Bổ Sung: 〜てあげる・てもらう・てくれる Tổng Quan</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Nhóm động từ授受 (cho-nhận) diễn tả hướng của hành động giúp đỡ — điểm ngữ pháp quan trọng nhất N5-N4.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Hướng hành động</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜てあげる</b></td><td>Tôi làm gì đó cho người khác</td><td>友達に本を貸し<b>てあげた</b>。= Đã cho bạn mượn sách.</td></tr>
+        <tr><td><b>〜てもらう</b></td><td>Tôi nhận được sự giúp đỡ từ người khác</td><td>友達に本を貸し<b>てもらった</b>。= Đã được bạn cho mượn sách.</td></tr>
+        <tr><td><b>〜てくれる</b></td><td>Người khác làm gì đó cho tôi (chủ ngữ là người khác)</td><td>友達が本を貸し<b>てくれた</b>。= Bạn đã cho tôi mượn sách.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg343"></div>
+    </section>
+<section class="section" id="bai344">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 8 · N5 Từ Vựng</div>
+      <h2>第344課 — Bổ Sung: Từ Vựng Nghề Nghiệp Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Tên các nghề nghiệp phổ biến — hay dùng để giới thiệu bản thân/gia đình.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>会社員</td><td>かいしゃいん</td><td>nhân viên công ty</td></tr>
+        <tr><td>医者</td><td>いしゃ</td><td>bác sĩ</td></tr>
+        <tr><td>先生</td><td>せんせい</td><td>giáo viên</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg344"></div>
+    </section>
+<section class="section" id="bai363">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 9 · N5</div>
+      <h2>第363課 — Bổ Sung: 〜つもりです vs 〜予定です Phân Biệt Dự Định</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Cả 2 đều diễn tả dự định tương lai nhưng mức độ chắc chắn khác nhau.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Mức độ</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜つもりです</b></td><td>Ý định cá nhân, chưa chắc chắn tuyệt đối</td><td>来年留学する<b>つもりです</b>。= Dự định năm sau đi du học.</td></tr>
+        <tr><td><b>〜予定です</b></td><td>Kế hoạch đã được sắp xếp cụ thể, chắc chắn hơn</td><td>来月出張する<b>予定です</b>。= Có kế hoạch đi công tác tháng sau.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg363"></div>
+    </section>
+<section class="section" id="bai364">
+      <div class="eyebrow">📗 Bài bổ sung Vòng 9 · N5 Từ Vựng</div>
+      <h2>第364課 — Bổ Sung: Từ Vựng Thư Viện & Sách Vở</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng liên quan đọc sách/thư viện — chủ đề quen thuộc N5.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>図書館</td><td>としょかん</td><td>thư viện</td></tr>
+        <tr><td>借りる</td><td>かりる</td><td>mượn</td></tr>
+        <tr><td>返す</td><td>かえす</td><td>trả lại</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg364"></div>
+    </section>
+</div>
+
+<script>
+/* ============ DARK MODE ============ */
+const darkToggle = document.getElementById('darkToggle');
+if(darkToggle) darkToggle.addEventListener('click', () => {
+  const body = document.body;
+  const isDark = body.getAttribute('data-theme') === 'dark';
+  body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  darkToggle.textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+});
+
+/* ============ SIDEBAR ACTIVE LINK + MOBILE TOGGLE ============ */
+const sidebar = document.getElementById('sidebar');
+const _mt=document.getElementById('menuToggle'); if(_mt) _mt.addEventListener('click', () => sidebar && sidebar.classList.toggle('open'));
+document.querySelectorAll('.sidebar nav a').forEach(link=>{
+  link.addEventListener('click', ()=> sidebar.classList.remove('open'));
+});
+
+/* ============ ACCORDION ============ */
+function toggleAccordion(headEl){
+  const item = headEl.parentElement;
+  const body = headEl.nextElementSibling;
+  const isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+  body.style.maxHeight = !isOpen ? body.scrollHeight + 'px' : 0;
+}
+
+/* ============ COPY CODE ============ */
+function copyCode(btn){
+  const code = btn.previousElementSibling.innerText;
+  navigator.clipboard.writeText(code).then(()=>{
+    const old = btn.textContent;
+    btn.textContent = 'Đã copy ✓';
+    setTimeout(()=> btn.textContent = old, 1500);
+  });
+}
+
+/* ============ FLASHCARDS (generated from data) ============ */
+const flashData = [
+  {front:'あ', back:'a'}, {front:'い', back:'i'}, {front:'う', back:'u'},
+  {front:'え', back:'e'}, {front:'お', back:'o'}
+];
+const flashGrid = document.getElementById('flashGrid');
+if(flashGrid) flashData.forEach(item=>{
+  const card = document.createElement('div');
+  card.className = 'flashcard';
+  card.innerHTML = `
+    <div class="flashcard-inner">
+      <div class="flashcard-face flashcard-front">${item.front}</div>
+      <div class="flashcard-face flashcard-back">${item.back}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+  flashGrid.appendChild(card);
+});
+
+/* ============ QUIZ CHECK ============ */
+function checkQuiz(){
+  const form = document.getElementById('quizForm');
+  const questions = ['q1','q2','q3'];
+  let score = 0;
+  questions.forEach(q=>{
+    const selected = form.querySelector(`input[name="${q}"]:checked`);
+    const feedback = form.querySelector(`input[name="${q}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!selected){
+      feedback.style.display='block'; feedback.className='quiz-feedback wrong'; feedback.textContent='⚠️ Bạn chưa chọn đáp án.';
+      return;
+    }
+    if(selected.value === 'correct'){
+      score++; feedback.style.display='block'; feedback.className='quiz-feedback correct'; feedback.textContent='✓ Chính xác!';
+    } else {
+      feedback.style.display='block'; feedback.className='quiz-feedback wrong'; feedback.textContent='✗ Sai rồi, xem lại bài học nhé.';
+    }
+  });
+  document.getElementById('quizResult').textContent = `Kết quả: ${score}/${questions.length} câu đúng`;
+}
+
+/* ============ PROGRESS BAR ============ */
+const totalLessons = 200;
+const completedLessons = 200;
+const _pb=document.getElementById('progressBar'); if(_pb) _pb.style.width = (completedLessons/totalLessons*100) + '%';
+const _pl=document.getElementById('progressLabel'); if(_pl) _pl.textContent = `Bài ${completedLessons} / ${totalLessons} (12 tháng)`;
+
+/* ============ FLASHCARDS BÀI 3 ============ */
+const flashData3 = [
+  {front:'さ', back:'sa'}, {front:'し', back:'shi ⚠️'}, {front:'す', back:'su'},
+  {front:'せ', back:'se'}, {front:'そ', back:'so'},
+  {front:'すし', back:'sushi'}, {front:'せんせい', back:'thầy giáo'},
+  {front:'さかな', back:'con cá'}, {front:'そら', back:'bầu trời'}
+];
+const flashGrid3 = document.getElementById('flashGrid3');
+if(flashGrid3) flashData3.forEach(item=>{
+  const card = document.createElement('div');
+  card.className = 'flashcard';
+  card.innerHTML = `<div class="flashcard-inner">
+    <div class="flashcard-face flashcard-front">${item.front}</div>
+    <div class="flashcard-face flashcard-back">${item.back}</div>
+  </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+  flashGrid3.appendChild(card);
+});
+
+/* ============ QUIZ BÀI 3 ============ */
+function checkQuiz3(){
+  const form = document.getElementById('quizForm3');
+  const questions = ['q3_1','q3_2','q3_3','q3_4','q3_5'];
+  let score = 0;
+  questions.forEach(q=>{
+    const selected = form.querySelector(`input[name="${q}"]:checked`);
+    const feedback = form.querySelector(`input[name="${q}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!selected){
+      feedback.style.display='block'; feedback.className='quiz-feedback wrong'; feedback.textContent='⚠️ Bạn chưa chọn đáp án.';
+      return;
+    }
+    if(selected.value==='correct'){
+      score++; feedback.style.display='block'; feedback.className='quiz-feedback correct'; feedback.textContent='✓ Chính xác!';
+    } else {
+      feedback.style.display='block'; feedback.className='quiz-feedback wrong'; feedback.textContent='✗ Sai rồi, xem lại bài học nhé.';
+    }
+  });
+  const r = document.getElementById('quizResult3');
+  r.textContent = `Kết quả: ${score}/${questions.length} câu đúng — ${score===5?'Hoàn hảo! 🎉':score>=3?'Tốt lắm! 💪':'Ôn lại bài nhé 📖'}`;
+}
+
+/* ============ FLASHCARDS BÀI 2 ============ */
+const flashData2 = [
+  {front:'か', back:'ka'}, {front:'き', back:'ki'}, {front:'く', back:'ku'},
+  {front:'け', back:'ke'}, {front:'こ', back:'ko'},
+  {front:'えき', back:'nhà ga'}, {front:'かお', back:'khuôn mặt'}
+];
+const flashGrid2 = document.getElementById('flashGrid2');
+if(flashGrid2) flashData2.forEach(item=>{
+  const card = document.createElement('div');
+  card.className = 'flashcard';
+  card.innerHTML = `<div class="flashcard-inner">
+    <div class="flashcard-face flashcard-front">${item.front}</div>
+    <div class="flashcard-face flashcard-back">${item.back}</div>
+  </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+  flashGrid2.appendChild(card);
+});
+
+/* ============ QUIZ BÀI 2 ============ */
+function checkQuiz2(){
+  const form = document.getElementById('quizForm2');
+  const questions = ['q2_1','q2_2','q2_3','q2_4'];
+  let score = 0;
+  questions.forEach(q=>{
+    const selected = form.querySelector(`input[name="${q}"]:checked`);
+    const feedback = form.querySelector(`input[name="${q}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!selected){
+      feedback.style.display='block'; feedback.className='quiz-feedback wrong'; feedback.textContent='⚠️ Bạn chưa chọn đáp án.';
+      return;
+    }
+    if(selected.value==='correct'){
+      score++; feedback.style.display='block'; feedback.className='quiz-feedback correct'; feedback.textContent='✓ Chính xác!';
+    } else {
+      feedback.style.display='block'; feedback.className='quiz-feedback wrong'; feedback.textContent='✗ Sai rồi, xem lại bài học nhé.';
+    }
+  });
+  document.getElementById('quizResult2').textContent = `Kết quả: ${score}/${questions.length} câu đúng`;
+}
+
+/* ============ QUIZ SRS ============ */
+function checkSRS(){
+  const form = document.getElementById('quizSRS');
+  const questions = ['srs1','srs2'];
+  let score = 0;
+  questions.forEach(q=>{
+    const selected = form.querySelector(`input[name="${q}"]:checked`);
+    const feedback = form.querySelector(`input[name="${q}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!selected){
+      feedback.style.display='block'; feedback.className='quiz-feedback wrong'; feedback.textContent='⚠️ Bạn chưa chọn đáp án.';
+      return;
+    }
+    if(selected.value==='correct'){
+      score++; feedback.style.display='block'; feedback.className='quiz-feedback correct'; feedback.textContent='✓ Chính xác!';
+    } else {
+      feedback.style.display='block'; feedback.className='quiz-feedback wrong'; feedback.textContent='✗ Ôn lại nhé!';
+    }
+  });
+  document.getElementById('srsResult').textContent = `SRS: ${score}/${questions.length} — ${score===questions.length?'Xuất sắc! Não đã ghi nhớ tốt 🎉':'Cần ôn thêm, đừng nản nhé 💪'}`;
+}
+
+/* ============ HÀM QUIZ CHUNG ============ */
+function runQuiz(formId, total, resultId){
+  const form=document.getElementById(formId);
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn đáp án.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi, xem lại nhé.';}
+  });
+  const msg=score===total?'Hoàn hảo! 🎉':score>=Math.ceil(total*0.7)?'Tốt lắm! 💪':'Ôn lại bài nhé 📖';
+  document.getElementById(resultId).textContent=`Kết quả: ${score}/${total} — ${msg}`;
+}
+
+function runQuizMaster(){
+  const form=document.getElementById('qfmaster');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}
+  });
+  const r=document.getElementById('qrmaster');
+  if(score>=9)r.textContent=`🏆 ${score}/10 — Xuất sắc! Bạn đã thành thạo Hiragana! Sẵn sàng học Katakana!`;
+  else if(score>=7)r.textContent=`✅ ${score}/10 — Tốt! Ôn lại các chữ sai rồi tiếp tục Katakana.`;
+  else r.textContent=`📖 ${score}/10 — Cần ôn thêm. Đừng nản — xem lại bảng Hiragana và thử lại!`;
+}
+
+/* ============ FLASHCARD GENERATOR ============ */
+function makeFlashcards(gridId, data){
+  const g=document.getElementById(gridId);
+  if(!g)return;
+  data.forEach(item=>{
+    const c=document.createElement('div');c.className='flashcard';
+    c.innerHTML=`<div class="flashcard-inner"><div class="flashcard-face flashcard-front">${item.f}</div><div class="flashcard-face flashcard-back">${item.b}</div></div>`;
+    c.addEventListener('click',()=>c.classList.toggle('flipped'));
+    g.appendChild(c);
+  });
+}
+makeFlashcards('fg4',[{f:'た',b:'ta'},{f:'ち',b:'chi⚠️'},{f:'つ',b:'tsu⚠️'},{f:'て',b:'te'},{f:'と',b:'to'},{f:'ともだち',b:'bạn bè'},{f:'ちかてつ',b:'tàu điện ngầm'}]);
+makeFlashcards('fg5',[{f:'な',b:'na'},{f:'に',b:'ni'},{f:'ぬ',b:'nu'},{f:'ね',b:'ne'},{f:'の',b:'no'},{f:'なまえ',b:'tên'},{f:'にほん',b:'Nhật Bản'},{f:'ねこ',b:'mèo'}]);
+makeFlashcards('fg6',[{f:'は',b:'ha/wa'},{f:'ひ',b:'hi'},{f:'ふ',b:'fu⚠️'},{f:'へ',b:'he/e'},{f:'ほ',b:'ho'},{f:'はじめまして',b:'Xin chào lần đầu'},{f:'ほん',b:'sách'}]);
+makeFlashcards('fg7',[{f:'ま',b:'ma'},{f:'み',b:'mi'},{f:'む',b:'mu'},{f:'め',b:'me'},{f:'も',b:'mo'},{f:'みず',b:'nước'},{f:'まいにち',b:'mỗi ngày'},{f:'も',b:'trợ từ "cũng"'}]);
+makeFlashcards('fg8',[{f:'や',b:'ya'},{f:'ゆ',b:'yu'},{f:'よ',b:'yo'},{f:'ら',b:'ra'},{f:'り',b:'ri'},{f:'る',b:'ru'},{f:'れ',b:'re'},{f:'ろ',b:'ro'},{f:'りんご',b:'táo'},{f:'やすみ',b:'ngày nghỉ'}]);
+makeFlashcards('fg9',[{f:'わ',b:'wa'},{f:'を',b:'o (tân ngữ)'},{f:'ん',b:'n/m/ng'},{f:'わたし',b:'tôi'},{f:'にほんご',b:'tiếng Nhật'},{f:'さんぽ',b:'đi dạo'},{f:'わかる',b:'hiểu'}]);
+makeFlashcards('fg10',[{f:'ア',b:'a'},{f:'イ',b:'i'},{f:'ウ',b:'u'},{f:'エ',b:'e'},{f:'オ',b:'o'},{f:'アニメ',b:'anime'},{f:'エアコン',b:'điều hòa'},{f:'ー',b:'kéo dài nguyên âm'}]);
+makeFlashcards('fg11',[{f:'カ',b:'ka'},{f:'キ',b:'ki'},{f:'ク',b:'ku'},{f:'シ',b:'shi⚠️'},{f:'ツ',b:'tsu⚠️'},{f:'コーヒー',b:'cà phê'},{f:'ケーキ',b:'bánh kem'},{f:'タクシー',b:'taxi'},{f:'テスト',b:'kiểm tra'}]);
+makeFlashcards('fg12',[{f:'ナ',b:'na'},{f:'ニ',b:'ni'},{f:'ノ',b:'no'},{f:'ハ',b:'ha'},{f:'フ',b:'fu'},{f:'ヘ',b:'he (=へ)'},{f:'ホテル',b:'khách sạn'},{f:'ニュース',b:'tin tức'},{f:'ノート',b:'vở ghi'}]);
+makeFlashcards('fg13',[{f:'マ',b:'ma'},{f:'ミ',b:'mi'},{f:'メ',b:'me'},{f:'ロ',b:'ro'},{f:'リ',b:'ri'},{f:'ン',b:'n'},{f:'レストラン',b:'nhà hàng'},{f:'ラーメン',b:'ramen'},{f:'ロボット',b:'robot'}]);
+makeFlashcards('fg14',[{f:'が',b:'ga'},{f:'ざ',b:'za'},{f:'だ',b:'da'},{f:'ば',b:'ba'},{f:'ぱ',b:'pa'},{f:'がくせい',b:'học sinh'},{f:'でんしゃ',b:'tàu điện'},{f:'べんきょう',b:'học bài'},{f:'ごはん',b:'cơm/bữa ăn'}]);
+makeFlashcards('fg15',[{f:'きょう',b:'hôm nay'},{f:'ちょっと',b:'một chút'},{f:'りょこう',b:'du lịch'},{f:'びょういん',b:'bệnh viện'},{f:'おちゃ',b:'trà'},{f:'じゃあ',b:'vậy thì'},{f:'しゃしん',b:'ảnh chụp'},{f:'ぎゅうにゅう',b:'sữa bò'}]);
+makeFlashcards('fg16',[{f:'っ',b:'phụ âm đôi (dừng 1 nhịp)'},{f:'ー',b:'kéo dài (Katakana)'},{f:'きって',b:'tem thư'},{f:'ざっし',b:'tạp chí'},{f:'おばあさん',b:'bà nội/ngoại'},{f:'おじいさん',b:'ông nội/ngoại'},{f:'ファン',b:'fan'}]);
+makeFlashcards('fg17',[{f:'いち',b:'1'},{f:'に',b:'2'},{f:'さん',b:'3'},{f:'よん/し',b:'4'},{f:'ご',b:'5'},{f:'ろく',b:'6'},{f:'なな/しち',b:'7'},{f:'はち',b:'8'},{f:'きゅう/く',b:'9'},{f:'じゅう',b:'10'},{f:'もくようび',b:'thứ Năm'},{f:'なんじですか',b:'Mấy giờ rồi?'}]);
+
+/* ============ QUIZ CHƯƠNG 1 ============ */
+function runQuizCh1(){
+  const form=document.getElementById('qfch1');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi, xem lại nhé.';}
+  });
+  const r=document.getElementById('qrch1');
+  r.style.border='2px solid';
+  if(score>=13){r.style.borderColor='#3F8C5C';r.textContent=`🏆 ${score}/15 — XUẤT SẮC! Bạn đã thành thạo hệ thống Kana hoàn chỉnh. Sẵn sàng học Chương 2: Ngữ pháp N5!`;}
+  else if(score>=10){r.style.borderColor='var(--kin)';r.textContent=`✅ ${score}/15 — TỐT! Ôn lại những câu sai rồi bước vào Chương 2. Bạn đã đủ nền tảng!`;}
+  else{r.style.borderColor='var(--hanko)';r.textContent=`📖 ${score}/15 — Cần ôn thêm. Xem lại các bài có câu sai, dành 1–2 ngày ôn SRS, rồi thử lại!`;}
+}
+
+/* ===== FLASHCARDS BÀI 19-35 ===== */
+makeFlashcards('fg19',[{f:'がくせい',b:'học sinh'},{f:'かいしゃいん',b:'nhân viên'},{f:'いしゃ',b:'bác sĩ'},{f:'N は N です',b:'N là N'},{f:'じゃありません',b:'không phải là'},{f:'〜ですか',b:'...phải không?'},{f:'にほんじん',b:'người Nhật'},{f:'〜さん',b:'anh/chị (kính ngữ)'}]);
+makeFlashcards('fg20',[{f:'は',b:'chủ đề câu'},{f:'が',b:'chủ ngữ nhấn mạnh'},{f:'を',b:'tân ngữ'},{f:'に',b:'tồn tại/thời điểm/đích'},{f:'で',b:'địa điểm hành động/phương tiện'},{f:'と',b:'và / cùng với'},{f:'も',b:'cũng'},{f:'へ',b:'hướng đi'}]);
+makeFlashcards('fg21',[{f:'おいしい',b:'ngon (い)'},{f:'たかい',b:'cao/đắt (い)'},{f:'きれい(な)',b:'đẹp/sạch (な)'},{f:'しずか(な)',b:'yên tĩnh (な)'},{f:'すき(な)',b:'thích (な)'},{f:'たかくない',b:'không đắt (phủ định い)'},{f:'きれいでした',b:'đã đẹp (quá khứ な)'},{f:'よかった',b:'đã tốt (いい→よい)'}]);
+makeFlashcards('fg22',[{f:'いきます',b:'đi (Nhóm 1)'},{f:'たべます',b:'ăn (Nhóm 2)'},{f:'します',b:'làm (Nhóm 3)'},{f:'きます',b:'đến (Nhóm 3)'},{f:'よみます',b:'đọc (Nhóm 1)'},{f:'みます',b:'xem (Nhóm 2)'},{f:'おきます',b:'dậy (Nhóm 2)'},{f:'ねます',b:'ngủ (Nhóm 2)'},{f:'はなします',b:'nói (Nhóm 1)'}]);
+makeFlashcards('fg23',[{f:'たべました',b:'đã ăn (ました)'},{f:'いきました',b:'đã đi'},{f:'みませんでした',b:'không xem (hồi đó)'},{f:'かいた',b:'đã viết (た形)'},{f:'のんだ',b:'đã uống (た形)'},{f:'きのう',b:'hôm qua'},{f:'それから',b:'sau đó'},{f:'よかったです',b:'đã hay / tốt'}]);
+makeFlashcards('fg24',[{f:'たべない',b:'không ăn (ない形)'},{f:'いかない',b:'không đi'},{f:'しない',b:'không làm'},{f:'こない',b:'không đến'},{f:'ない (ある→)',b:'không có (đồ vật)'},{f:'〜ないでください',b:'xin đừng làm'},{f:'すわらないでください',b:'xin đừng ngồi'}]);
+makeFlashcards('fg25',[{f:'たべて',b:'ăn rồi... (て形)'},{f:'いって',b:'đi rồi... (ngoại lệ!)'},{f:'して',b:'làm rồi...'},{f:'きて',b:'đến rồi...'},{f:'〜てください',b:'xin hãy làm'},{f:'〜てもいいですか',b:'tôi được làm không?'},{f:'すみません',b:'xin lỗi / xin hỏi'}]);
+makeFlashcards('fg26',[{f:'〜ています',b:'đang làm / trạng thái'},{f:'たべています',b:'đang ăn'},{f:'けっこんしています',b:'đã kết hôn (trạng thái)'},{f:'あめがふっています',b:'trời đang mưa'},{f:'〜ていません',b:'không đang làm'},{f:'〜ていました',b:'đang làm (quá khứ)'}]);
+makeFlashcards('fg27',[{f:'これ',b:'cái này (gần người nói)'},{f:'それ',b:'cái đó (gần người nghe)'},{f:'あれ',b:'cái kia (xa cả 2)'},{f:'どれ',b:'cái nào?'},{f:'ここ',b:'ở đây'},{f:'そこ',b:'ở đó'},{f:'あそこ',b:'ở kia'},{f:'この〜',b:'cái ~ này'},{f:'どこ',b:'ở đâu?'}]);
+makeFlashcards('fg28',[{f:'いきましょう',b:'hãy đi (cùng nhau)'},{f:'のみませんか',b:'uống không? (mời)'},{f:'〜てもいいですか',b:'được ... không? (xin phép)'},{f:'〜てはいけません',b:'không được làm (cấm)'},{f:'どうぞ',b:'mời / xin cứ tự nhiên'}]);
+makeFlashcards('fg29',[{f:'いきたいです',b:'muốn đi'},{f:'たべたいです',b:'muốn ăn'},{f:'いきたくないです',b:'không muốn đi'},{f:'〜がほしいです',b:'muốn có ~ (danh từ)'},{f:'たい vs ほしい',b:'たい=muốn làm · ほしい=muốn có'},{f:'〜たがっています',b:'(người khác) muốn làm'}]);
+makeFlashcards('fg30',[{f:'AはBよりC',b:'A thì C hơn B'},{f:'AのほうがB',b:'A hơn B'},{f:'いちばん',b:'nhất (trong nhóm)'},{f:'どちらのほうが',b:'cái nào ... hơn?'},{f:'おなじくらい',b:'ngang bằng nhau'},{f:'〜の中で',b:'trong số ~'}]);
+makeFlashcards('fg31',[{f:'〜から',b:'vì ~ (chủ quan)'},{f:'〜ので',b:'vì ~ (khách quan/lịch sự)'},{f:'〜のに',b:'mặc dù ~ mà...'},{f:'あめだから',b:'vì trời mưa (から)'},{f:'びょうきなので',b:'vì bị bệnh (ので)'}]);
+makeFlashcards('fg32',[{f:'なければなりません',b:'phải làm'},{f:'なきゃ',b:'phải làm (thông thường)'},{f:'なくてもいいです',b:'không cần làm'},{f:'てはいけません',b:'không được làm (cấm)'},{f:'てもいいです',b:'được phép làm'}]);
+makeFlashcards('fg33',[{f:'〜本(ほん)',b:'đếm đồ dài (bút, chai)'},{f:'〜枚(まい)',b:'đếm đồ dẹt (giấy, áo)'},{f:'〜冊(さつ)',b:'đếm sách, vở'},{f:'〜台(だい)',b:'đếm máy móc, xe'},{f:'〜匹(ひき)',b:'đếm động vật nhỏ'},{f:'〜人(にん)',b:'đếm người'},{f:'ひとり・ふたり',b:'1 người・2 người (bất quy tắc)'},{f:'〜杯(はい)',b:'đếm ly, bát'}]);
+
+/* ===== QUIZ THI THỬ N5 ===== */
+function runQuizN5(){
+  const form=document.getElementById('qfn5');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi, xem lại nhé.';}
+  });
+  const r=document.getElementById('qrn5');
+  r.style.border='2px solid';
+  const pct=Math.round(score/20*100);
+  if(score>=16){r.style.borderColor='#3F8C5C';r.innerHTML=`🏆 <b>${score}/20 (${pct}%)</b> — XUẤT SẮC! Bạn đã vượt chuẩn N5. Sẵn sàng bước vào N4!`;}
+  else if(score>=14){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/20 (${pct}%)</b> — ĐẠT! Đủ chuẩn N5 (70%). Ôn lại phần sai rồi tiếp tục N4.`;}
+  else if(score>=10){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/20 (${pct}%)</b> — GẦN ĐẠT. Ôn thêm 1 tuần ngữ pháp rồi thử lại!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/20 (${pct}%)</b> — Cần ôn tập thêm. Xem lại Bài 19–33 và làm SRS đều đặn!`;}
+}
+/* ===== FLASHCARDS BÀI 36-55 ===== */
+makeFlashcards('fg36',[{f:'人',b:'ひと — người'},{f:'父',b:'ちち — bố (mình)'},{f:'母',b:'はは — mẹ (mình)'},{f:'友達',b:'ともだち — bạn bè'},{f:'先生',b:'せんせい — giáo viên'},{f:'上',b:'うえ — trên'},{f:'中',b:'なか — trong'},{f:'東',b:'ひがし — đông'}]);
+makeFlashcards('fg37',[{f:'日',b:'ひ — ngày/mặt trời'},{f:'月',b:'つき — tháng/trăng'},{f:'年',b:'とし — năm'},{f:'今',b:'いま — bây giờ'},{f:'山',b:'やま — núi'},{f:'海',b:'うみ — biển'},{f:'空港',b:'くうこう — sân bay'},{f:'東京',b:'とうきょう — Tokyo'}]);
+makeFlashcards('fg38',[{f:'学校',b:'がっこう — trường học'},{f:'図書館',b:'としょかん — thư viện'},{f:'家族',b:'かぞく — gia đình'},{f:'兄',b:'あに — anh trai (mình)'},{f:'姉',b:'あね — chị gái (mình)'},{f:'食事',b:'しょくじ — bữa ăn'},{f:'飲み物',b:'のみもの — đồ uống'},{f:'ちち vs おとうさん',b:'bố mình vs bố người khác'}]);
+makeFlashcards('fg39',[{f:'いつも',b:'luôn luôn'},{f:'ときどき',b:'thỉnh thoảng'},{f:'ぜんぜん〜ない',b:'hoàn toàn không'},{f:'まだ',b:'vẫn còn / chưa'},{f:'でんしゃ',b:'tàu điện'},{f:'ひこうき',b:'máy bay'},{f:'びょうき',b:'bệnh tật'},{f:'いたい',b:'đau'}]);
+makeFlashcards('fg40',[{f:'働く',b:'はたらく — làm việc'},{f:'始める',b:'はじめる — bắt đầu'},{f:'終わる',b:'おわる — kết thúc'},{f:'使う',b:'つかう — sử dụng'},{f:'教える',b:'おしえる — dạy'},{f:'会社',b:'かいしゃ — công ty'},{f:'電話',b:'でんわ — điện thoại'},{f:'銀行',b:'ぎんこう — ngân hàng'}]);
+makeFlashcards('fg41',[{f:'会議',b:'かいぎ — cuộc họp'},{f:'じょうし',b:'cấp trên'},{f:'うれしい',b:'vui mừng'},{f:'かなしい',b:'buồn bã'},{f:'ざんねん',b:'tiếc nuối'},{f:'もんだい',b:'vấn đề'},{f:'けいけん',b:'kinh nghiệm'},{f:'ぶんか',b:'văn hóa'}]);
+makeFlashcards('fg42',[{f:'いらっしゃる',b:'kính ngữ: có mặt/đi/đến'},{f:'めしあがる',b:'kính ngữ: ăn/uống'},{f:'おっしゃる',b:'kính ngữ: nói'},{f:'いただく',b:'khiêm tốn: nhận/ăn'},{f:'まいる',b:'khiêm tốn: đi/đến'},{f:'拝見する',b:'khiêm tốn: xem'}]);
+makeFlashcards('fg43',[{f:'〜たことがある',b:'đã từng...'},{f:'〜たばかり',b:'vừa mới ... (gần đây)'},{f:'〜たところ',b:'vừa xong (ngay lúc đó)'},{f:'〜ているところ',b:'đang làm dở'},{f:'〜るところ',b:'sắp làm'}]);
+makeFlashcards('fg44',[{f:'〜ながら',b:'vừa A vừa B'},{f:'〜たあとで',b:'sau khi làm A'},{f:'〜まえに',b:'trước khi làm'},{f:'〜てから',b:'xong A mới B (nhấn thứ tự)'},{f:'〜あいだに',b:'trong khi A thì B'}]);
+makeFlashcards('fg45',[{f:'〜んです',b:'giải thích / tìm đồng cảm'},{f:'〜でしょう',b:'chắc là... (~80%)'},{f:'〜かもしれない',b:'có thể là... (~50%)'},{f:'〜はずだ',b:'chắc chắn (theo logic)'},{f:'〜らしい',b:'hình như (nghe nói)'}]);
+makeFlashcards('fg46',[{f:'〜ために',b:'để (mục đích cụ thể)'},{f:'〜ように',b:'để (mục tiêu/trạng thái)'},{f:'おいしそう',b:'trông có vẻ ngon'},{f:'おいしいそう',b:'nghe nói ngon'},{f:'〜ようだ',b:'có vẻ như (quan sát)'}]);
+makeFlashcards('fg47',[{f:'〜てみる',b:'thử làm xem'},{f:'〜ておく',b:'làm trước để chuẩn bị'},{f:'〜てしまう',b:'① xong hẳn ② lỡ làm'},{f:'〜てあげる',b:'làm cho người khác'},{f:'〜てもらう',b:'nhờ người làm cho mình'},{f:'〜てくれる',b:'người tự nguyện làm cho mình'}]);
+makeFlashcards('fg48',[{f:'受身形',b:'Nhóm1: う→あ+れる · Nhóm2: られる'},{f:'される',b:'する→される (bị động)'},{f:'ほめられた',b:'được khen'},{f:'ぬすまれた',b:'bị lấy trộm'},{f:'に vs を (bị động)',b:'に=tác nhân · を=vật bị tác động'}]);
+makeFlashcards('fg49',[{f:'使役形',b:'Nhóm1: う→あ+せる · Nhóm2: させる'},{f:'させられる',b:'bị ép phải làm'},{f:'食べさせる',b:'bắt/cho ăn'},{f:'させる vs させられる',b:'chủ động vs bị ép'}]);
+makeFlashcards('fg50',[{f:'〜と',b:'quy luật tự nhiên'},{f:'〜ば',b:'giả định, tích cực'},{f:'〜たら',b:'phổ biến nhất hội thoại'},{f:'〜なら',b:'phản ứng với thông tin'},{f:'やすければ',b:'nếu rẻ thì... (ば)'}]);
+makeFlashcards('fg51',[{f:'尊敬語',b:'tôn kính ngữ — về người trên'},{f:'謙譲語',b:'khiêm tốn ngữ — về bản thân'},{f:'いらっしゃいます',b:'います (kính ngữ)'},{f:'おります',b:'います (khiêm tốn)'},{f:'ご覧になる',b:'みる (kính ngữ)'},{f:'拝見する',b:'みる (khiêm tốn)'}]);
+makeFlashcards('fg52',[{f:'[V普通形] + N',b:'Câu tương đối'},{f:'[あった]ひと',b:'người tôi gặp'},{f:'[かった]もの',b:'thứ đã mua'},{f:'[きれいな]はな',b:'hoa đẹp (な giữ な)'},{f:'mệnh đề tương đối',b:'PHẢI ở thể thường!'}]);
+makeFlashcards('fg53',[{f:'〜らしい',b:'hình như / đúng chất'},{f:'〜ようだ',b:'có vẻ như (quan sát)'},{f:'〜はずだ',b:'chắc là (theo logic)'},{f:'〜わけだ',b:'vậy là / kết luận'},{f:'〜ものだ',b:'vốn dĩ / ngày xưa hay...'}]);
+makeFlashcards('fg54',[{f:'関係',b:'かんけい — quan hệ'},{f:'場合',b:'ばあい — trường hợp'},{f:'感じる',b:'かんじる — cảm thấy'},{f:'決める',b:'きめる — quyết định'},{f:'必要',b:'ひつよう — cần thiết'},{f:'以上',b:'いじょう — trở lên'},{f:'変化',b:'へんか — thay đổi'}]);
+
+/* ===== QUIZ N4 ===== */
+function runQuizN4(){
+  const form=document.getElementById('qfn4');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi, xem lại nhé.';}
+  });
+  const r=document.getElementById('qrn4');r.style.border='2px solid';
+  const pct=Math.round(score/20*100);
+  if(score>=16){r.style.borderColor='#3F8C5C';r.innerHTML=`🏆 <b>${score}/20 (${pct}%)</b> — XUẤT SẮC! Vượt chuẩn N4. Tiếp tục chinh phục N3→N2!`;}
+  else if(score>=14){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/20 (${pct}%)</b> — ĐẠT CHUẨN N4 (70%)!`;}
+  else if(score>=10){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/20 (${pct}%)</b> — Gần đạt. Ôn thêm 2 tuần rồi thử lại!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/20 (${pct}%)</b> — Cần ôn thêm. Xem lại Bài 42–54!`;}
+}
+
+/* ===== FLASHCARDS BÀI 81-100 ===== */
+makeFlashcards('fg81',[
+  {f:'〜をよそに',b:'bất chấp ~/mặc kệ ~ (lo lắng người khác)'},
+  {f:'〜もかまわず',b:'bất chấp ~/không quan tâm đến ~'},
+  {f:'〜をものともせず',b:'không nao núng trước ~ (dũng cảm)'},
+  {f:'〜をいいことに',b:'lợi dụng ~ (sắc thái phê phán)'},
+  {f:'〜をめぐって',b:'xung quanh vấn đề ~'},
+  {f:'よそに vs もかまわず',b:'よそ=mặc kệ cảm xúc · もかまわず=bất chấp hậu quả'}
+]);
+makeFlashcards('fg82',[
+  {f:'〜とあって',b:'do là ~ (kết quả tự nhiên)'},
+  {f:'〜とあれば',b:'nếu là ~ (điều kiện đặc biệt)'},
+  {f:'〜とあっては',b:'trong hoàn cảnh ~ thì ~'},
+  {f:'〜とはいえ',b:'tuy rằng ~ (thừa nhận)'},
+  {f:'〜というものだ',b:'mới thực sự là ~ / đó chính là ~'},
+  {f:'連休とあって混んでいる',b:'do là nghỉ dài nên đông người'}
+]);
+makeFlashcards('fg83',[
+  {f:'〜ともなると',b:'khi đã đến mức ~ (trách nhiệm lớn)'},
+  {f:'〜ともなれば',b:'khi đã vào ~ (thay đổi tự nhiên)'},
+  {f:'〜ともなく',b:'một cách vô thức ~/không chủ đích'},
+  {f:'〜に足る',b:'xứng đáng ~/đủ để ~'},
+  {f:'〜に越したことはない',b:'không gì bằng ~/tốt nhất vẫn là ~'},
+  {f:'〜ないまでも',b:'dù không đến mức ~/ít nhất cũng ~'}
+]);
+makeFlashcards('fg84',[
+  {f:'〜ではあるまいし',b:'không phải ~ mà (phê phán)'},
+  {f:'〜まじき',b:'không thể chấp nhận ~ (vi phạm chuẩn mực)'},
+  {f:'〜べきだ',b:'nên ~ (nghĩa vụ theo lý trí)'},
+  {f:'〜べきではない',b:'không nên ~'},
+  {f:'〜ずにはすまない',b:'không thể không ~ (lương tâm đòi)'},
+  {f:'〜てしかるべきだ',b:'xứng đáng được ~/là điều đương nhiên nên ~'}
+]);
+makeFlashcards('fg85',[
+  {f:'〜にほかならない',b:'chính là ~/không gì khác là ~'},
+  {f:'〜にすぎない',b:'chỉ là ~/không hơn gì ~'},
+  {f:'〜とはいうものの',b:'tuy nói là ~ nhưng thực tế ~'},
+  {f:'〜と言わざるを得ない',b:'không thể không nói rằng ~'},
+  {f:'〜とみえる',b:'có vẻ như ~ (khách quan)'},
+  {f:'〜に相違ない',b:'chắc chắn là ~ (trang trọng)'}
+]);
+makeFlashcards('fg86',[
+  {f:'仮説',b:'かせつ — giả thuyết'},
+  {f:'実証',b:'じっしょう — thực chứng'},
+  {f:'分析',b:'ぶんせき — phân tích'},
+  {f:'統計',b:'とうけい — thống kê'},
+  {f:'客観的',b:'きゃっかんてき — khách quan'},
+  {f:'論理的',b:'ろんりてき — có tính logic'},
+  {f:'妥当',b:'だとう — thích đáng, hợp lý'},
+  {f:'貢献',b:'こうけん — đóng góp'}
+]);
+makeFlashcards('fg87',[
+  {f:'葛藤',b:'かっとう — mâu thuẫn nội tâm'},
+  {f:'焦り',b:'あせり — sự nóng lòng, hấp tấp'},
+  {f:'達成感',b:'たっせいかん — cảm giác hoàn thành'},
+  {f:'劣等感',b:'れっとうかん — mặc cảm tự ti'},
+  {f:'孤独感',b:'こどくかん — cảm giác cô đơn'},
+  {f:'共感',b:'きょうかん — đồng cảm'},
+  {f:'充実感',b:'じゅうじつかん — cảm giác trọn vẹn'},
+  {f:'疎外感',b:'そがいかん — cảm giác bị gạt ra ngoài'}
+]);
+makeFlashcards('fg88',[
+  {f:'規制',b:'きせい — quy định, kiểm soát'},
+  {f:'義務',b:'ぎむ — nghĩa vụ'},
+  {f:'権利',b:'けんり — quyền lợi'},
+  {f:'改革',b:'かいかく — cải cách'},
+  {f:'撤廃',b:'てっぱい — bãi bỏ'},
+  {f:'是正',b:'ぜせい — chỉnh sửa, khắc phục'},
+  {f:'実施',b:'じっし — thực thi'},
+  {f:'整備',b:'せいび — hoàn thiện'}
+]);
+makeFlashcards('fg96',[
+  {f:'〜に沿って',b:'theo ~/phù hợp với ~'},
+  {f:'〜に基づいて',b:'dựa trên ~/căn cứ vào ~'},
+  {f:'〜を踏まえて',b:'dựa trên ~/tính đến ~ (từ thực tế)'},
+  {f:'〜に即して',b:'phù hợp sát với ~/đúng theo ~'},
+  {f:'〜を通じて',b:'thông qua ~/suốt ~'},
+  {f:'〜を前提に',b:'lấy ~ làm tiền đề/điều kiện trước'}
+]);
+
+/* ===== SIÊU QUIZ N2 (30 câu) ===== */
+function runSuperQuiz(){
+  const form=document.getElementById('qfsuper');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}
+  });
+  const r=document.getElementById('qrsuper');r.style.border='2px solid';
+  const pct=Math.round(score/30*100);
+  if(score>=26){r.style.borderColor='#3F8C5C';r.innerHTML=`🏆 <b>${score}/30 (${pct}%)</b> — XUẤT SẮC TUYỆT VỜI! Bạn chắc chắn sẽ đậu N2!`;}
+  else if(score>=21){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/30 (${pct}%)</b> — ĐẠT CHUẨN (70%). Sẵn sàng thi thật! 頑張って！`;}
+  else if(score>=15){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/30 (${pct}%)</b> — Gần đạt. Ôn thêm Chương 9 rồi thử lại!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/30 (${pct}%)</b> — Cần ôn thêm. Xem lại toàn bộ ngữ pháp N2 và SRS hằng ngày!`;}
+}
+
+/* ===== QUIZ N2 ĐỀ 4 ===== */
+function runQuizN2E4(){
+  const form=document.getElementById('qfn2e4');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}
+  });
+  const r=document.getElementById('qrn2e4');r.style.border='2px solid';
+  const pct=Math.round(score/10*100);
+  if(score>=9){r.style.borderColor='#3F8C5C';r.innerHTML=`🏆 <b>${score}/10 (${pct}%)</b> — Xuất sắc! N2 đã nằm trong tầm tay!`;}
+  else if(score>=7){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/10 (${pct}%)</b> — Tốt lắm! Tiếp tục ôn luyện.`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/10 (${pct}%)</b> — Xem lại Chương 9 và thử lại!`;}
+}
+makeFlashcards('fg71',[
+  {f:'〜てはじめて',b:'chỉ sau khi ~ mới nhận ra/biết được'},
+  {f:'〜からといって',b:'dù là ~ cũng không có nghĩa là ~'},
+  {f:'〜にしても',b:'dù ~ đi nữa cũng ~'},
+  {f:'AにしてもBにしても',b:'dù A hay B cũng ~'},
+  {f:'〜にしろ/にせよ',b:'dù ~ thế nào (cứng hơn にしても)'},
+  {f:'〜わけにはいかない',b:'không thể ~ được (đạo đức/xã hội)'},
+  {f:'わけ vs ざるを得ない',b:'わけ=đạo đức ngăn · ざるを得ない=ngoại lực bắt buộc'},
+  {f:'子どもを持ってはじめて',b:'chỉ sau khi có con mới hiểu...'}
+]);
+makeFlashcards('fg72',[
+  {f:'Vた上で',b:'sau khi ~ rồi (hoàn thành trước)'},
+  {f:'Nの上で',b:'trên phương diện ~ / trong lĩnh vực ~'},
+  {f:'〜上は',b:'đã ~ rồi thì phải ~ (cam kết)'},
+  {f:'〜以上は',b:'một khi đã ~ thì ~ (trách nhiệm mạnh)'},
+  {f:'〜をもとに',b:'dựa trên ~ (nguyên liệu/nguồn gốc)'},
+  {f:'〜にもとづいて',b:'căn cứ vào ~ (trang trọng, quy định)'},
+  {f:'〜をきっかけに',b:'nhân cơ duyên ~ (bước ngoặt)'},
+  {f:'参加する以上は',b:'đã tham gia thì phải cố hết sức'}
+]);
+makeFlashcards('fg73',[
+  {f:'〜反面(で)',b:'mặt khác / ngược lại (cùng chủ thể)'},
+  {f:'〜ことなく',b:'mà không ~ / không một lần ~'},
+  {f:'〜ながらも',b:'mặc dù ~ (đang trong tình trạng đó) nhưng ~'},
+  {f:'〜かのように',b:'như thể là ~ (thực ra không phải)'},
+  {f:'〜ぬきに',b:'không có ~ / gác lại ~'},
+  {f:'反面 vs 一方で',b:'反面=cùng chủ thể · 一方で=có thể khác chủ thể'},
+  {f:'冗談はぬきにして',b:'gác chuyện đùa lại, nói nghiêm túc nào'},
+  {f:'知りながらも言わなかった',b:'biết nhưng vẫn không nói'}
+]);
+
+/* ===== QUIZ N2 ĐỀ 3 ===== */
+function runQuizN2E3(){
+  const form=document.getElementById('qfn2e3');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}
+  });
+  const r=document.getElementById('qrn2e3');r.style.border='2px solid';
+  const pct=Math.round(score/20*100);
+  if(score>=17){r.style.borderColor='#3F8C5C';r.innerHTML=`🏆 <b>${score}/20 (${pct}%)</b> — XUẤT SẮC! Bạn đã sẵn sàng thi N2 thật!`;}
+  else if(score>=14){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/20 (${pct}%)</b> — ĐẠT CHUẨN (70%). Ôn lại phần sai rồi đăng ký thi thôi!`;}
+  else if(score>=10){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/20 (${pct}%)</b> — Gần đạt. Ôn Chương 7–8 thêm 2 tuần!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/20 (${pct}%)</b> — Cần ôn thêm. Xem lại Bài 61–79 một lần nữa!`;}
+}
+makeFlashcards('fg61',[
+  {f:'〜を皮切りに',b:'lấy ~ làm điểm khởi đầu'},
+  {f:'〜を機に',b:'nhân dịp ~ (thay đổi tích cực)'},
+  {f:'〜に際して',b:'vào dịp ~ (trang trọng)'},
+  {f:'〜にあたって',b:'trước khi thực hiện ~'},
+  {f:'〜を契機に',b:'lấy ~ làm bước ngoặt'},
+  {f:'〜に限り',b:'chỉ riêng ~ (giới hạn)'},
+  {f:'〜の限り',b:'trong phạm vi ~/hết sức có thể'},
+  {f:'〜をはじめ',b:'bắt đầu với ~ và nhiều thứ khác'},
+  {f:'〜からすると',b:'nhìn từ góc độ ~'},
+  {f:'〜に対して',b:'đối với ~/trái lại ~'}
+]);
+makeFlashcards('fg62',[
+  {f:'〜かねる',b:'khó lòng làm ~ (từ chối lịch sự)'},
+  {f:'〜かねない',b:'có thể ~ (lo ngại xảy ra xấu)'},
+  {f:'〜ざるを得ない',b:'buộc phải ~/không có lựa chọn'},
+  {f:'〜ずにはいられない',b:'không kìm được mà ~/không thể không'},
+  {f:'〜に違いない',b:'chắc chắn là ~'},
+  {f:'〜までもない',b:'không cần phải ~ (hiển nhiên)'},
+  {f:'〜はおろか',b:'~ thì không nói gì, ngay cả ~'},
+  {f:'かねる vs かねない',b:'かねる=không thể · かねない=có thể xảy ra xấu'}
+]);
+makeFlashcards('fg63',[
+  {f:'〜てならない',b:'cứ ~ mãi (cảm xúc tự nhiên dâng lên)'},
+  {f:'〜てたまらない',b:'~ quá không chịu nổi (thể chất/tâm lý)'},
+  {f:'〜てしょうがない',b:'~ không làm sao được (thoải mái hơn)'},
+  {f:'〜に加えて',b:'thêm vào ~/hơn nữa ~'},
+  {f:'〜のみならず',b:'không chỉ ~ mà còn (trang trọng)'},
+  {f:'〜ばかりか',b:'không chỉ ~ mà còn (bất ngờ/vượt trội)'},
+  {f:'〜あまり(に)',b:'do quá ~ mà (kết quả ngoài ý muốn)'},
+  {f:'〜たあげく',b:'sau khi ~ mãi rồi (kết quả thường xấu)'},
+  {f:'〜末(に)',b:'sau ~ rồi cuối cùng (trung lập)'},
+  {f:'〜一方(で)',b:'trong khi đó ~/mặt khác ~'}
+]);
+makeFlashcards('fg64',[
+  {f:'制度',b:'せいど — chế độ, hệ thống'},
+  {f:'政策',b:'せいさく — chính sách'},
+  {f:'影響',b:'えいきょう — ảnh hưởng'},
+  {f:'格差',b:'かくさ — khoảng cách, bất bình đẳng'},
+  {f:'需要と供給',b:'じゅようときょうきゅう — cung và cầu'},
+  {f:'競争',b:'きょうそう — cạnh tranh'},
+  {f:'環境問題',b:'かんきょうもんだい — vấn đề môi trường'},
+  {f:'温暖化',b:'おんだんか — nóng lên toàn cầu'},
+  {f:'主張',b:'しゅちょう — lập luận, khẳng định'},
+  {f:'根拠',b:'こんきょ — căn cứ, cơ sở'}
+]);
+
+/* ===== KANJI N2 GRID ===== */
+const kanjiN2Data=[
+  {k:'普及',on:'フキュウ',kun:'ふきゅう',m:'phổ cập, lan rộng',ex:'スマホの普及・普及率'},
+  {k:'拡大',on:'カクダイ',kun:'ひろがる',m:'mở rộng, phóng to',ex:'市場拡大・格差の拡大'},
+  {k:'縮小',on:'シュクショウ',kun:'ちぢむ',m:'thu nhỏ, giảm',ex:'予算縮小・事業縮小'},
+  {k:'維持',on:'イジ',kun:'いじする',m:'duy trì, giữ gìn',ex:'現状維持・体力維持'},
+  {k:'促進',on:'ソクシン',kun:'うながす',m:'xúc tiến, thúc đẩy',ex:'経済促進・健康促進'},
+  {k:'抑制',on:'ヨクセイ',kun:'おさえる',m:'kiềm chế, ức chế',ex:'感情抑制・犯罪抑制'},
+  {k:'改善',on:'カイゼン',kun:'よくなる',m:'cải thiện',ex:'環境改善・業務改善'},
+  {k:'悪化',on:'アッカ',kun:'わるくなる',m:'xấu đi, trầm trọng hơn',ex:'病状悪化・関係悪化'},
+  {k:'解決',on:'カイケツ',kun:'とく',m:'giải quyết',ex:'問題解決・紛争解決'},
+  {k:'発生',on:'ハッセイ',kun:'おこる',m:'phát sinh, xảy ra',ex:'事故発生・問題発生'},
+  {k:'原因',on:'ゲンイン',kun:'もと',m:'nguyên nhân',ex:'原因究明・根本原因'},
+  {k:'結果',on:'ケッカ',kun:'—',m:'kết quả',ex:'調査結果・最終結果'},
+  {k:'影響',on:'エイキョウ',kun:'—',m:'ảnh hưởng',ex:'悪影響・影響を与える'},
+  {k:'対策',on:'タイサク',kun:'—',m:'biện pháp đối phó',ex:'温暖化対策・防犯対策'},
+  {k:'方針',on:'ホウシン',kun:'—',m:'phương hướng, chính sách',ex:'経営方針・教育方針'},
+  {k:'目標',on:'モクヒョウ',kun:'めあて',m:'mục tiêu',ex:'達成目標・長期目標'},
+  {k:'実現',on:'ジツゲン',kun:'かなう',m:'thực hiện, hiện thực hóa',ex:'夢の実現・目標実現'},
+  {k:'批判',on:'ヒハン',kun:'—',m:'chỉ trích, phê phán',ex:'厳しい批判・批判を受ける'},
+  {k:'評価',on:'ヒョウカ',kun:'—',m:'đánh giá, nhận xét',ex:'高い評価・自己評価'},
+  {k:'判断',on:'ハンダン',kun:'—',m:'phán đoán, quyết định',ex:'状況判断・適切な判断'},
+  {k:'認識',on:'ニンシキ',kun:'みとめる',m:'nhận thức, nhận ra',ex:'問題認識・共通認識'},
+  {k:'意識',on:'イシキ',kun:'—',m:'ý thức, nhận thức',ex:'環境意識・問題意識'},
+  {k:'主張',on:'シュチョウ',kun:'となえる',m:'lập luận, chủ trương',ex:'筆者の主張・強く主張する'},
+  {k:'根拠',on:'コンキョ',kun:'—',m:'căn cứ, cơ sở',ex:'科学的根拠・根拠を示す'},
+  {k:'前提',on:'ゼンテイ',kun:'—',m:'tiền đề, điều kiện trước',ex:'大前提・前提条件'},
+  {k:'矛盾',on:'ムジュン',kun:'—',m:'mâu thuẫn',ex:'矛盾を感じる・自己矛盾'},
+  {k:'概念',on:'ガイネン',kun:'—',m:'khái niệm',ex:'新しい概念・基本概念'},
+  {k:'観点',on:'カンテン',kun:'みかた',m:'quan điểm, góc nhìn',ex:'別の観点・歴史的観点'},
+  {k:'傾向',on:'ケイコウ',kun:'かたむく',m:'xu hướng, thiên hướng',ex:'近年の傾向・傾向と対策'},
+  {k:'背景',on:'ハイケイ',kun:'—',m:'bối cảnh, nền tảng',ex:'歴史的背景・事件の背景'},
+  {k:'課題',on:'カダイ',kun:'—',m:'nhiệm vụ, vấn đề cần giải quyết',ex:'重要な課題・課題解決'},
+  {k:'格差',on:'カクサ',kun:'—',m:'khoảng cách, bất bình đẳng',ex:'経済格差・南北格差'},
+  {k:'制度',on:'セイド',kun:'—',m:'chế độ, hệ thống',ex:'社会制度・年金制度'},
+  {k:'政策',on:'セイサク',kun:'—',m:'chính sách',ex:'経済政策・教育政策'},
+  {k:'議論',on:'ギロン',kun:'—',m:'tranh luận, thảo luận',ex:'活発な議論・議論する'},
+  {k:'状況',on:'ジョウキョウ',kun:'—',m:'tình trạng, hoàn cảnh',ex:'現在の状況・緊急状況'},
+  {k:'現象',on:'ゲンショウ',kun:'—',m:'hiện tượng',ex:'社会現象・自然現象'},
+  {k:'特徴',on:'トクチョウ',kun:'—',m:'đặc trưng, đặc điểm',ex:'文化の特徴・主な特徴'},
+  {k:'共通',on:'キョウツウ',kun:'—',m:'chung, phổ biến',ex:'共通点・共通認識'},
+  {k:'独自',on:'ドクジ',kun:'—',m:'độc đáo, riêng của mình',ex:'独自の方法・独自文化'}
+];
+buildKanjiGrid(kanjiN2Data,'kanjiN2Grid');
+
+/* ===== QUIZ N2 ĐỀ 1 ===== */
+function runQuizN2E1(){
+  const form=document.getElementById('qfn2e1');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}
+  });
+  const r=document.getElementById('qrn2e1');r.style.border='2px solid';
+  const pct=Math.round(score/25*100);
+  if(score>=22){r.style.borderColor='#3F8C5C';r.innerHTML=`🏆 <b>${score}/25 (${pct}%)</b> — XUẤT SẮC! Bạn đạt trình độ N2 chắc chắn!`;}
+  else if(score>=18){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/25 (${pct}%)</b> — ĐẠT CHUẨN N2 (72%). Sẵn sàng thi thật!`;}
+  else if(score>=13){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/25 (${pct}%)</b> — Gần đạt N2. Ôn lại Bài 61–64 rồi thử lại!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/25 (${pct}%)</b> — Cần ôn thêm. Tập trung ngữ pháp N2 và SRS hằng ngày!`;}
+}
+/* ===== QUIZ N2 ĐỀ 2 ===== */
+function runQuizN2E2(){
+  const form=document.getElementById('qfn2e2');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}
+  });
+  const r=document.getElementById('qrn2e2');r.style.border='2px solid';
+  const pct=Math.round(score/10*100);
+  if(score>=9){r.style.borderColor='#3F8C5C';r.innerHTML=`🏆 <b>${score}/10 (${pct}%)</b> — Xuất sắc! N2 trong tầm tay!`;}
+  else if(score>=7){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/10 (${pct}%)</b> — Tốt lắm! Tiếp tục ôn luyện.`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/10 (${pct}%)</b> — Xem lại phần giải thích chi tiết bên dưới!`;}
+}
+makeFlashcards('fg56',[{f:'ことにする',b:'tự quyết định làm'},{f:'ことになる',b:'được quyết định (hoàn cảnh)'},{f:'ようにする',b:'cố gắng để...'},{f:'ようになる',b:'dần dần có thể...'},{f:'うんどうすることにした',b:'đã quyết định tập thể dục'},{f:'はなせるようになった',b:'đã có thể nói được rồi'}]);
+makeFlashcards('fg57',[{f:'〜てほしい',b:'muốn người khác làm cho mình'},{f:'〜といいですね',b:'mong là... (chúc)'},{f:'ればよかった',b:'giá mà đã làm...'},{f:'なければよかった',b:'giá mà đã không làm...'},{f:'はずがない',b:'không thể nào là...'},{f:'てほしい vs たい',b:'người khác làm vs mình làm'}]);
+makeFlashcards('fg58',[{f:'において',b:'trong / tại (trang trọng hơn で)'},{f:'に関して',b:'liên quan đến / về...'},{f:'に対して',b:'đối với / hướng về'},{f:'によって',b:'tùy theo / do / bằng cách'},{f:'をめぐって',b:'xung quanh vấn đề...'},{f:'を通じて',b:'thông qua'}]);
+makeFlashcards('fg59',[{f:'にもかかわらず',b:'bất chấp / mặc dù (đối lập mạnh)'},{f:'にしては',b:'xét theo... thì lại bất ngờ'},{f:'わりに',b:'so với... thì / xét ra thì'},{f:'うえに',b:'hơn nữa / thêm vào đó'},{f:'だけでなく〜も',b:'không chỉ... mà còn...'},{f:'ものの',b:'tuy rằng / mặc dù (nhưng...)'},{f:'からこそ',b:'chính vì... mà'}]);
+
+/* ===== QUIZ N3 ===== */
+function runQuizN3(){
+  const form=document.getElementById('qfn3');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi, xem lại nhé.';}
+  });
+  const r=document.getElementById('qrn3');r.style.border='2px solid';
+  const pct=Math.round(score/15*100);
+  if(score>=13){r.style.borderColor='#3F8C5C';r.innerHTML=`🏆 <b>${score}/15 (${pct}%)</b> — XUẤT SẮC! Bạn đã vượt chuẩn N3. Bắt đầu xung kích N2 tháng 9!`;}
+  else if(score>=11){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/15 (${pct}%)</b> — ĐẠT CHUẨN N3 (73%)! Sẵn sàng tiến lên N2.`;}
+  else if(score>=8){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/15 (${pct}%)</b> — Gần đạt N3. Ôn lại Chương 5–6 rồi thử lại!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/15 (${pct}%)</b> — Cần ôn thêm. Tập trung vào ngữ pháp N3 và SRS hằng ngày!`;}
+}
+
+/* ===== BẢNG CHỮ CÁI JS ===== */
+function showKanaPanel(id, btn){
+  document.querySelectorAll('.kana-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.kana-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function searchKana(val){
+  const v=val.trim().toLowerCase();
+  document.querySelectorAll('.kana-cell-full:not(.empty)').forEach(c=>{
+    c.classList.remove('highlight-card');
+    if(v && (c.dataset.roma||'').includes(v)) c.classList.add('highlight-card');
+  });
+  document.querySelectorAll('.kanji-ref-card').forEach(c=>{
+    c.classList.remove('highlight-card');
+    const t=c.textContent.toLowerCase();
+    if(v && t.includes(v)) c.classList.add('highlight-card');
+  });
+}
+
+// Kanji data N5
+const kanjiN5Data=[
+  {k:'人',on:'ジン・ニン',kun:'ひと',m:'người',ex:'にほんじん'},
+  {k:'日',on:'ニチ・ジツ',kun:'ひ・か',m:'ngày/mặt trời',ex:'まいにち・きょう'},
+  {k:'月',on:'ゲツ・ガツ',kun:'つき',m:'tháng/trăng',ex:'いちがつ・つき'},
+  {k:'年',on:'ネン',kun:'とし',m:'năm',ex:'ことし・らいねん'},
+  {k:'時',on:'ジ',kun:'とき',m:'giờ/thời gian',ex:'じかん・ときどき'},
+  {k:'分',on:'ブン・フン',kun:'わかる',m:'phút/hiểu',ex:'さんじっぷん'},
+  {k:'今',on:'コン・キン',kun:'いま',m:'bây giờ',ex:'いま・こんにちは'},
+  {k:'何',on:'カ',kun:'なに・なん',m:'cái gì/bao nhiêu',ex:'なにをする？'},
+  {k:'山',on:'サン',kun:'やま',m:'núi',ex:'ふじさん'},
+  {k:'川',on:'セン',kun:'かわ',m:'sông',ex:'かわ'},
+  {k:'海',on:'カイ',kun:'うみ',m:'biển',ex:'うみへいく'},
+  {k:'空',on:'クウ',kun:'そら',m:'bầu trời/rỗng',ex:'くうこう=sân bay'},
+  {k:'水',on:'スイ',kun:'みず',m:'nước',ex:'みず・すいようび'},
+  {k:'火',on:'カ',kun:'ひ',m:'lửa',ex:'ひ・かようび'},
+  {k:'木',on:'モク',kun:'き',m:'cây/gỗ',ex:'き・もくようび'},
+  {k:'花',on:'カ',kun:'はな',m:'hoa',ex:'はなみ=ngắm hoa'},
+  {k:'雨',on:'ウ',kun:'あめ',m:'mưa',ex:'あめがふる'},
+  {k:'上',on:'ジョウ',kun:'うえ',m:'trên',ex:'うえ・じょうず'},
+  {k:'下',on:'カ',kun:'した',m:'dưới',ex:'した・ちか'},
+  {k:'中',on:'チュウ',kun:'なか',m:'trong/giữa',ex:'なか・ちゅうごく'},
+  {k:'右',on:'ウ',kun:'みぎ',m:'phải',ex:'みぎ・うせつ'},
+  {k:'左',on:'サ',kun:'ひだり',m:'trái',ex:'ひだり・させつ'},
+  {k:'前',on:'ゼン',kun:'まえ',m:'trước',ex:'まえ・ごぜん'},
+  {k:'後',on:'ゴ',kun:'あと・うしろ',m:'sau',ex:'ごご・うしろ'},
+  {k:'大',on:'ダイ・タイ',kun:'おおきい',m:'lớn/to',ex:'おおきい・だいがく'},
+  {k:'小',on:'ショウ',kun:'ちいさい',m:'nhỏ',ex:'ちいさい・しょうがっこう'},
+  {k:'高',on:'コウ',kun:'たかい',m:'cao/đắt',ex:'たかい・こうこう'},
+  {k:'安',on:'アン',kun:'やすい',m:'rẻ/yên tâm',ex:'やすい・あんしん'},
+  {k:'新',on:'シン',kun:'あたらしい',m:'mới',ex:'あたらしい・しんかんせん'},
+  {k:'古',on:'コ',kun:'ふるい',m:'cũ',ex:'ふるい・こだい'},
+  {k:'長',on:'チョウ',kun:'ながい',m:'dài',ex:'ながい・ちょうじょ'},
+  {k:'食',on:'ショク',kun:'たべる',m:'ăn/thức ăn',ex:'たべる・しょくじ'},
+  {k:'飲',on:'イン',kun:'のむ',m:'uống',ex:'のむ・のみもの'},
+  {k:'見',on:'ケン',kun:'みる',m:'xem/nhìn',ex:'みる・けんがく'},
+  {k:'聞',on:'ブン',kun:'きく',m:'nghe/hỏi',ex:'きく・しんぶん'},
+  {k:'言',on:'ゲン',kun:'いう',m:'nói',ex:'いう・ことば'},
+  {k:'書',on:'ショ',kun:'かく',m:'viết',ex:'かく・しょどう'},
+  {k:'読',on:'ドク',kun:'よむ',m:'đọc',ex:'よむ・どくしょ'},
+  {k:'来',on:'ライ',kun:'くる',m:'đến/lại',ex:'くる・らいしゅう'},
+  {k:'行',on:'コウ',kun:'いく',m:'đi',ex:'いく・ぎんこう'},
+  {k:'帰',on:'キ',kun:'かえる',m:'về/trở lại',ex:'かえる・きこく'},
+  {k:'学',on:'ガク',kun:'まなぶ',m:'học',ex:'がくせい・がっこう'},
+  {k:'校',on:'コウ',kun:'—',m:'trường',ex:'がっこう・こうちょう'},
+  {k:'語',on:'ゴ',kun:'かたる',m:'ngôn ngữ',ex:'にほんご・ものがたり'},
+  {k:'先',on:'セン',kun:'さき',m:'trước/tiên',ex:'せんせい・せんしゅう'},
+  {k:'生',on:'セイ',kun:'いきる',m:'sống/sinh',ex:'がくせい・たんじょうび'},
+  {k:'父',on:'フ',kun:'ちち',m:'bố (mình)',ex:'ちち・おとうさん'},
+  {k:'母',on:'ボ',kun:'はは',m:'mẹ (mình)',ex:'はは・おかあさん'},
+  {k:'子',on:'シ',kun:'こ',m:'trẻ em/con',ex:'こども・おとこのこ'},
+  {k:'友',on:'ユウ',kun:'とも',m:'bạn bè',ex:'ともだち・ゆうじん'},
+  {k:'家',on:'カ・ケ',kun:'いえ・うち',m:'nhà/gia đình',ex:'いえ・かぞく'},
+  {k:'門',on:'モン',kun:'かど',m:'cổng',ex:'もんだい=vấn đề'},
+  {k:'東',on:'トウ',kun:'ひがし',m:'đông',ex:'とうきょう・ひがし'},
+  {k:'西',on:'セイ',kun:'にし',m:'tây',ex:'にし・かんさい'},
+  {k:'南',on:'ナン',kun:'みなみ',m:'nam',ex:'みなみ・なんきょく'},
+  {k:'北',on:'ホク',kun:'きた',m:'bắc',ex:'きた・ほっかいどう'},
+  {k:'国',on:'コク',kun:'くに',m:'nước',ex:'くに・にほん・がいこく'},
+  {k:'電',on:'デン',kun:'—',m:'điện',ex:'でんわ・でんしゃ・でんき'},
+  {k:'車',on:'シャ',kun:'くるま',m:'xe',ex:'くるま・でんしゃ'},
+  {k:'駅',on:'エキ',kun:'—',m:'nhà ga',ex:'えき・しゅうてんえき'},
+  {k:'店',on:'テン',kun:'みせ',m:'cửa hàng',ex:'みせ・レストラン'},
+  {k:'道',on:'ドウ',kun:'みち',m:'đường',ex:'みち・どうろ'},
+  {k:'魚',on:'ギョ',kun:'さかな',m:'cá',ex:'さかな・きんぎょ'},
+  {k:'肉',on:'ニク',kun:'—',m:'thịt',ex:'ぎゅうにく・ぶたにく'},
+  {k:'米',on:'ベイ',kun:'こめ',m:'gạo/Mỹ',ex:'こめ・アメリカ=米国'},
+  {k:'雪',on:'セツ',kun:'ゆき',m:'tuyết',ex:'ゆき・おおゆき'},
+  {k:'半',on:'ハン',kun:'なかば',m:'nửa',ex:'さんじはん・はんぶん'},
+  {k:'百',on:'ヒャク',kun:'—',m:'trăm',ex:'ひゃくえん・さんびゃく'},
+  {k:'千',on:'セン',kun:'—',m:'nghìn',ex:'いっせん・せんえん'},
+  {k:'万',on:'マン',kun:'—',m:'vạn',ex:'いちまん・まんえん'},
+  {k:'円',on:'エン',kun:'—',m:'tròn/yên',ex:'えん・ひゃくえん'},
+  {k:'本',on:'ホン',kun:'もと',m:'sách/gốc',ex:'ほん・にほん・いっぽん'},
+  {k:'名',on:'メイ',kun:'な',m:'tên/nổi tiếng',ex:'なまえ・ゆうめい'},
+  {k:'白',on:'ハク',kun:'しろ',m:'trắng',ex:'しろい・はくし'},
+  {k:'黒',on:'コク',kun:'くろ',m:'đen',ex:'くろい・こっかい'},
+  {k:'赤',on:'セキ',kun:'あか',m:'đỏ',ex:'あかい・あかちゃん'},
+  {k:'青',on:'セイ',kun:'あお',m:'xanh',ex:'あおい・あおしんごう'},
+  {k:'目',on:'モク',kun:'め',m:'mắt',ex:'め・めがね'},
+  {k:'耳',on:'ジ',kun:'みみ',m:'tai',ex:'みみ・ちゅうじ'},
+  {k:'口',on:'コウ',kun:'くち',m:'miệng/cửa',ex:'くち・いりぐち'}
+];
+
+// Kanji N4 data
+const kanjiN4Data=[
+  {k:'働',on:'ドウ',kun:'はたらく',m:'làm việc',ex:'はたらく・ろうどう'},
+  {k:'始',on:'シ',kun:'はじまる',m:'bắt đầu',ex:'はじめる・はじまる'},
+  {k:'終',on:'シュウ',kun:'おわる',m:'kết thúc',ex:'おわる・しゅうまつ'},
+  {k:'使',on:'シ',kun:'つかう',m:'sử dụng',ex:'つかう・しよう'},
+  {k:'教',on:'キョウ',kun:'おしえる',m:'dạy/giáo',ex:'おしえる・きょうしつ'},
+  {k:'習',on:'シュウ',kun:'ならう',m:'học tập',ex:'ならう・れんしゅう'},
+  {k:'待',on:'タイ',kun:'まつ',m:'chờ đợi',ex:'まつ・きたい'},
+  {k:'知',on:'チ',kun:'しる',m:'biết',ex:'しる・ちしき'},
+  {k:'強',on:'キョウ',kun:'つよい',m:'mạnh',ex:'つよい・べんきょう'},
+  {k:'急',on:'キュウ',kun:'いそぐ',m:'gấp/vội',ex:'いそぐ・きゅうに'},
+  {k:'重',on:'ジュウ',kun:'おもい',m:'nặng/quan trọng',ex:'おもい・じゅうよう'},
+  {k:'特',on:'トク',kun:'—',m:'đặc biệt',ex:'とくべつ・とっきゅう'},
+  {k:'会',on:'カイ',kun:'あう',m:'gặp/hội',ex:'あう・かいしゃ・かいぎ'},
+  {k:'社',on:'シャ',kun:'—',m:'công ty/xã hội',ex:'かいしゃ・しゃちょう'},
+  {k:'病',on:'ビョウ',kun:'やむ',m:'bệnh',ex:'びょうき・びょういん'},
+  {k:'医',on:'イ',kun:'—',m:'y tế',ex:'いしゃ・いがく'},
+  {k:'銀',on:'ギン',kun:'—',m:'bạc/ngân hàng',ex:'ぎんこう・ぎんいろ'},
+  {k:'駅',on:'エキ',kun:'—',m:'nhà ga',ex:'えき・しゅうてんえき'},
+  {k:'送',on:'ソウ',kun:'おくる',m:'gửi/tiễn',ex:'おくる・そうしん'},
+  {k:'受',on:'ジュ',kun:'うける',m:'nhận',ex:'うける・じゅけん'},
+  {k:'決',on:'ケツ',kun:'きめる',m:'quyết định',ex:'きめる・けってい'},
+  {k:'続',on:'ゾク',kun:'つづく',m:'tiếp tục',ex:'つづく・けいぞく'},
+  {k:'変',on:'ヘン',kun:'かわる',m:'thay đổi',ex:'かわる・へんか'},
+  {k:'感',on:'カン',kun:'かんじる',m:'cảm giác',ex:'かんじる・かんどう'},
+  {k:'思',on:'シ',kun:'おもう',m:'nghĩ/cảm',ex:'おもう・おもいで'},
+  {k:'考',on:'コウ',kun:'かんがえる',m:'suy nghĩ',ex:'かんがえる'},
+  {k:'必',on:'ヒツ',kun:'かならず',m:'nhất định',ex:'かならず・ひつよう'},
+  {k:'以',on:'イ',kun:'—',m:'dĩ/hơn',ex:'いじょう・いか・いない'},
+  {k:'関',on:'カン',kun:'せき',m:'liên quan',ex:'かんけい・かんしん'},
+  {k:'場',on:'ジョウ',kun:'ば',m:'nơi chốn',ex:'ばあい・しごとば'}
+];
+
+function buildKanjiGrid(data, gridId){
+  const g=document.getElementById(gridId);
+  if(!g)return;
+  data.forEach(d=>{
+    const c=document.createElement('div');
+    c.className='kanji-ref-card';
+    c.innerHTML=`<span class="k-char">${d.k}</span><span class="k-on">音: ${d.on}</span><span class="k-kun">訓: ${d.kun}</span><span class="k-mean">${d.m}</span>`;
+    c.onclick=()=>showKanjiPopup(d);
+    g.appendChild(c);
+  });
+}
+buildKanjiGrid(kanjiN5Data,'kanjiN5Grid');
+
+/* ===== FLASHCARDS BÀI 101-120 ===== */
+makeFlashcards('fg101',[
+  {f:'〜とたん(に)',b:'ngay lúc vừa ~ thì ~ (bất ngờ)'},
+  {f:'〜や否や',b:'vừa ~ thì lập tức ~ (văn viết)'},
+  {f:'〜なり',b:'vừa ~ xong ngay ~ (B bất thường)'},
+  {f:'〜が早いか',b:'chưa kịp ~ thì đã ~ (trang trọng nhất)'},
+  {f:'とたん vs や否や',b:'とたん=thông thường · や否や=văn viết'}
+]);
+makeFlashcards('fg102',[
+  {f:'〜かぎり(Vている)',b:'chừng nào còn ~/miễn là ~'},
+  {f:'〜かぎりでは',b:'trong phạm vi ~/theo những gì ~'},
+  {f:'〜ところを',b:'đúng lúc đang ~ (bị bắt gặp)'},
+  {f:'〜ところから',b:'từ việc ~ mà phán đoán'}
+]);
+makeFlashcards('fg103',[
+  {f:'〜ようがない',b:'không có cách nào ~'},
+  {f:'〜ようでは',b:'nếu cứ như ~ thì ~ (phê phán)'},
+  {f:'〜ようによっては',b:'tùy theo cách ~'},
+  {f:'〜ようとしない',b:'không chịu ~/cố tình không ~'}
+]);
+makeFlashcards('fg104',[
+  {f:'〜さえ〜ば',b:'chỉ cần ~ là ~ (điều kiện duy nhất)'},
+  {f:'〜てこそ',b:'chính nhờ ~ mới ~ (điều kiện cốt lõi)'},
+  {f:'〜だに',b:'ngay cả ~ thôi cũng (văn cổ)'},
+  {f:'〜であれ〜であれ',b:'dù là A hay B cũng ~'}
+]);
+makeFlashcards('fg105',[
+  {f:'Vようと〜Vまいと',b:'dù làm hay không làm cũng ~'},
+  {f:'〜ならではの',b:'chỉ ~ mới có/đặc trưng của ~'},
+  {f:'〜ないことには',b:'nếu không ~ thì không thể ~'},
+  {f:'〜ないまでも',b:'dù không đến mức ~ thì ít nhất ~'}
+]);
+makeFlashcards('fg106',[
+  {f:'株式',b:'かぶしき — cổ phiếu'},
+  {f:'為替',b:'かわせ — hối đoái'},
+  {f:'GDP',b:'tổng sản phẩm quốc nội'},
+  {f:'財政赤字',b:'ざいせいあかじ — thâm hụt ngân sách'},
+  {f:'貿易',b:'ぼうえき — mậu dịch'},
+  {f:'生産性',b:'せいさんせい — năng suất'},
+  {f:'持続可能',b:'じぞくかのう — bền vững'},
+  {f:'インフレ・デフレ',b:'lạm phát · giảm phát'}
+]);
+makeFlashcards('fg107',[
+  {f:'症状',b:'しょうじょう — triệu chứng'},
+  {f:'治療',b:'ちりょう — điều trị'},
+  {f:'免疫',b:'めんえき — miễn dịch'},
+  {f:'遺伝子',b:'いでんし — gen di truyền'},
+  {f:'感染症',b:'かんせんしょう — bệnh truyền nhiễm'},
+  {f:'人工知能',b:'じんこうちのう — trí tuệ nhân tạo'},
+  {f:'生態系',b:'せいたいけい — hệ sinh thái'},
+  {f:'再生可能エネルギー',b:'さいせいかのうエネルギー — năng lượng tái tạo'}
+]);
+makeFlashcards('fg108',[
+  {f:'習得',b:'しゅうとく — lĩnh hội, tiếp thu'},
+  {f:'多様性',b:'たようせい — đa dạng tính'},
+  {f:'固定観念',b:'こていかんねん — quan niệm cố định'},
+  {f:'偏見',b:'へんけん — thành kiến'},
+  {f:'相互理解',b:'そうごりかい — hiểu biết lẫn nhau'},
+  {f:'批判的思考',b:'ひはんてきしこう — tư duy phản biện'},
+  {f:'普遍的',b:'ふへんてき — phổ quát'},
+  {f:'伝承',b:'でんしょう — truyền thừa'}
+]);
+makeFlashcards('fg111',[
+  {f:'〜ゆえに/〜ゆえの',b:'do ~/vì ~ (văn viết trang trọng)'},
+  {f:'〜きらいがある',b:'có xu hướng ~/hay có khuynh hướng ~'},
+  {f:'〜たりとも〜ない',b:'dù chỉ ~ cũng không (tối thiểu)'},
+  {f:'〜なくしては',b:'nếu không có ~/thiếu ~'},
+  {f:'〜をおいて〜ない',b:'ngoài ~ ra không có ~'},
+  {f:'〜ずにはおかない',b:'nhất định sẽ ~/không thể không làm cho ~'},
+  {f:'〜てやまない',b:'mãi mãi ~/không ngừng ~ (cảm xúc sâu)'},
+  {f:'〜ならいざしらず',b:'nếu là ~ thì còn biết, nhưng ~'},
+  {f:'〜とばかりに',b:'như thể muốn nói ~/ra vẻ như ~'},
+  {f:'〜いかんによって',b:'tùy theo ~/phụ thuộc vào ~'}
+]);
+makeFlashcards('fg117',[
+  {f:'感激する',b:'かんげきする — xúc động sâu sắc'},
+  {f:'胸が痛む',b:'むねがいたむ — đau lòng'},
+  {f:'胸が躍る',b:'むねがおどる — lòng phấn chấn'},
+  {f:'切ない',b:'せつない — buồn bã, da diết'},
+  {f:'懐かしい',b:'なつかしい — nhớ nhung'},
+  {f:'悔しい',b:'くやしい — tiếc, ức chế'},
+  {f:'心強い',b:'こころづよい — vững lòng'},
+  {f:'心細い',b:'こころぼそい — lo lắng bất an'},
+  {f:'しみじみ',b:'thấm thía, cảm sâu sắc'},
+  {f:'腹立たしい',b:'はらだたしい — tức giận'}
+]);
+
+/* ===== KANJI N1 DATA ===== */
+const kanjiN1Data=[
+  {k:'模倣',on:'モホウ',kun:'まねる',m:'bắt chước, mô phỏng',ex:'創造と模倣・模倣品'},
+  {k:'矛盾',on:'ムジュン',kun:'—',m:'mâu thuẫn',ex:'矛盾する・矛盾点'},
+  {k:'概念',on:'ガイネン',kun:'—',m:'khái niệm',ex:'基本概念・概念図'},
+  {k:'抽象',on:'チュウショウ',kun:'—',m:'trừu tượng',ex:'抽象的・抽象画'},
+  {k:'顕著',on:'ケンチョ',kun:'いちじるしい',m:'nổi bật, rõ rệt',ex:'顕著な効果・顕著な特徴'},
+  {k:'懸念',on:'ケネン',kun:'—',m:'lo ngại',ex:'懸念される・懸念を示す'},
+  {k:'逸脱',on:'イツダツ',kun:'それる',m:'đi lệch, sai lệch',ex:'規則から逸脱する'},
+  {k:'醸成',on:'ジョウセイ',kun:'かもす',m:'tạo ra (bầu không khí)',ex:'雰囲気を醸成する'},
+  {k:'脆弱',on:'ゼイジャク',kun:'もろい',m:'dễ vỡ, dễ tổn thương',ex:'脆弱性・脆弱な体制'},
+  {k:'払拭',on:'フッショク',kun:'ぬぐう',m:'xóa bỏ, quét sạch',ex:'不安を払拭する'},
+  {k:'踏襲',on:'トウシュウ',kun:'ふむ',m:'noi theo, kế thừa',ex:'前例を踏襲する'},
+  {k:'恣意',on:'シイ',kun:'—',m:'tùy tiện, độc đoán',ex:'恣意的な判断'},
+  {k:'俯瞰',on:'フカン',kun:'みおろす',m:'nhìn từ trên xuống, tổng quan',ex:'全体を俯瞰する'},
+  {k:'斬新',on:'ザンシン',kun:'—',m:'mới mẻ, sáng tạo',ex:'斬新なアイデア'},
+  {k:'逡巡',on:'シュンジュン',kun:'ためらう',m:'do dự, ngần ngại',ex:'逡巡なく決断する'},
+  {k:'隔絶',on:'カクゼツ',kun:'へだてる',m:'cách biệt, tách biệt',ex:'世間から隔絶された'},
+  {k:'敷衍',on:'フエン',kun:'のべる',m:'giải thích rộng hơn, triển khai',ex:'考えを敷衍する'},
+  {k:'凌駕',on:'リョウガ',kun:'しのぐ',m:'vượt trội, vượt qua',ex:'記録を凌駕する'},
+  {k:'蹂躙',on:'ジュウリン',kun:'ふみにじる',m:'chà đạp, giày xéo',ex:'権利を蹂躙する'},
+  {k:'憂慮',on:'ユウリョ',kun:'うれえる',m:'lo âu, lo ngại',ex:'深く憂慮する'},
+  {k:'齟齬',on:'ソゴ',kun:'くいちがう',m:'sự bất đồng, mâu thuẫn',ex:'認識の齟齬'},
+  {k:'看過',on:'カンカ',kun:'みすごす',m:'bỏ qua, không để ý',ex:'看過できない問題'},
+  {k:'帰趨',on:'キスウ',kun:'—',m:'xu hướng, diễn biến',ex:'事態の帰趨を見守る'},
+  {k:'瑕疵',on:'カシ',kun:'きず',m:'khiếm khuyết, tỳ vết',ex:'瑕疵担保責任'},
+  {k:'蓋然',on:'ガイゼン',kun:'—',m:'khả năng, xác suất',ex:'蓋然性が高い'},
+  {k:'敷設',on:'フセツ',kun:'しく',m:'xây dựng, lắp đặt',ex:'鉄道を敷設する'},
+  {k:'醜悪',on:'シュウアク',kun:'みにくい',m:'xấu xa, đáng ghê tởm',ex:'醜悪な行為'},
+  {k:'赦免',on:'シャメン',kun:'ゆるす',m:'tha thứ, đặc xá',ex:'罪を赦免する'},
+  {k:'逼迫',on:'ヒッパク',kun:'せまる',m:'căng thẳng, khẩn cấp',ex:'財政が逼迫する'},
+  {k:'嗜好',on:'シコウ',kun:'このむ',m:'sở thích, khẩu vị',ex:'嗜好品・個人の嗜好'}
+];
+buildKanjiGrid(kanjiN1Data,'kanjiN1Grid');
+
+/* ===== FLASHCARDS BÀI 181-200 ===== */
+makeFlashcards('fg181',[
+  {f:'〜であれ/〜であろうと',b:'dù là ~ đi nữa (bất kỳ trường hợp)'},
+  {f:'〜といえども',b:'dù là ~/ngay cả ~ cũng (trang trọng)'},
+  {f:'〜ないでもない/〜なくもない',b:'không phải là không ~ (phủ định yếu)'},
+  {f:'〜ずにはすまない',b:'buộc phải ~/không thể không ~ (lương tâm)'}
+]);
+makeFlashcards('fg182',[
+  {f:'〜ないとも限らない',b:'không loại trừ khả năng ~'},
+  {f:'〜にたえる',b:'đáng ~/đủ tiêu chuẩn để ~'},
+  {f:'〜にたえない',b:'không thể chịu được ~/quá tệ'},
+  {f:'〜をはじめとする',b:'lấy ~ làm đầu tiêu biểu, bao gồm ~'}
+]);
+makeFlashcards('fg183',[
+  {f:'〜のもとに/のもとで',b:'dưới ~/với sự giám sát của ~'},
+  {f:'〜ないではおかない',b:'nhất định sẽ làm cho ~ (tác động tất yếu)'},
+  {f:'〜にして (đặc biệt)',b:'đến tận ~/chính vào lúc ~'},
+  {f:'〜にあって(も)',b:'trong hoàn cảnh ~ (văn viết trang trọng)'}
+]);
+makeFlashcards('fg184',[
+  {f:'量子コンピュータ',b:'りょうし — máy tính lượng tử'},
+  {f:'機械学習',b:'きかいがくしゅう — machine learning'},
+  {f:'ゲノム編集',b:'ゲノムへんしゅう — chỉnh sửa bộ gene'},
+  {f:'自動運転',b:'じどううんてん — lái tự động'},
+  {f:'カーボンニュートラル',b:'trung hòa carbon'},
+  {f:'汎用人工知能',b:'はんようじんこうちのう — AGI'},
+  {f:'特異点',b:'とくいてん — technological singularity'},
+  {f:'ブロックチェーン',b:'blockchain — phân tán, bất biến'}
+]);
+makeFlashcards('fg185',[
+  {f:'社会構造',b:'しゃかいこうぞう — cấu trúc xã hội'},
+  {f:'文化相対主義',b:'chủ nghĩa tương đối văn hóa'},
+  {f:'エスノセントリズム',b:'thuyết trung tâm dân tộc'},
+  {f:'集合意識',b:'しゅうごういしき — ý thức tập thể (Durkheim)'},
+  {f:'グローバリゼーション',b:'toàn cầu hóa'},
+  {f:'ポストモダン',b:'hậu hiện đại'},
+  {f:'ジェンダー',b:'giới (gender) · giới tính xã hội'},
+  {f:'逸脱行動',b:'いつだつこうどう — hành vi lệch chuẩn'}
+]);
+makeFlashcards('fg191',[
+  {f:'水に流す',b:'trôi theo nước → quên đi, tha thứ'},
+  {f:'一石を投じる',b:'ném hòn đá → gây tác động, nêu vấn đề'},
+  {f:'眉をひそめる',b:'nhíu mày → tỏ ra không hài lòng'},
+  {f:'筆舌に尽くしがたい',b:'không thể diễn tả bằng lời'},
+  {f:'言わずもがな',b:'không cần phải nói → đương nhiên rồi'},
+  {f:'枚挙にいとまがない',b:'không đếm xuể'},
+  {f:'汗顔の至り',b:'cực kỳ hổ thẹn'},
+  {f:'耳を傾ける',b:'lắng nghe chăm chú'},
+  {f:'腰を折る',b:'ngắt lời, gián đoạn'},
+  {f:'手をこまねく',b:'bó tay, không làm gì'}
+]);
+makeFlashcards('fg192',[
+  {f:'しんとする',b:'yên tĩnh hoàn toàn'},
+  {f:'凛とした',b:'りんとした — nghiêm trang, thanh lịch'},
+  {f:'うつろな',b:'trống rỗng, vô hồn · うつろな目'},
+  {f:'かすかな',b:'mờ nhạt, rất nhỏ · かすかな希望'},
+  {f:'ひたむきな',b:'chuyên tâm, hết lòng'},
+  {f:'おもむろに',b:'từ từ, thong thả'},
+  {f:'ざわめく',b:'xôn xao, ồn ào nhẹ'},
+  {f:'たゆたう',b:'trôi nổi, lênh đênh'}
+]);
+
+/* ===== QUIZ N1 ĐỀ 3 ===== */
+function runQuizN1E3(){
+  const form=document.getElementById('qfn1e3');
+  if(!form)return;
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector('input[name="'+n+'"]:checked');
+    const fb=form.querySelector('input[name="'+n+'"]').closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';}return;}
+    if(sel.value==='c'){score++;if(fb){fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}}
+    else{if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}}
+  });
+  const r=document.getElementById('qrn1e3');if(!r)return;
+  r.style.border='2px solid';
+  const pct=Math.round(score/30*100);
+  if(pct>=84){r.style.borderColor='#8B0000';r.innerHTML='🔴 <b>'+score+'/30 ('+pct+'%)</b> — XUẤT SẮC! N1 đang rất vững!';}
+  else if(pct>=70){r.style.borderColor='var(--kin)';r.innerHTML='✅ <b>'+score+'/30 ('+pct+'%)</b> — Tốt lắm! Tiếp tục luyện đề!';}
+  else if(pct>=50){r.style.borderColor='var(--ai)';r.innerHTML='📚 <b>'+score+'/30 ('+pct+'%)</b> — Đang tiến bộ. Ôn lại Bài 181-190!';}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML='📖 <b>'+score+'/30 ('+pct+'%)</b> — Cần ôn thêm. Xem lại N1 Chương 3!';}
+}
+
+/* ===== SIÊU ĐỀ N1 (40 câu) ===== */
+function runSuperN1(){
+  const form=document.getElementById('qfsuper_n1');
+  if(!form)return;
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector('input[name="'+n+'"]:checked');
+    const fb=form.querySelector('input[name="'+n+'"]').closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';}return;}
+    if(sel.value==='c'){score++;if(fb){fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}}
+    else{if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}}
+  });
+  const r=document.getElementById('qrsupern1');if(!r)return;
+  r.style.border='3px solid';
+  const pct=Math.round(score/40*100);
+  if(pct>=88){r.style.borderColor='#8B0000';r.innerHTML='🎌🏆 <b>'+score+'/40 ('+pct+'%)</b> — THIÊN TÀI! N1合格間違いなし！';}
+  else if(pct>=75){r.style.borderColor='var(--kin)';r.innerHTML='🏆 <b>'+score+'/40 ('+pct+'%)</b> — XUẤT SẮC! N1 hoàn toàn trong tầm tay!';}
+  else if(pct>=60){r.style.borderColor='var(--ai)';r.innerHTML='✅ <b>'+score+'/40 ('+pct+'%)</b> — Tốt lắm! Còn 2-3 tháng ôn nữa là đủ!';}
+  else if(pct>=45){r.style.borderColor='#666';r.innerHTML='📚 <b>'+score+'/40 ('+pct+'%)</b> — Đang tiến bộ. Cần ôn thêm 6 tháng!';}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML='📖 <b>'+score+'/40 ('+pct+'%)</b> — Hãy củng cố N2 thật vững trước khi leo N1!';}
+}
+
+
+/* ===== FLASHCARDS N1 BÀI 161-180 ===== */
+makeFlashcards('fg161',[
+  {f:'〜に即して/に即した',b:'phù hợp sát với ~/căn cứ đúng vào ~'},
+  {f:'〜をもとより/はもとより',b:'~ thì đương nhiên rồi, còn ~'},
+  {f:'〜にかかわる',b:'liên quan đến ~ (trọng đại)'},
+  {f:'〜いかんだ/いかんで',b:'phụ thuộc vào ~/tùy theo ~'}
+]);
+makeFlashcards('fg162',[
+  {f:'〜たる/〜たるもの',b:'là ~/với tư cách là ~ (trang trọng)'},
+  {f:'〜ごとき/〜ごとく',b:'như ~/giống như ~ (văn học)'},
+  {f:'〜にして①',b:'vừa là ~ vừa là ~'},
+  {f:'〜にして②',b:'chính vào lúc ~/ngay khi ~'},
+  {f:'〜をして〜せる',b:'khiến ~/làm cho ~ (văn cổ)'}
+]);
+makeFlashcards('fg163',[
+  {f:'〜はともかく',b:'~ thì tạm gác lại (tập trung điều khác)'},
+  {f:'〜もさることながら',b:'~ thì đương nhiên, nhưng ~ còn hơn'},
+  {f:'〜ところを (xin lỗi)',b:'vào lúc bận ~ mà (công thức trang trọng)'},
+  {f:'お忙しいところを',b:'dù lúc bận — cảm ơn/xin lỗi trang trọng'}
+]);
+makeFlashcards('fg164',[
+  {f:'〜ずして',b:'mà không ~/không cần ~ (văn học)'},
+  {f:'〜をおして/をおしても',b:'bất chấp ~/vượt qua ~ mà vẫn'},
+  {f:'〜をもってしても',b:'ngay cả ~ cũng không thể'},
+  {f:'〜ことなしに',b:'mà không ~/không hề ~ suốt quá trình'}
+]);
+makeFlashcards('fg165',[
+  {f:'〜ようにも〜ない',b:'dù muốn ~ cũng không thể ~'},
+  {f:'〜てもさしつかえない',b:'không sao nếu ~ (cho phép lịch sự)'},
+  {f:'〜とも限らない',b:'không hẳn là ~/không nhất định ~'},
+  {f:'泣こうにも涙が出ない',b:'dù muốn khóc cũng không ra nước mắt'}
+]);
+makeFlashcards('fg166',[
+  {f:'演繹',b:'えんえき — diễn dịch (nguyên lý→cụ thể)'},
+  {f:'帰納',b:'きのう — quy nạp (cụ thể→nguyên lý)'},
+  {f:'命題',b:'めいだい — mệnh đề, proposition'},
+  {f:'批駁',b:'ひばく — bác bỏ, phê phán mạnh'},
+  {f:'反駁',b:'はんばく — phản bác'},
+  {f:'帰結',b:'きけつ — kết luận, hệ quả tất yếu'},
+  {f:'蓋然性',b:'がいぜんせい — khả năng, xác suất'},
+  {f:'概括',b:'がいかつ — khái quát, tóm tắt'}
+]);
+makeFlashcards('fg167',[
+  {f:'覇権',b:'はけん — bá quyền, hegemony'},
+  {f:'主権',b:'しゅけん — chủ quyền'},
+  {f:'地政学',b:'ちせいがく — địa chính trị học'},
+  {f:'多極化',b:'たきょくか — đa cực hóa'},
+  {f:'新自由主義',b:'しんじゆうしゅぎ — neoliberalism'},
+  {f:'福祉国家',b:'ふくしこっか — nhà nước phúc lợi'},
+  {f:'格差是正',b:'かくさぜせい — khắc phục bất bình đẳng'},
+  {f:'民主主義',b:'みんしゅしゅぎ — chủ nghĩa dân chủ'}
+]);
+makeFlashcards('fg172',[
+  {f:'忸怩たる',b:'じくじたる — hổ thẹn, bối rối'},
+  {f:'忘我',b:'ぼうが — quên mình'},
+  {f:'昂揚',b:'こうよう — phấn khích, hứng khởi'},
+  {f:'憤懣',b:'ふんまん — phẫn nộ, uất ức'},
+  {f:'慚愧',b:'ざんき — xấu hổ sâu sắc'},
+  {f:'感慨',b:'かんがい — cảm xúc sâu sắc'},
+  {f:'陶酔',b:'とうすい — say mê, đắm mình'},
+  {f:'畏敬',b:'いけい — kính sợ, kính ngưỡng'}
+]);
+makeFlashcards('fg178',[
+  {f:'棚に上げる',b:'gác lên kệ → bỏ qua lỗi mình mà chỉ trích người'},
+  {f:'お茶を濁す',b:'làm đục nước trà → nói mơ hồ tránh né vấn đề'},
+  {f:'腹を割って',b:'mổ bụng ra → thành thật, thẳng thắn'},
+  {f:'焼け石に水',b:'nước đổ đá nóng → cố gắng vô ích'},
+  {f:'雨降って地固まる',b:'mưa xuống đất cứng → sau khó khăn càng vững'},
+  {f:'七転び八起き',b:'ngã 7 đứng 8 → kiên trì không bỏ cuộc'},
+  {f:'目から鱗が落ちる',b:'vảy rơi khỏi mắt → bừng tỉnh ngộ'},
+  {f:'二の足を踏む',b:'giẫm chân thứ hai → do dự, ngần ngại'},
+  {f:'頭角を現す',b:'đầu nhô ra → nổi bật, được công nhận'},
+  {f:'石の上にも三年',b:'ngồi đá 3 năm → kiên nhẫn thì thành công'}
+]);
+
+/* ===== QUIZ N1 ĐỀ 2 ===== */
+function runQuizN1E2(){
+  const form=document.getElementById('qfn1e2');
+  if(!form) return;
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';}return;}
+    if(sel.value==='c'){score++;if(fb){fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}}
+    else{if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}}
+  });
+  const r=document.getElementById('qrn1e2');
+  if(!r) return;
+  r.style.border='2px solid';
+  const pct=Math.round(score/25*100);
+  if(pct>=84){r.style.borderColor='#8B0000';r.innerHTML=`🔴 <b>${score}/25 (${pct}%)</b> — XUẤT SẮC! Ngữ pháp N1 đang vững chắc!`;}
+  else if(pct>=70){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/25 (${pct}%)</b> — Tốt lắm! Tiếp tục ôn Chương 3 N1!`;}
+  else if(pct>=50){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/25 (${pct}%)</b> — Đang tiến bộ. Ôn lại Bài 161-170!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/25 (${pct}%)</b> — Cần ôn thêm. Xem lại ngữ pháp N1 Chương 2!`;}
+}
+
+
+buildKanjiGrid(kanjiN1Data,'kanjiN1GridCh1');
+
+/* ===== FLASHCARDS N1 BÀI 121-140 ===== */
+makeFlashcards('fg121',[
+  {f:'〜ゆえに/ゆえの',b:'do ~/vì ~ (văn học/trang trọng)'},
+  {f:'〜いかんにかかわらず',b:'bất kể ~ thế nào'},
+  {f:'〜いかんによっては',b:'tùy theo ~/phụ thuộc vào ~'},
+  {f:'〜なくして(は)',b:'nếu không có ~/thiếu ~ thì không thể'}
+]);
+makeFlashcards('fg122',[
+  {f:'〜たりとも〜ない',b:'dù chỉ ~ cũng không (tuyệt đối)'},
+  {f:'〜をおいて〜ない',b:'ngoài ~ ra không có ~ (duy nhất)'},
+  {f:'〜ずにはおかない',b:'nhất định sẽ làm cho ~ (tất yếu)'},
+  {f:'一瞬たりとも気を抜けない',b:'không thể lơ là dù một giây'}
+]);
+makeFlashcards('fg123',[
+  {f:'〜ならいざしらず',b:'nếu là ~ thì còn biết, nhưng ~'},
+  {f:'〜ともすると/ともすれば',b:'hay có xu hướng ~ (tiêu cực)'},
+  {f:'〜めく',b:'mang vẻ ~/trở nên giống ~'},
+  {f:'春めいてきた',b:'đã bắt đầu mang vẻ mùa xuân'}
+]);
+makeFlashcards('fg124',[
+  {f:'〜てやまない',b:'mãi mãi ~/không ngừng ~ (cảm xúc)'},
+  {f:'〜にかたくない',b:'không khó để ~ (dễ tưởng tượng)'},
+  {f:'〜かぎりだ',b:'thật là ~ (cảm xúc cực độ)'},
+  {f:'〜(の)きわみ',b:'cực độ ~/đỉnh điểm của ~'}
+]);
+makeFlashcards('fg125',[
+  {f:'〜とばかりに',b:'như thể muốn nói ~/ra vẻ như ~'},
+  {f:'〜ではあるまいか',b:'chẳng phải ~ sao? (phỏng đoán)'},
+  {f:'〜にあたらない',b:'không cần ~/không đáng ~'},
+  {f:'〜もさることながら',b:'~ thì đương nhiên rồi, nhưng còn ~'}
+]);
+makeFlashcards('fg126',[
+  {f:'N + をもって① ',b:'bằng ~/thông qua ~ (phương tiện)'},
+  {f:'N + をもって②',b:'kể từ ~ (mốc thời gian chính thức)'},
+  {f:'〜ともあろう者が',b:'là ~ mà lại ~ (phê phán vị thế cao)'},
+  {f:'〜ようでは困る',b:'nếu cứ như ~ thì không xong'}
+]);
+makeFlashcards('fg127',[
+  {f:'〜に足る',b:'xứng đáng ~/đủ để ~'},
+  {f:'〜に足らない',b:'không đáng ~/không đủ để ~'},
+  {f:'〜べからず',b:'cấm ~/không được ~ (biển báo/cổ điển)'},
+  {f:'〜ずとも',b:'dù không ~/không nhất thiết (trang trọng)'}
+]);
+makeFlashcards('fg128',[
+  {f:'N + かたがた',b:'vừa A vừa B (trang trọng, thư từ)'},
+  {f:'Vます + がてら',b:'vừa ~ vừa (hội thoại, nhẹ hơn)'},
+  {f:'Vる/Nの + かたわら',b:'trong khi ~ (song song dài hạn)'},
+  {f:'〜を兼ねて',b:'kiêm ~/kết hợp mục đích'}
+]);
+makeFlashcards('fg129',[
+  {f:'〜んがために',b:'để ~/vì mục đích ~ (văn học mãnh liệt)'},
+  {f:'〜んばかりに',b:'chỉ vì muốn ~ mà (nguyên nhân)'},
+  {f:'〜ものを',b:'lẽ ra ~/đáng nhẽ ~ (nuối tiếc)'},
+  {f:'〜ながらに(して)',b:'trong khi ~/ngay từ ~ (không thay đổi)'}
+]);
+makeFlashcards('fg130',[
+  {f:'〜手前(は)',b:'trước mặt ~/vì thể diện trước ~'},
+  {f:'〜そばから',b:'vừa ~ thì lại ngay ~ (lặp đi lặp lại)'},
+  {f:'〜が最後/〜たが最後',b:'một khi đã ~ thì ~ (không đảo ngược)'},
+  {f:'〜ともなしに',b:'không chủ đích ~/vô thức ~'}
+]);
+makeFlashcards('fg131',[
+  {f:'蓋然性',b:'がいぜんせい — khả năng xảy ra, xác suất'},
+  {f:'恣意的',b:'しいてき — tùy tiện, độc đoán'},
+  {f:'俯瞰',b:'ふかん — nhìn từ trên xuống, tổng quan'},
+  {f:'脆弱性',b:'ぜいじゃくせい — tính dễ tổn thương'},
+  {f:'醸成',b:'じょうせい — tạo ra dần dần'},
+  {f:'逸脱',b:'いつだつ — đi lệch khỏi chuẩn mực'},
+  {f:'払拭',b:'ふっしょく — xóa bỏ, quét sạch'},
+  {f:'凌駕',b:'りょうが — vượt trội, vượt qua'}
+]);
+makeFlashcards('fg132',[
+  {f:'情緒',b:'じょうちょ — tình cảm, xúc cảm'},
+  {f:'哀愁',b:'あいしゅう — nỗi buồn man mác'},
+  {f:'郷愁',b:'きょうしゅう — nỗi nhớ quê, hoài niệm'},
+  {f:'余韻',b:'よいん — dư âm, dư vị'},
+  {f:'象徴',b:'しょうちょう — biểu tượng'},
+  {f:'逆説',b:'ぎゃくせつ — nghịch lý'},
+  {f:'皮肉',b:'ひにく — mỉa mai, châm biếm'},
+  {f:'風刺',b:'ふうし — châm biếm xã hội'}
+]);
+makeFlashcards('fg133',[
+  {f:'認識論',b:'にんしきろん — nhận thức luận'},
+  {f:'弁証法',b:'べんしょうほう — biện chứng pháp'},
+  {f:'実存主義',b:'じつぞんしゅぎ — chủ nghĩa hiện sinh'},
+  {f:'功利主義',b:'こうりしゅぎ — chủ nghĩa vị lợi'},
+  {f:'パラダイム',b:'mô hình tư duy, paradigm'},
+  {f:'超越',b:'ちょうえつ — siêu việt'},
+  {f:'相対主義',b:'そうたいしゅぎ — chủ nghĩa tương đối'},
+  {f:'二元論',b:'にげんろん — nhị nguyên luận'}
+]);
+makeFlashcards('fg134',[
+  {f:'寡占',b:'かせん — độc quyền nhóm, oligopoly'},
+  {f:'独占',b:'どくせん — độc quyền, monopoly'},
+  {f:'外部性',b:'がいぶせい — ngoại tác, externality'},
+  {f:'モラルハザード',b:'rủi ro đạo đức, moral hazard'},
+  {f:'トレードオフ',b:'đánh đổi, trade-off'},
+  {f:'量的緩和',b:'りょうてきかんわ — nới lỏng định lượng QE'},
+  {f:'限界費用',b:'げんかいひよう — chi phí cận biên'},
+  {f:'財政出動',b:'ざいせいしゅつどう — kích thích tài khóa'}
+]);
+
+/* ===== QUIZ N1 ĐỀ 1 ===== */
+function runQuizN1E1(){
+  const form=document.getElementById('qfn1e1');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';}return;}
+    if(sel.value==='c'){score++;if(fb){fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}}
+    else{if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}}
+  });
+  const r=document.getElementById('qrn1e1');r.style.border='2px solid';
+  const pct=Math.round(score/30*100);
+  if(pct>=80){r.style.borderColor='#8B0000';r.innerHTML=`🔴 <b>${score}/30 (${pct}%)</b> — XUẤT SẮC! N1 đang trong tầm tay!`;}
+  else if(pct>=70){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/30 (${pct}%)</b> — Tốt lắm! Tiếp tục học N1 Chương 2!`;}
+  else if(pct>=50){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/30 (${pct}%)</b> — Đang tiến bộ. Ôn lại Bài 121-130 rồi thử lại!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/30 (${pct}%)</b> — N1 còn khó. Hãy củng cố N2 thật vững trước!`;}
+}
+
+
+/* ===== MEGA QUIZ (30 câu) ===== */
+function runMegaQuiz(){
+  const form=document.getElementById('qfmega');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';}return;}
+    if(sel.value==='c'){score++;if(fb){fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}}
+    else{if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}}
+  });
+  const r=document.getElementById('qrmega');r.style.border='2px solid';
+  const total=names.length;
+  const pct=Math.round(score/total*100);
+  if(pct>=85){r.style.borderColor='#3F8C5C';r.innerHTML=`🏆 <b>${score}/${total} (${pct}%)</b> — XUẤT SẮC TUYỆT VỜI! N2 chắc chắn trong tầm tay!`;}
+  else if(pct>=70){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/${total} (${pct}%)</b> — ĐẠT CHUẨN! Sẵn sàng thi thật rồi! 頑張って！`;}
+  else if(pct>=55){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/${total} (${pct}%)</b> — Gần đạt. Ôn lại Chương 7-10 rồi thử lại!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/${total} (${pct}%)</b> — Cần ôn thêm. SRS hằng ngày và ôn từng chương!`;}
+}
+buildKanjiGrid(kanjiN4Data,'kanjiN4Grid');
+buildKanjiGrid(kanjiN2Data,'kanjiN2Grid');
+buildKanjiGrid(kanjiN2Data,'kanjiN2GridRef');
+
+function showKanjiPopup(d){
+  document.getElementById('popupContent').innerHTML=`
+    <div style="text-align:center;margin-bottom:14px">
+      <span style="font-family:var(--font-display);font-size:4rem;color:var(--ai)">${d.k}</span>
+    </div>
+    <table style="width:100%;font-size:.9rem">
+      <tr><td style="color:var(--sumi-soft);padding:4px 8px">音読み</td><td><b>${d.on}</b></td></tr>
+      <tr><td style="color:var(--sumi-soft);padding:4px 8px">訓読み</td><td><b>${d.kun}</b></td></tr>
+      <tr><td style="color:var(--sumi-soft);padding:4px 8px">Nghĩa</td><td><b>${d.m}</b></td></tr>
+      <tr><td style="color:var(--sumi-soft);padding:4px 8px">Ví dụ</td><td><b>${d.ex||'—'}</b></td></tr>
+    </table>`;
+  const p=document.getElementById('kanjiPopup');
+  p.style.display='flex';
+  p.onclick=e=>{if(e.target===p)closePopup();};
+}
+function closePopup(){document.getElementById('kanjiPopup').style.display='none';}
+
+window.addEventListener('scroll',()=>{document.getElementById('topBtn').style.display=window.scrollY>400?'flex':'none';});
+
+/* ===== QUIZ N1 ĐỀ 3 ===== */
+
+/* ===== SIÊU ĐỀ N1 40 CÂU ===== */
+
+/* ===== AI SENSEI CHATBOT ===== */
+const AI_SYSTEM = `Bạn là AI Sensei — trợ lý học tiếng Nhật chuyên sâu, thân thiện và nhiệt tình.
+Người dùng đang học tiếng Nhật từ N5 đến N1, với mục tiêu đạt N1 JLPT.
+Lịch học: 1 giờ 30 phút mỗi ngày.
+
+NHIỆM VỤ CHÍNH:
+- Giải thích ngữ pháp N2/N1 bằng tiếng Việt rõ ràng, có ví dụ thực tế
+- So sánh các cấu trúc tương tự (phân biệt ニュアンス)
+- Tạo câu ví dụ với bản dịch tiếng Việt
+- Quiz người dùng bằng câu hỏi trắc nghiệm ngắn
+- Giải thích Kanji theo bộ thủ và ghi nhớ thú vị
+- Đề xuất lịch học và tài liệu phù hợp
+- Khuyến khích và động viên khi người dùng gặp khó khăn
+
+QUY TẮC PHẢN HỒI:
+- Luôn viết tiếng Nhật kèm furigana khi cần: 例えば → 例(たと)えば
+- Dùng emoji để làm sinh động: ✅ ❌ 💡 📌 🎌
+- Phản hồi ngắn gọn, súc tích (tối đa 300 từ trừ khi được yêu cầu chi tiết)
+- Cuối mỗi câu trả lời, đề xuất 1 câu hỏi tiếp theo để học sâu hơn
+- Nếu được quiz, tạo 5 câu trắc nghiệm với đáp án ở cuối (dùng spoiler: "Đáp án: ...")
+- Trả lời bằng tiếng Việt, chèn tiếng Nhật khi cần thiết`;
+
+let aiHistory = [];
+
+function toggleAIPanel(){
+  const panel = document.getElementById('ai-panel');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+    document.getElementById('ai-input').focus();
+  }
+}
+
+function quickAsk(text){
+  document.getElementById('ai-input').value = text;
+  sendAI();
+}
+
+async function sendAI(){
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+
+  const sendBtn = document.getElementById('ai-send');
+  input.value = '';
+  sendBtn.disabled = true;
+
+  // Hiển thị tin nhắn người dùng
+  appendMsg('user', msg);
+
+  // Thêm vào history
+  aiHistory.push({role:'user', content: msg});
+
+  // Loading indicator
+  const loadId = appendMsg('bot', '⏳ Đang suy nghĩ...', true);
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1024,
+        system: AI_SYSTEM,
+        messages: aiHistory
+      })
+    });
+
+    const data = await response.json();
+    const reply = data.content && data.content[0] ? data.content[0].text : '❌ Lỗi kết nối. Vui lòng thử lại.';
+
+    // Xóa loading, hiển thị reply
+    removeMsg(loadId);
+    appendMsg('bot', reply);
+
+    // Lưu vào history
+    aiHistory.push({role:'assistant', content: reply});
+
+    // Giới hạn history 20 turns để tránh vượt context
+    if(aiHistory.length > 40) aiHistory = aiHistory.slice(-40);
+
+  } catch(err) {
+    removeMsg(loadId);
+    appendMsg('bot', '❌ Lỗi kết nối API. Hãy kiểm tra mạng và thử lại.');
+  }
+
+  sendBtn.disabled = false;
+  input.focus();
+}
+
+function appendMsg(role, text, isLoading=false){
+  const box = document.getElementById('ai-messages');
+  const div = document.createElement('div');
+  const id = 'msg-' + Date.now() + Math.random();
+  div.id = id;
+  div.className = 'ai-msg ' + role + (isLoading ? ' loading' : '');
+  // Render markdown cơ bản
+  div.innerHTML = text
+    .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
+    .replace(/\*(.*?)\*/g,'<i>$1</i>')
+    .replace(/`([^`]+)`/g,'<code style="background:var(--washi-2);padding:1px 4px;border-radius:3px">$1</code>')
+    .replace(/\n/g,'<br>');
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return id;
+}
+
+function removeMsg(id){
+  const el = document.getElementById(id);
+  if(el) el.remove();
+}
+
+/* ===== FLASHCARDS BÀI 141-160 ===== */
+makeFlashcards('fg141',[
+  {f:'〜すら/〜ですら',b:'ngay cả ~ cũng (nhấn mạnh cực độ)'},
+  {f:'〜だに',b:'ngay cả ~ thôi cũng (văn cổ)'},
+  {f:'〜こそすれ',b:'nếu có thì là ~ chứ không phải ~ (khẳng định A, phủ B)'},
+  {f:'〜をよそに (N1応用)',b:'mặc kệ ~/bất chấp ~ (văn bản trang trọng hơn N2)'}
+]);
+makeFlashcards('fg142',[
+  {f:'〜ごとき/〜ごとく',b:'như ~/giống như ~ (văn học, so sánh trang trọng)'},
+  {f:'〜のごとく',b:'giống như ~/như thể ~ (văn viết cổ điển)'},
+  {f:'嵐のごとき勢い',b:'khí thế như bão tố'},
+  {f:'雲のごとく消え去る',b:'biến mất như đám mây'}
+]);
+makeFlashcards('fg143',[
+  {f:'〜いかんせん',b:'đáng tiếc là ~/tuy nhiên ~ (không thể làm gì được)'},
+  {f:'〜いわんや',b:'huống chi ~/nói gì đến ~ (so sánh leo thang)'},
+  {f:'〜もさることながら',b:'~ thì đương nhiên rồi, nhưng còn ~'},
+  {f:'いかんせん時間がない',b:'đáng tiếc là không có thời gian'}
+]);
+makeFlashcards('fg144',[
+  {f:'〜からある/〜からする',b:'đến tận ~/lên tới ~ (số lượng lớn)'},
+  {f:'〜に至って(は)',b:'đến khi ~/đến mức ~ (thường là quá muộn)'},
+  {f:'〜に至るまで',b:'cho đến tận ~/đến cả ~'},
+  {f:'〜の至り',b:'cực độ ~/đỉnh điểm của ~ (như光栄の至り)'}
+]);
+makeFlashcards('fg145',[
+  {f:'〜までだ/〜までのことだ',b:'chỉ là ~ thôi/chỉ cần ~ là xong (giải pháp đơn giản)'},
+  {f:'〜のみ',b:'chỉ ~/duy nhất ~ (trang trọng hơn だけ)'},
+  {f:'〜にすぎない (N1応用)',b:'chỉ là ~/không hơn không kém (trong văn học thuật)'},
+  {f:'だめなら諦めるまでだ',b:'nếu không được thì chỉ việc từ bỏ thôi'}
+]);
+makeFlashcards('fg146',[
+  {f:'外交',b:'がいこう — ngoại giao'},
+  {f:'制裁',b:'せいさい — trừng phạt, chế tài'},
+  {f:'条約',b:'じょうやく — hiệp ước, điều ước'},
+  {f:'批准',b:'ひじゅん — phê chuẩn (hiệp ước)'},
+  {f:'拒否権',b:'きょひけん — quyền phủ quyết (veto)'},
+  {f:'多国間',b:'たこくかん — đa phương'},
+  {f:'安全保障',b:'あんぜんほしょう — an ninh quốc gia'},
+  {f:'国際連合',b:'こくさいれんごう — Liên Hợp Quốc (UN)'}
+]);
+makeFlashcards('fg147',[
+  {f:'再生医療',b:'さいせいいりょう — y học tái sinh'},
+  {f:'iPS細胞',b:'iPS さいぼう — tế bào gốc cảm ứng đa năng'},
+  {f:'量子力学',b:'りょうしりきがく — cơ học lượng tử'},
+  {f:'ナノテクノロジー',b:'công nghệ nano'},
+  {f:'バイオテクノロジー',b:'công nghệ sinh học'},
+  {f:'拡張現実(AR)',b:'かくちょうげんじつ — thực tế tăng cường'},
+  {f:'仮想現実(VR)',b:'かそうげんじつ — thực tế ảo'},
+  {f:'自律型兵器',b:'じりつがたへいき — vũ khí tự hành'}
+]);
+makeFlashcards('fg148',[
+  {f:'人口動態',b:'じんこうどうたい — nhân khẩu học'},
+  {f:'少子高齢化',b:'しょうしこうれいか — tỷ lệ sinh thấp, già hóa'},
+  {f:'移民',b:'いみん — di dân, người nhập cư'},
+  {f:'同化',b:'どうか — đồng hóa (văn hóa)'},
+  {f:'多文化共生',b:'たぶんかきょうせい — chung sống đa văn hóa'},
+  {f:'格差社会',b:'かくさしゃかい — xã hội bất bình đẳng'},
+  {f:'社会的排除',b:'しゃかいてきはいじょ — loại trừ xã hội'},
+  {f:'インクルージョン',b:'inclusion — hòa nhập'}
+]);
+makeFlashcards('fg151',[
+  {f:'〜しまつだ',b:'đến mức ~ / cuối cùng dẫn đến ~ (kết cục xấu)'},
+  {f:'〜と相まって',b:'kết hợp với ~/cùng với ~ tạo nên ~'},
+  {f:'〜を経て',b:'thông qua ~/trải qua ~ (quá trình)'},
+  {f:'〜を皮切りに (N1)',b:'lấy ~ làm mở đầu (mạnh hơn N2)'}
+]);
+makeFlashcards('fg152',[
+  {f:'〜ことあれ',b:'kể cả khi ~/cho dù ~ (giả định mạnh)'},
+  {f:'〜といわず〜といわず',b:'dù là A hay B cũng ~/không phân biệt A hay B'},
+  {f:'〜なりに/〜なりの',b:'theo cách của ~/theo kiểu riêng của ~'},
+  {f:'〜というところだ',b:'khoảng ~/đại khái là ~ (ước lượng)'}
+]);
+makeFlashcards('fg156',[
+  {f:'立法',b:'りっぽう — lập pháp'},
+  {f:'司法',b:'しほう — tư pháp'},
+  {f:'行政',b:'ぎょうせい — hành pháp'},
+  {f:'条例',b:'じょうれい — điều lệ, nghị định địa phương'},
+  {f:'憲法',b:'けんぽう — hiến pháp'},
+  {f:'違憲',b:'いけん — vi hiến'},
+  {f:'判例',b:'はんれい — án lệ, tiền lệ pháp'},
+  {f:'起訴',b:'きそ — truy tố, khởi tố'}
+]);
+makeFlashcards('fg157',[
+  {f:'免疫療法',b:'めんえきりょうほう — liệu pháp miễn dịch'},
+  {f:'抗体',b:'こうたい — kháng thể'},
+  {f:'ウイルス変異',b:'ウイルスへんい — biến thể virus'},
+  {f:'臨床試験',b:'りんしょうしけん — thử nghiệm lâm sàng'},
+  {f:'副反応',b:'ふくはんのう — tác dụng phụ (vaccine)'},
+  {f:'集団免疫',b:'しゅうだんめんえき — miễn dịch cộng đồng'},
+  {f:'精神疾患',b:'せいしんしっかん — bệnh tâm thần'},
+  {f:'認知症',b:'にんちしょう — sa sút trí tuệ, mất trí'}
+]);
+
+/* ===== BÀI BỔ SUNG 207-208 ===== */
+makeFlashcards('fg207',[
+  {f:'は vs が',b:'は=chủ đề đã biết/so sánh · が=thông tin mới/nhấn mạnh chủ ngữ'},
+  {f:'に vs で',b:'に=vị trí tồn tại/thời điểm · で=nơi diễn ra hành động'},
+  {f:'〜てください vs 〜てもいいです',b:'てください=yêu cầu · てもいい=cho phép'},
+  {f:'まだ〜ていません vs もう〜ました',b:'まだ=chưa · もう=đã rồi'},
+  {f:'〜ながら vs 〜てから',b:'ながら=đồng thời · てから=làm xong rồi mới'},
+  {f:'〜ほうがいい vs 〜ばいい',b:'ほうがいい=lời khuyên nên làm · ばいい=chỉ cần làm là đủ'}
+]);
+makeFlashcards('fg208',[
+  {f:'お父さん / 父',b:'おとうさん(bố người khác) / ちち(bố mình)'},
+  {f:'お母さん / 母',b:'おかあさん(mẹ người khác) / はは(mẹ mình)'},
+  {f:'お兄さん / 兄',b:'おにいさん(anh người khác) / あに(anh mình)'},
+  {f:'お姉さん / 姉',b:'おねえさん(chị người khác) / あね(chị mình)'},
+  {f:'嬉しい',b:'うれしい — vui mừng'},
+  {f:'悲しい',b:'かなしい — buồn'},
+  {f:'寂しい',b:'さびしい — cô đơn'},
+  {f:'恥ずかしい',b:'はずかしい — xấu hổ, ngại ngùng'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 2: 223-224 ===== */
+makeFlashcards('fg223',[
+  {f:'食べます → 食べる',b:'ます形 → 普通形 (hiện tại khẳng định)'},
+  {f:'食べません → 食べない',b:'ます形 → 普通形 (hiện tại phủ định)'},
+  {f:'食べました → 食べた',b:'ます形 → 普通形 (quá khứ khẳng định)'},
+  {f:'食べませんでした → 食べなかった',b:'ます形 → 普通形 (quá khứ phủ định)'}
+]);
+makeFlashcards('fg224',[
+  {f:'春',b:'はる — mùa xuân'},
+  {f:'梅雨',b:'つゆ — mùa mưa tháng 6'},
+  {f:'台風',b:'たいふう — bão'},
+  {f:'蒸し暑い',b:'むしあつい — nóng ẩm oi bức'},
+  {f:'涼しい',b:'すずしい — mát mẻ'},
+  {f:'紅葉',b:'こうよう — lá đỏ mùa thu'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 3: 243-244 ===== */
+makeFlashcards('fg243',[
+  {f:'へ',b:'hướng đến (nhấn mạnh phương hướng)'},
+  {f:'に',b:'đích đến cụ thể'},
+  {f:'まで',b:'cho đến (kéo dài liên tục)'},
+  {f:'までに',b:'trước khi đến (hạn chót, 1 lần)'}
+]);
+makeFlashcards('fg244',[
+  {f:'改札口',b:'かいさつぐち — cửa soát vé'},
+  {f:'乗り換え',b:'のりかえ — chuyển tuyến/đổi tàu'},
+  {f:'時刻表',b:'じこくひょう — bảng giờ tàu/xe'},
+  {f:'交番',b:'こうばん — trạm cảnh sát khu vực'},
+  {f:'郵便局',b:'ゆうびんきょく — bưu điện'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 4: 263-264 ===== */
+makeFlashcards('fg263',[
+  {f:'行く → 行こう',b:'Nhóm 1: đổi u→o + う (thể ý chí)'},
+  {f:'食べる → 食べよう',b:'Nhóm 2: bỏ る + よう'},
+  {f:'する → しよう / くる → こよう',b:'bất quy tắc'}
+]);
+makeFlashcards('fg264',[
+  {f:'値段',b:'ねだん — giá cả'},
+  {f:'お釣り',b:'おつり — tiền thừa'},
+  {f:'割引',b:'わりびき — giảm giá'},
+  {f:'レジ',b:'reji — quầy thu ngân'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 5: 283-284 ===== */
+makeFlashcards('fg283',[
+  {f:'朝起きて、顔を洗って、朝ごはんを食べます',b:'thức dậy, rửa mặt, rồi ăn sáng (て nối tuần tự)'},
+  {f:'quy tắc て nối câu',b:'chỉ động từ CUỐI chia thì, các động từ giữa giữ nguyên て'}
+]);
+makeFlashcards('fg284',[
+  {f:'台所',b:'だいどころ — nhà bếp'},
+  {f:'玄関',b:'げんかん — lối vào nhà'},
+  {f:'押し入れ',b:'おしいれ — tủ âm tường kiểu Nhật'},
+  {f:'畳',b:'たたみ — chiếu tatami'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 6: 303-304 ===== */
+makeFlashcards('fg303',[
+  {f:'〜てもいいですか',b:'xin phép làm gì đó'},
+  {f:'〜なければなりません',b:'phải làm gì đó (bắt buộc)'}
+]);
+makeFlashcards('fg304',[
+  {f:'頭',b:'あたま — đầu'},
+  {f:'お腹',b:'おなか — bụng'},
+  {f:'喉',b:'のど — cổ họng'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 7: 323-324 ===== */
+makeFlashcards('fg323',[
+  {f:'Vた+ことがある',b:'đã từng có kinh nghiệm ~'},
+  {f:'Vる+ことがある',b:'thỉnh thoảng có việc ~ xảy ra'}
+]);
+makeFlashcards('fg324',[
+  {f:'趣味',b:'しゅみ — sở thích'},
+  {f:'映画',b:'えいが — phim điện ảnh'},
+  {f:'散歩',b:'さんぽ — đi dạo'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 8: 343-344 ===== */
+makeFlashcards('fg343',[
+  {f:'〜てあげる',b:'tôi làm gì đó cho người khác'},
+  {f:'〜てもらう',b:'tôi nhận được sự giúp đỡ từ người khác'},
+  {f:'〜てくれる',b:'người khác làm gì đó cho tôi'}
+]);
+makeFlashcards('fg344',[
+  {f:'会社員',b:'かいしゃいん — nhân viên công ty'},
+  {f:'医者',b:'いしゃ — bác sĩ'},
+  {f:'先生',b:'せんせい — giáo viên'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 9: 363-364 ===== */
+makeFlashcards('fg363',[
+  {f:'〜つもりです',b:'ý định cá nhân, chưa chắc chắn tuyệt đối'},
+  {f:'〜予定です',b:'kế hoạch đã sắp xếp cụ thể, chắc chắn hơn'}
+]);
+makeFlashcards('fg364',[
+  {f:'図書館',b:'としょかん — thư viện'},
+  {f:'借りる',b:'かりる — mượn'},
+  {f:'返す',b:'かえす — trả lại'}
+]);
+
+function openToc(){
+  document.getElementById('tocPanel').classList.add('open');
+  document.getElementById('tocOverlay').classList.add('open');
+}
+function closeToc(){
+  document.getElementById('tocPanel').classList.remove('open');
+  document.getElementById('tocOverlay').classList.remove('open');
+}
+
+/* ===== NAV DROPDOWN TOGGLE ===== */
+document.querySelectorAll('.nav-dd-trigger').forEach(trigger=>{
+  trigger.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const dd = trigger.closest('.nav-dd');
+    const wasOpen = dd.classList.contains('open');
+    document.querySelectorAll('.nav-dd.open').forEach(d=>d.classList.remove('open'));
+    if(!wasOpen) dd.classList.add('open');
+  });
+});
+document.addEventListener('click', ()=>{
+  document.querySelectorAll('.nav-dd.open').forEach(d=>d.classList.remove('open'));
+});
+
+
+/* ===== THEO DÕI TIẾN ĐỘ HỌC TẬP ===== */
+function pSafeGet(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
+function pSafeSet(key, val){ try{ localStorage.setItem(key, val); }catch(e){} }
+
+function isLessonDone(baiId){ return pSafeGet('done_'+baiId) === '1'; }
+function setLessonDone(baiId, done){ pSafeSet('done_'+baiId, done ? '1' : '0'); }
+
+function updateProgressSummary(){
+  const sections = document.querySelectorAll('.section[id^="bai"]');
+  let done = 0;
+  sections.forEach(s=>{ if(isLessonDone(s.id)) done++; });
+  const total = sections.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  const summaryEl = document.getElementById('progressSummary');
+  if(summaryEl){
+    summaryEl.innerHTML = `
+      <span>📊 Tiến độ: <b>${done}/${total} bài</b> (${pct}%)</span>
+      <div class="psum-bar"><div class="psum-fill" style="width:${pct}%"></div></div>
+    `;
+  }
+}
+
+function toggleLessonDone(btn, baiId){
+  const nowDone = !isLessonDone(baiId);
+  setLessonDone(baiId, nowDone);
+  btn.classList.toggle('done', nowDone);
+  btn.textContent = nowDone ? '✓ Đã học' : '☐ Đánh dấu đã học';
+  const section = document.getElementById(baiId);
+  if(section) section.classList.toggle('lesson-completed', nowDone);
+  const tocItem = document.querySelector(`.toc-item[href="#${baiId}"]`);
+  if(tocItem){
+    tocItem.classList.toggle('done-item', nowDone);
+    const checkSpan = tocItem.querySelector('.toc-check');
+    if(nowDone && !checkSpan){
+      const span = document.createElement('span');
+      span.className = 'toc-check';
+      span.textContent = '✓';
+      tocItem.insertBefore(span, tocItem.firstChild);
+    } else if(!nowDone && checkSpan){
+      checkSpan.remove();
+    }
+  }
+  updateProgressSummary();
+}
+
+function initProgressTracking(){
+  const sections = document.querySelectorAll('.section[id^="bai"]');
+  sections.forEach(section=>{
+    const baiId = section.id;
+    const done = isLessonDone(baiId);
+    if(done) section.classList.add('lesson-completed');
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lesson-done-toggle' + (done ? ' done' : '');
+    btn.textContent = done ? '✓ Đã học' : '☐ Đánh dấu đã học';
+    btn.onclick = ()=> toggleLessonDone(btn, baiId);
+
+    const firstChild = section.firstElementChild;
+    if(firstChild) section.insertBefore(btn, firstChild);
+    else section.appendChild(btn);
+
+    if(done){
+      const tocItem = document.querySelector(`.toc-item[href="#${baiId}"]`);
+      if(tocItem){
+        tocItem.classList.add('done-item');
+        const span = document.createElement('span');
+        span.className = 'toc-check';
+        span.textContent = '✓';
+        tocItem.insertBefore(span, tocItem.firstChild);
+      }
+    }
+  });
+  updateProgressSummary();
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initProgressTracking);
+} else {
+  initProgressTracking();
+}
+
+</script>
+
+<button class="toc-btn" onclick="openToc()" title="Mục lục">📑</button>
+<div class="toc-overlay" id="tocOverlay" onclick="closeToc()"></div>
+<div class="toc-panel" id="tocPanel">
+  <div class="toc-panel-header">
+    <h3>📑 Mục Lục (37 bài)</h3>
+    <button class="toc-close-btn" onclick="closeToc()">✕</button>
+  </div>
+  <div class="toc-panel-body">
+<div class="toc-group-label">📖 Bài gốc</div>
+      <a href="#bai19" class="toc-item" onclick="closeToc()"><span class="toc-num">19.</span>Câu Cơ Bản: N は N です・じゃありません・ですか</a>
+      <a href="#bai20" class="toc-item" onclick="closeToc()"><span class="toc-num">20.</span>Hệ Thống Trợ Từ: が・を・に・で・へ・と・も・か</a>
+      <a href="#bai21" class="toc-item" onclick="closeToc()"><span class="toc-num">21.</span>Tính Từ い (i-adj) và な (na-adj): Chia & Ứng Dụng</a>
+      <a href="#bai22" class="toc-item" onclick="closeToc()"><span class="toc-num">22.</span>Động Từ: 3 Nhóm & Thì Hiện Tại (ます形)</a>
+      <a href="#bai23" class="toc-item" onclick="closeToc()"><span class="toc-num">23.</span>Thì Quá Khứ: ました形 & た形</a>
+      <a href="#bai24" class="toc-item" onclick="closeToc()"><span class="toc-num">24.</span>Thể Phủ Định: ない形 & Ứng Dụng</a>
+      <a href="#bai25" class="toc-item" onclick="closeToc()"><span class="toc-num">25.</span>て形: Chuỗi Hành Động & Yêu Cầu</a>
+      <a href="#bai26" class="toc-item" onclick="closeToc()"><span class="toc-num">26.</span>ている: Hành Động Đang Diễn Ra & Trạng Thái</a>
+      <a href="#bai27" class="toc-item" onclick="closeToc()"><span class="toc-num">27.</span>Từ Chỉ Thị: これ・それ・あれ・どれ / ここ・そこ・あそこ・どこ</a>
+      <a href="#bai28" class="toc-item" onclick="closeToc()"><span class="toc-num">28.</span>Mời & Xin Phép: ましょう・ませんか・てもいいですか・てはいけません</a>
+      <a href="#bai29" class="toc-item" onclick="closeToc()"><span class="toc-num">29.</span>Mong Muốn: たい・たがる・ほしい・ほしがる</a>
+      <a href="#bai30" class="toc-item" onclick="closeToc()"><span class="toc-num">30.</span>So Sánh: より・ほうが・いちばん・おなじくらい</a>
+      <a href="#bai31" class="toc-item" onclick="closeToc()"><span class="toc-num">31.</span>Lý Do & Nguyên Nhân: から・ので・のに</a>
+      <a href="#bai32" class="toc-item" onclick="closeToc()"><span class="toc-num">32.</span>Nghĩa Vụ & Cho Phép: なければならない・なくてもいい</a>
+      <a href="#bai33" class="toc-item" onclick="closeToc()"><span class="toc-num">33.</span>助数詞 Josūshi: Đếm Đồ Vật Theo Loại</a>
+      <a href="#bai34" class="toc-item" onclick="closeToc()"><span class="toc-num">34.</span>Ôn Tập Ngữ Pháp N5 Tổng Hợp + SRS</a>
+      <a href="#bai35" class="toc-item" onclick="closeToc()"><span class="toc-num">35.</span>🏆 Thi Thử JLPT N5 (20 câu mô phỏng)</a>
+      <a href="#bai36" class="toc-item" onclick="closeToc()"><span class="toc-num">36.</span>Kanji N5: Người, Số, Phương Hướng (1–25)</a>
+      <a href="#bai37" class="toc-item" onclick="closeToc()"><span class="toc-num">37.</span>Kanji N5: Thời Gian, Thiên Nhiên & Địa Lý (26–60)</a>
+<div class="toc-group-label">✨ Bài bổ sung</div>
+      <a href="#bai207" class="toc-item" onclick="closeToc()"><span class="toc-num">207.</span>Bổ Sung: 6 Cặp Ngữ Pháp N5 Dễ Nhầm Lẫn Nhất</a>
+      <a href="#bai208" class="toc-item" onclick="closeToc()"><span class="toc-num">208.</span>Bổ Sung: Từ Vựng Gia Đình & Cảm Xúc Mở Rộng</a>
+      <a href="#bai223" class="toc-item" onclick="closeToc()"><span class="toc-num">223.</span>Bổ Sung: Thể Lịch Sự (ます形) vs Thể Thông Thường (普通形)</a>
+      <a href="#bai224" class="toc-item" onclick="closeToc()"><span class="toc-num">224.</span>Bổ Sung: Từ Vựng Thời Tiết & Bốn Mùa</a>
+      <a href="#bai243" class="toc-item" onclick="closeToc()"><span class="toc-num">243.</span>Bổ Sung: Phân Biệt へ・に・まで・までに</a>
+      <a href="#bai244" class="toc-item" onclick="closeToc()"><span class="toc-num">244.</span>Bổ Sung: Phương Tiện Giao Thông & Địa Điểm Công Cộng</a>
+      <a href="#bai263" class="toc-item" onclick="closeToc()"><span class="toc-num">263.</span>Bổ Sung: Thể Ý Chí (意向形) 〜よう・〜おう</a>
+      <a href="#bai264" class="toc-item" onclick="closeToc()"><span class="toc-num">264.</span>Bổ Sung: Từ Vựng Mua Sắm & Tiền Tệ</a>
+      <a href="#bai283" class="toc-item" onclick="closeToc()"><span class="toc-num">283.</span>Bổ Sung: Thể て Nối Câu Liệt Kê Hành Động Tuần Tự</a>
+      <a href="#bai284" class="toc-item" onclick="closeToc()"><span class="toc-num">284.</span>Bổ Sung: Từ Vựng Nhà Cửa & Đồ Nội Thất</a>
+      <a href="#bai303" class="toc-item" onclick="closeToc()"><span class="toc-num">303.</span>Bổ Sung: 〜てもいいですか vs 〜なければなりません</a>
+      <a href="#bai304" class="toc-item" onclick="closeToc()"><span class="toc-num">304.</span>Bổ Sung: Từ Vựng Cơ Thể & Sức Khỏe Cơ Bản</a>
+      <a href="#bai323" class="toc-item" onclick="closeToc()"><span class="toc-num">323.</span>Bổ Sung: 〜ことがあります (Kinh Nghiệm) vs 〜ことがある (Thỉnh Thoảng)</a>
+      <a href="#bai324" class="toc-item" onclick="closeToc()"><span class="toc-num">324.</span>Bổ Sung: Từ Vựng Hoạt Động Giải Trí</a>
+      <a href="#bai343" class="toc-item" onclick="closeToc()"><span class="toc-num">343.</span>Bổ Sung: 〜てあげる・てもらう・てくれる Tổng Quan</a>
+      <a href="#bai344" class="toc-item" onclick="closeToc()"><span class="toc-num">344.</span>Bổ Sung: Từ Vựng Nghề Nghiệp Cơ Bản</a>
+      <a href="#bai363" class="toc-item" onclick="closeToc()"><span class="toc-num">363.</span>Bổ Sung: 〜つもりです vs 〜予定です Phân Biệt Dự Định</a>
+      <a href="#bai364" class="toc-item" onclick="closeToc()"><span class="toc-num">364.</span>Bổ Sung: Từ Vựng Thư Viện & Sách Vở</a>
+  </div>
+</div>
+<button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+</body></html>
