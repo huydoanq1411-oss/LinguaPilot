@@ -41,6 +41,7 @@ Chạy lệnh tại thư mục gốc repo rồi truy cập <http://localhost:800
 ## Tính năng
 
 - Bài học có giải thích, ví dụ, flashcard và câu hỏi tương tác.
+- Sau khi nộp quiz, có thể làm lại với bộ câu mới cùng cấp độ; ngân hàng được lưu cục bộ, không cần gọi API.
 - Giao diện sáng/tối và điều hướng giữa các phần học.
 - Đánh dấu tiến độ bài học; dữ liệu tiến độ được lưu cục bộ trong trình duyệt khi tính năng lưu trữ khả dụng.
 - Bảng tra cứu hỗ trợ phát âm bằng chức năng tổng hợp giọng nói của trình duyệt nếu được hỗ trợ.
@@ -49,3 +50,11 @@ Chạy lệnh tại thư mục gốc repo rồi truy cập <http://localhost:800
 ## Công nghệ
 
 HTML, CSS và JavaScript thuần; nội dung và mã tương tác được đặt trực tiếp trong các trang HTML. Không có bước build. Một số kiểu chữ được tải từ Google Fonts khi có kết nối mạng; trang có font dự phòng nếu không tải được.
+
+### Cập nhật ngân hàng quiz
+
+Sau khi thêm/sửa câu hỏi trong các trang `JP/*.html`, tạo lại ngân hàng dùng chung bằng Windows PowerShell tại thư mục gốc:
+
+```powershell
+Get-Content .\JP\build-quiz-bank.ps1 -Raw -Encoding UTF8 | Invoke-Expression
+```

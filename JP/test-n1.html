@@ -605,15 +605,17 @@ function runSingleQuiz(){
     const sel = form.querySelector(`input[name="${name}"]:checked`);
     const questionDiv = form.querySelector(`input[name="${name}"]`).closest('.quiz-q');
     const fb = questionDiv.querySelector('.quiz-feedback');
+    const correctOption = questionDiv.querySelector('input[value="c"]');
+    const correctAnswer = correctOption ? correctOption.parentElement.textContent.trim() : '';
     if(!sel){
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='⚠️ Chưa chọn.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`⚠️ Chưa chọn. Đáp án: ${correctAnswer}.`;
       return;
     }
     if(sel.value === 'c'){
       score++;
       fb.style.display='block'; fb.className='quiz-feedback correct'; fb.textContent='✓ Chính xác!';
     } else {
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='✗ Sai rồi.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`✗ Đáp án đúng: ${correctAnswer}. Đọc lại gợi ý nghĩa trong câu và tự đặt thêm một câu tương tự.`;
     }
   });
   const total = names.length;
@@ -647,5 +649,21 @@ document.addEventListener('click', ()=>{
 
 </script>
 
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:0 20px 24px">
+  <section class="section">
+    <div class="eyebrow">N1 · Nhận diện văn phong và dạng kết hợp</div>
+    <h2>Đọc mẫu ngữ pháp như một tín hiệu văn bản</h2>
+    <table>
+      <tr><th>Dấu hiệu</th><th>Diễn giải</th><th>Ví dụ</th></tr>
+      <tr><td>〜ゆえ(に)</td><td>Nguyên nhân trang trọng, thường gặp trong văn viết/lập luận.</td><td>若さゆえの過ち。</td></tr>
+      <tr><td>〜いかんにかかわらず</td><td>Văn bản quy định: bất kể nội dung/diễn biến của danh từ đứng trước.</td><td>理由のいかんにかかわらず、規則を守る。</td></tr>
+      <tr><td>〜たりとも〜ない</td><td>Phủ định tuyệt đối, thường đi với đơn vị nhỏ như 一秒・一円・一人.</td><td>一秒たりとも無駄にできない。</td></tr>
+      <tr><td>〜んばかり</td><td>Phóng đại hình ảnh: như thể sắp xảy ra; dạng に bổ nghĩa động từ, の bổ nghĩa danh từ.</td><td>泣かんばかりに頼む。/ 割れんばかりの拍手。</td></tr>
+    </table>
+    <div class="box note"><b>Chiến thuật N1</b> Tách câu thành phần bổ nghĩa, kết thúc câu và quan hệ lập luận. Với mẫu văn viết, để ý sắc thái trang trọng và danh từ/động từ ngay trước cấu trúc; đừng chỉ chọn theo bản dịch tiếng Việt.</div>
+  </section>
+</div>
 <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script src="quiz-bank.js"></script>
+<script src="quiz-engine.js"></script>
 </body></html>

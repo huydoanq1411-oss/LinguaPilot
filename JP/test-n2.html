@@ -605,15 +605,17 @@ function runSingleQuiz(){
     const sel = form.querySelector(`input[name="${name}"]:checked`);
     const questionDiv = form.querySelector(`input[name="${name}"]`).closest('.quiz-q');
     const fb = questionDiv.querySelector('.quiz-feedback');
+    const correctOption = questionDiv.querySelector('input[value="c"]');
+    const correctAnswer = correctOption ? correctOption.parentElement.textContent.trim() : '';
     if(!sel){
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='⚠️ Chưa chọn.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`⚠️ Chưa chọn. Đáp án: ${correctAnswer}.`;
       return;
     }
     if(sel.value === 'c'){
       score++;
       fb.style.display='block'; fb.className='quiz-feedback correct'; fb.textContent='✓ Chính xác!';
     } else {
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='✗ Sai rồi.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`✗ Đáp án đúng: ${correctAnswer}. Đọc lại gợi ý nghĩa trong câu và tự đặt thêm một câu tương tự.`;
     }
   });
   const total = names.length;
@@ -647,5 +649,21 @@ document.addEventListener('click', ()=>{
 
 </script>
 
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:0 20px 24px">
+  <section class="section">
+    <div class="eyebrow">N2 · Đọc sắc thái liên kết</div>
+    <h2>Thời điểm, kết quả và tương phản</h2>
+    <table>
+      <tr><th>Cấu trúc</th><th>Dùng khi</th><th>Ví dụ</th></tr>
+      <tr><td>末に</td><td>Sau một quá trình/cân nhắc, đi đến kết quả; có thể trung tính.</td><td>何度も話し合った末に、結論を出した。</td></tr>
+      <tr><td>あげく</td><td>Sau nhiều phiền toái hoặc thử làm, kết cục thường không như ý.</td><td>迷ったあげく、何も買わなかった。</td></tr>
+      <tr><td>次第</td><td>Vừa hoàn tất việc A thì lập tức làm B; thường là văn phong công việc.</td><td>到着し次第、ご連絡します。</td></tr>
+      <tr><td>に反して / のにひきかえ</td><td>に反して: trái dự đoán/kỳ vọng; のにひきかえ: đặt hai đối tượng cạnh nhau để đối chiếu.</td><td>予想に反して勝った。/ 兄は社交的なのにひきかえ、弟は内気だ。</td></tr>
+    </table>
+    <div class="box tip"><b>Mẹo làm câu ngữ pháp</b> Xác định trước mốc thời gian, kết quả tốt/xấu và đối tượng đang được so sánh. Sau đó mới kiểm tra mẫu kết hợp từ điển/た形/danh từ.</div>
+  </section>
+</div>
 <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script src="quiz-bank.js"></script>
+<script src="quiz-engine.js"></script>
 </body></html>

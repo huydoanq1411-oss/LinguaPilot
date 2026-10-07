@@ -605,15 +605,17 @@ function runSingleQuiz(){
     const sel = form.querySelector(`input[name="${name}"]:checked`);
     const questionDiv = form.querySelector(`input[name="${name}"]`).closest('.quiz-q');
     const fb = questionDiv.querySelector('.quiz-feedback');
+    const correctOption = questionDiv.querySelector('input[value="c"]');
+    const correctAnswer = correctOption ? correctOption.parentElement.textContent.trim() : '';
     if(!sel){
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='⚠️ Chưa chọn.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`⚠️ Chưa chọn. Đáp án: ${correctAnswer}.`;
       return;
     }
     if(sel.value === 'c'){
       score++;
       fb.style.display='block'; fb.className='quiz-feedback correct'; fb.textContent='✓ Chính xác!';
     } else {
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='✗ Sai rồi.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`✗ Đáp án đúng: ${correctAnswer}. Đọc lại gợi ý nghĩa trong câu và tự đặt thêm một câu tương tự.`;
     }
   });
   const total = names.length;
@@ -647,5 +649,21 @@ document.addEventListener('click', ()=>{
 
 </script>
 
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:0 20px 24px">
+  <section class="section">
+    <div class="eyebrow">N3→N2 · Chọn cấu trúc theo quan hệ nghĩa</div>
+    <h2>Nguyên nhân, suy luận và giới hạn trách nhiệm</h2>
+    <table>
+      <tr><th>Cấu trúc</th><th>Sắc thái</th><th>Ví dụ</th></tr>
+      <tr><td>おかげで</td><td>Nguyên nhân được nhìn nhận tích cực hoặc biết ơn.</td><td>先生のおかげで合格できた。</td></tr>
+      <tr><td>せいで / ばかりに</td><td>せいで gán nguyên nhân tiêu cực; ばかりに nhấn mạnh một nguyên nhân nhỏ dẫn đến hậu quả đáng tiếc.</td><td>雨のせいで遅れた。/ 一言言ったばかりに誤解された。</td></tr>
+      <tr><td>ことから</td><td>Suy luận hoặc đặt tên dựa trên một dấu hiệu/sự kiện.</td><td>指紋が残っていたことから、犯人が分かった。</td></tr>
+      <tr><td>わけにはいかない / ざるを得ない</td><td>Không thể làm vì trách nhiệm; buộc phải làm do hoàn cảnh.</td><td>約束を破るわけにはいかない。/ 延期せざるを得ない。</td></tr>
+    </table>
+    <div class="box tip"><b>Cách ôn</b> Ghi lại chủ thể chịu trách nhiệm và thái độ người nói. Hai chi tiết này thường phân biệt được các đáp án gần nghĩa hơn là dịch từng chữ.</div>
+  </section>
+</div>
 <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script src="quiz-bank.js"></script>
+<script src="quiz-engine.js"></script>
 </body></html>

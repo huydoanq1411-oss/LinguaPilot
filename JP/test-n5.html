@@ -605,15 +605,17 @@ function runSingleQuiz(){
     const sel = form.querySelector(`input[name="${name}"]:checked`);
     const questionDiv = form.querySelector(`input[name="${name}"]`).closest('.quiz-q');
     const fb = questionDiv.querySelector('.quiz-feedback');
+    const correctOption = questionDiv.querySelector('input[value="c"]');
+    const correctAnswer = correctOption ? correctOption.parentElement.textContent.trim() : '';
     if(!sel){
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='⚠️ Chưa chọn.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`⚠️ Chưa chọn. Đáp án: ${correctAnswer}.`;
       return;
     }
     if(sel.value === 'c'){
       score++;
       fb.style.display='block'; fb.className='quiz-feedback correct'; fb.textContent='✓ Chính xác!';
     } else {
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='✗ Sai rồi.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`✗ Đáp án đúng: ${correctAnswer}. Đọc lại gợi ý nghĩa trong câu và tự đặt thêm một câu tương tự.`;
     }
   });
   const total = names.length;
@@ -647,5 +649,21 @@ document.addEventListener('click', ()=>{
 
 </script>
 
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:0 20px 24px">
+  <section class="section">
+    <div class="eyebrow">N5 · Khung câu nền tảng</div>
+    <h2>Đặt đúng vai trò trước khi chia động từ</h2>
+    <table>
+      <tr><th>Khung câu</th><th>Chức năng</th><th>Ví dụ</th></tr>
+      <tr><td>N は N です</td><td>Nêu chủ đề rồi giới thiệu/miêu tả.</td><td>私は学生です。</td></tr>
+      <tr><td>N を V</td><td>を đánh dấu đối tượng trực tiếp của hành động.</td><td>本を読みます。</td></tr>
+      <tr><td>N で V</td><td>で đánh dấu nơi diễn ra hành động hoặc phương tiện.</td><td>図書館で勉強します。/ 電車で行きます。</td></tr>
+      <tr><td>Vたことがある</td><td>Nói về trải nghiệm đã từng có, không phải một lần vừa hoàn tất.</td><td>日本へ行ったことがあります。</td></tr>
+    </table>
+    <div class="box tip"><b>Ôn nhanh</b> Tự đặt 3 câu về bản thân: nơi đang ở (に), nơi học/làm (で), và phương tiện đi lại (で). Đọc thành tiếng để gắn trợ từ với ý nghĩa.</div>
+  </section>
+</div>
 <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script src="quiz-bank.js"></script>
+<script src="quiz-engine.js"></script>
 </body></html>

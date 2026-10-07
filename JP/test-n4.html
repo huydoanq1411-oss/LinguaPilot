@@ -490,10 +490,10 @@ footer.lesson-nav{
   <label><input type="radio" name="q9" value="w">ようです</label>
 </div><div class="quiz-feedback"></div></div>
 
-<div class="quiz-q"><p><b>10.</b> 引っ越し＿＿＿、忙しくなりました。（Kể từ khi ~ có thay đổi rõ rệt, kéo dài）</p><div class="quiz-opts">
-  <label><input type="radio" name="q10" value="c">てからというもの</label>
-  <label><input type="radio" name="q10" value="w">てから五分後</label>
-  <label><input type="radio" name="q10" value="w">たまま</label>
+<div class="quiz-q"><p><b>10.</b> 引っ越して＿＿＿、忙しくなりました。（Kể từ khi ~ có thay đổi rõ rệt, kéo dài）</p><div class="quiz-opts">
+  <label><input type="radio" name="q10" value="c">からというもの</label>
+  <label><input type="radio" name="q10" value="w">から五分後</label>
+  <label><input type="radio" name="q10" value="w">いる間</label>
 </div><div class="quiz-feedback"></div></div>
 
 <div class="quiz-q"><p><b>11.</b> 「手続き」の意味は？</p><div class="quiz-opts">
@@ -605,15 +605,17 @@ function runSingleQuiz(){
     const sel = form.querySelector(`input[name="${name}"]:checked`);
     const questionDiv = form.querySelector(`input[name="${name}"]`).closest('.quiz-q');
     const fb = questionDiv.querySelector('.quiz-feedback');
+    const correctOption = questionDiv.querySelector('input[value="c"]');
+    const correctAnswer = correctOption ? correctOption.parentElement.textContent.trim() : '';
     if(!sel){
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='⚠️ Chưa chọn.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`⚠️ Chưa chọn. Đáp án: ${correctAnswer}.`;
       return;
     }
     if(sel.value === 'c'){
       score++;
       fb.style.display='block'; fb.className='quiz-feedback correct'; fb.textContent='✓ Chính xác!';
     } else {
-      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent='✗ Sai rồi.';
+      fb.style.display='block'; fb.className='quiz-feedback wrong'; fb.textContent=`✗ Đáp án đúng: ${correctAnswer}. Đọc lại gợi ý nghĩa trong câu và tự đặt thêm một câu tương tự.`;
     }
   });
   const total = names.length;
@@ -647,5 +649,20 @@ document.addEventListener('click', ()=>{
 
 </script>
 
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:0 20px 24px">
+  <section class="section">
+    <div class="eyebrow">N4 · Ôn theo cặp dễ nhầm</div>
+    <h2>Phân biệt sắc thái trước khi chọn đáp án</h2>
+    <table>
+      <tr><th>Cặp cấu trúc</th><th>Điểm phân biệt</th><th>Ví dụ</th></tr>
+      <tr><td>そうです / ようです</td><td>そうです dự đoán từ dấu hiệu nhìn thấy; ようです là suy luận từ nhiều căn cứ.</td><td>雨が降りそうです。/ 外がぬれているので、雨が降ったようです。</td></tr>
+      <tr><td>ことになる / ようになる</td><td>ことになる: quyết định/sắp xếp; ようになる: năng lực hoặc trạng thái thay đổi.</td><td>転勤することになった。/ 漢字が読めるようになった。</td></tr>
+      <tr><td>のに / けれど</td><td>のに thường biểu thị kết quả trái kỳ vọng và cảm xúc tiếc nuối.</td><td>勉強したのに、合格できなかった。</td></tr>
+    </table>
+    <div class="box tip"><b>Tự kiểm tra</b> Với mỗi câu sai, che đáp án rồi nói rõ: đây là quan sát, suy luận, quyết định hay sự thay đổi kéo dài? Chọn cấu trúc theo quan hệ nghĩa trước khi xét hình thức.</div>
+  </section>
+</div>
 <button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script src="quiz-bank.js"></script>
+<script src="quiz-engine.js"></script>
 </body></html>
