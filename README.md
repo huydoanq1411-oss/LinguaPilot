@@ -33,6 +33,7 @@ Chạy lệnh tại thư mục gốc repo rồi truy cập <http://localhost:800
 
 ### Tra cứu và kiểm tra
 
+- [`cau-truc-jlpt.html`](JP/cau-truc-jlpt.html): cấu trúc kỳ thi JLPT N5→N1 (thời gian, điểm đậu) kèm đường dẫn tới các bài cần học cho từng cấp.
 - [`bang-chu-cai.html`](JP/bang-chu-cai.html): bảng Hiragana, Katakana và Kanji tham khảo.
 - [`tra-kanji.html`](JP/tra-kanji.html): tra cứu Kanji.
 - [`test-n5.html`](JP/test-n5.html), [`test-n4.html`](JP/test-n4.html), [`test-n3.html`](JP/test-n3.html), [`test-n2.html`](JP/test-n2.html), [`test-n1.html`](JP/test-n1.html): bài kiểm tra theo cấp độ.
