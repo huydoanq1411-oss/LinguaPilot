@@ -59,3 +59,29 @@ Sau khi thêm/sửa câu hỏi trong các trang `JP/*.html`, tạo lại ngân h
 ```powershell
 Get-Content .\JP\build-quiz-bank.ps1 -Raw -Encoding UTF8 | Invoke-Expression
 ```
+
+## Cập nhật thêm tính năng cho web
+
+Chạy các lệnh sau trong thư mục gốc repo (`/f/Quoc_Huy/Go/JP`) để kiểm tra thay đổi và đẩy tính năng mới lên GitHub.
+
+Trước tiên, lấy thông tin mới nhất từ GitHub và kiểm tra trạng thái:
+
+```bash
+git fetch origin
+git status
+```
+
+Chỉ chạy lệnh sau nếu muốn đưa nhánh hiện tại về đúng commit `origin/main` và không cần giữ các commit local chưa có trên GitHub. Lệnh này không xóa nội dung file trong working tree, nhưng sẽ di chuyển `HEAD` của nhánh và có thể làm các commit local không còn nằm trên nhánh hiện tại:
+
+```bash
+git reset origin/main
+git status
+```
+
+Xem kỹ danh sách file `modified` và `untracked` trước khi thêm thay đổi, rồi commit và push:
+
+```bash
+git add .
+git commit -m "Add new features"
+git push -u origin main
+```
