@@ -70,7 +70,7 @@ function App() {
           <span className="brand-mark">L</span><span>lingua<span className="brand-light">pilot</span></span>
         </a>
         <nav aria-label="Điều hướng chính">
-          <a href="#learning">Khám phá</a>
+          <a href="/jp/index.html">Khám phá</a>
           <a href="/jp/cau-truc-jlpt.html">Kỳ thi JLPT</a>
         </nav>
         {user ? <div className="account"><span className="avatar">{(user.displayName || user.email).slice(0, 1).toUpperCase()}</span><span className="account-name">{user.displayName || user.email}</span><button className="text-button" onClick={signOut}>Đăng xuất</button></div> : <a className="nav-cta" href="#account">Bắt đầu học <span>↗</span></a>}
@@ -82,7 +82,7 @@ function App() {
             <div className="eyebrow"><span className="eyebrow-dot" /> KHÔNG GIAN HỌC NGOẠI NGỮ CỦA BẠN</div>
             <h1>Học ngôn ngữ,<br /><span>mở lối tương lai.</span></h1>
             <p className="hero-description">Từng bước vững chắc trên hành trình chinh phục tiếng Nhật. Bài học, công cụ tra cứu và luyện thi JLPT luôn ở ngay đây.</p>
-            <div className="hero-actions"><a className="primary-button" href="#learning">Khám phá bài học <span>→</span></a><a className="secondary-link" href="/jp/kiem-tra-thang-cap.html">Kiểm tra trình độ <span>↗</span></a></div>
+            <div className="hero-actions"><a className="primary-button" href="/jp/index.html">Khám phá bài học <span>→</span></a><a className="secondary-link" href="/jp/kiem-tra-thang-cap.html">Kiểm tra trình độ <span>↗</span></a></div>
             <div className="hero-note"><div className="mini-avatars"><span>あ</span><span>日</span><span>語</span></div><span>Học theo nhịp độ của riêng bạn</span></div>
           </div>
           <div className="hero-art" aria-label="Minh họa học tiếng Nhật" role="img">
