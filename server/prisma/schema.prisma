@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Language {
+  ja
+  en
+}
+
+enum Exam {
+  JLPT
+  IELTS
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  email        String       @unique
+  passwordHash String
+  displayName  String       @default("")
+  createdAt    DateTime     @default(now())
+  flashcards   Flashcard[]
+  submissions  Submission[]
+}
+
+model Flashcard {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language     Language
+  level        String   @default("")
+  front        String
+  back         String
+  repetitions  Int      @default(0)
+  intervalDays Int      @default(0)
+  ease         Float    @default(2.5)
+  nextReview   DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  @@index([userId, nextReview])
+}
+
+model Submission {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam      Exam
+  level     String   @default("")
+  prompt    String   @default("")
+  content   String
+  score     Float?
+  feedback  Json
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
