@@ -1,87 +1,77 @@
-# JLPT N2→N1: Học tiếng Nhật từ 0 đến N1
+# LinguaPilot
 
-Website học tiếng Nhật bằng tiếng Việt, đi từ bảng chữ cái Kana và kiến thức nền tảng đến ngữ pháp, từ vựng, Kanji và luyện thi JLPT N1. Dự án được xây dựng dưới dạng các trang HTML tĩnh, không cần cài đặt thư viện hay backend.
+LinguaPilot là không gian học tiếng Nhật bằng tiếng Việt. Ứng dụng gồm trang chủ React, thư viện bài học JLPT tĩnh và API Express/Prisma dùng PostgreSQL cho tài khoản người học.
 
-## Bắt đầu
+## Thành phần
 
-Mở [`JP/index.html`](JP/index.html) bằng trình duyệt để vào trang chủ, sau đó chọn phần học hoặc công cụ cần dùng.
+- `client/`: React và Vite. Trang chủ giới thiệu lộ trình, liên kết tới bài học, tra cứu và bài kiểm tra JLPT; hỗ trợ đăng ký, đăng nhập và xem phiên người dùng.
+- `client/public/jp/`: bài học, tra cứu Kanji và bài kiểm tra JLPT N5 đến N1.
+- `server/`: Express API, xác thực JWT và Prisma schema/migrations.
+- `docker-compose.yml`: PostgreSQL và pgAdmin.
 
-Có thể chạy qua máy chủ web cục bộ nếu muốn:
+## Chạy ứng dụng
+
+### 1. Cấu hình môi trường
+
+Tạo file `.env` ở thư mục gốc cho Docker Compose và file `server/.env` cho API. Đặt các biến Compose vào file gốc:
+
+```dotenv
+POSTGRES_USER=linguapilot
+POSTGRES_PASSWORD=change-this-password
+POSTGRES_DB=linguapilot
+PGADMIN_EMAIL=admin@example.com
+PGADMIN_PASSWORD=change-this-password
+```
+
+Thêm các biến API vào `server/.env` (dùng cùng thông tin PostgreSQL đã khai báo ở trên):
+
+```dotenv
+DATABASE_URL=postgresql://linguapilot:change-this-password@localhost:5434/linguapilot?schema=public
+JWT_SECRET=replace-with-a-random-secret-at-least-16-characters
+CLIENT_ORIGIN=http://localhost:5173
+PORT=3000
+```
+
+Không commit các file `.env`.
+
+### 2. Khởi động database và API
+
+Tại thư mục gốc, chạy PostgreSQL:
 
 ```bash
-python -m http.server 8000
+docker compose up -d db
 ```
 
-Chạy lệnh tại thư mục gốc repo rồi truy cập <http://localhost:8000/JP/>.
-
-## Nội dung
-
-### Lộ trình học
-
-| Trang | Nội dung |
-| --- | --- |
-| [`phan01.html`](JP/phan01.html) | Kana và phát âm |
-| [`phan02.html`](JP/phan02.html) | Ngữ pháp N5 |
-| [`phan03.html`](JP/phan03.html) | Ngữ pháp, từ vựng và Kanji N4 |
-| [`phan04.html`](JP/phan04.html) | Cầu nối N3→N2 và ngữ pháp trung cấp |
-| [`phan05.html`](JP/phan05.html) | Hoàn thiện và mở rộng N2 |
-| [`phan06.html`](JP/phan06.html) | N2 chuyên sâu |
-| [`phan07.html`](JP/phan07.html) | Ngữ pháp N1 nền tảng |
-| [`phan08.html`](JP/phan08.html) | N1 cơ bản và luyện đề |
-| [`phan09.html`](JP/phan09.html) | N1 nâng cao |
-| [`phan10.html`](JP/phan10.html) | N1 chuyên sâu và tổng ôn |
-
-### Tra cứu và kiểm tra
-
-- [`cau-truc-jlpt.html`](JP/cau-truc-jlpt.html): cấu trúc kỳ thi JLPT N5→N1 (thời gian, điểm đậu) kèm đường dẫn tới các bài cần học cho từng cấp.
-- [`bang-chu-cai.html`](JP/bang-chu-cai.html): bảng Hiragana, Katakana và Kanji tham khảo.
-- [`tra-kanji.html`](JP/tra-kanji.html): tra cứu Kanji.
-- [`test-n5.html`](JP/test-n5.html), [`test-n4.html`](JP/test-n4.html), [`test-n3.html`](JP/test-n3.html), [`test-n2.html`](JP/test-n2.html), [`test-n1.html`](JP/test-n1.html): bài kiểm tra theo cấp độ.
-- [`kiem-tra-thang-cap.html`](JP/kiem-tra-thang-cap.html): bài kiểm tra tổng hợp từ N5 đến N1.
-
-## Tính năng
-
-- Bài học có giải thích, ví dụ, flashcard và câu hỏi tương tác.
-- Sau khi nộp quiz, có thể làm lại với bộ câu mới cùng cấp độ; ngân hàng được lưu cục bộ, không cần gọi API.
-- Giao diện sáng/tối và điều hướng giữa các phần học.
-- Đánh dấu tiến độ bài học; dữ liệu tiến độ được lưu cục bộ trong trình duyệt khi tính năng lưu trữ khả dụng.
-- Bảng tra cứu hỗ trợ phát âm bằng chức năng tổng hợp giọng nói của trình duyệt nếu được hỗ trợ.
-- Giao diện tiếng Việt, bố cục thích ứng với màn hình nhỏ.
-
-## Công nghệ
-
-HTML, CSS và JavaScript thuần; nội dung và mã tương tác được đặt trực tiếp trong các trang HTML. Không có bước build. Một số kiểu chữ được tải từ Google Fonts khi có kết nối mạng; trang có font dự phòng nếu không tải được.
-
-### Cập nhật ngân hàng quiz
-
-Sau khi thêm/sửa câu hỏi trong các trang `JP/*.html`, tạo lại ngân hàng dùng chung bằng Windows PowerShell tại thư mục gốc:
-
-```powershell
-Get-Content .\JP\build-quiz-bank.ps1 -Raw -Encoding UTF8 | Invoke-Expression
-```
-
-## Cập nhật thêm tính năng cho web
-
-Chạy các lệnh sau trong thư mục gốc repo (`/f/Quoc_Huy/Go/JP`) để kiểm tra thay đổi và đẩy tính năng mới lên GitHub.
-
-Trước tiên, lấy thông tin mới nhất từ GitHub và kiểm tra trạng thái:
+Sau đó tại `server/`, cài dependencies, tạo Prisma Client và áp dụng migration:
 
 ```bash
-git fetch origin
-git status
+npm install
+npx prisma generate
+npx prisma migrate deploy
+npm run dev
 ```
 
-Chỉ chạy lệnh sau nếu muốn đưa nhánh hiện tại về đúng commit `origin/main` và không cần giữ các commit local chưa có trên GitHub. Lệnh này không xóa nội dung file trong working tree, nhưng sẽ di chuyển `HEAD` của nhánh và có thể làm các commit local không còn nằm trên nhánh hiện tại:
+API mặc định chạy tại `http://localhost:3000`. `GET /api/health` kiểm tra kết nối database. PgAdmin chạy tại `http://localhost:5050` nếu cần, bằng lệnh `docker compose up -d`.
+
+### 3. Khởi động giao diện
+
+Tại `client/`:
 
 ```bash
-git reset origin/main
-git status
+npm install
+npm run dev
 ```
 
-Xem kỹ danh sách file `modified` và `untracked` trước khi thêm thay đổi, rồi commit và push:
+Mở địa chỉ Vite in ra trên terminal (mặc định `http://localhost:5173`). Giao diện gọi API tại `http://localhost:3000/api`; có thể đặt `VITE_API_URL` nếu API chạy ở địa chỉ khác.
 
-```bash
-git add .
-git commit -m "Add new features"
-git push -u origin main
-```
+## API xác thực
+
+- `POST /api/auth/register` — đăng ký bằng `email`, `password` (tối thiểu 8 ký tự), và `displayName` tùy chọn.
+- `POST /api/auth/login` — đăng nhập và nhận JWT.
+- `GET /api/auth/me` — trả về tài khoản hiện tại; gửi header `Authorization: Bearer <token>`.
+
+JWT có thời hạn 7 ngày. Trang chủ lưu token trong `localStorage` để khôi phục phiên trên cùng trình duyệt.
+
+## Nội dung tiếng Nhật
+
+Mở `/jp/index.html` để vào thư viện. Các trang `phan01.html` đến `phan10.html` tạo lộ trình từ nền tảng đến N1; `test-n5.html` đến `test-n1.html` là bài kiểm tra theo cấp độ; `kiem-tra-thang-cap.html` là bài kiểm tra tổng hợp.

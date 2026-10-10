@@ -1,26 +1,30 @@
-const prisma = require('./db');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const prisma = require('./db');
 
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_ORIGIN.split(',') }));
+const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json({ limit: '100kb' }));
 
-app.get('/api/health', (req, res) => {
-  res.json({ ok: true });
+app.get('/api/health', async (req, res) => {
+  await prisma.$queryRaw`SELECT 1`;
+  res.json({ ok: true, db: 'up' });
 });
 
+app.use('/api/auth', require('./routes/auth'));
+
 app.use((err, req, res, next) => {
+  if (res.headersSent) return next(err);
   console.error(err);
-  res.status(500).json({ error: 'Lỗi máy chủ' });
+  res.status(err.status || 500).json({ error: err.status ? err.message : 'Lỗi máy chủ' });
 });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`API chạy tại http://localhost:${port}`));
-app.get('/api/health', async (req, res) => {
-  await prisma.$queryRaw`SELECT 1`;   // hỏi thử DB một câu đơn giản
-  res.json({ ok: true, db: 'up' });
-});
