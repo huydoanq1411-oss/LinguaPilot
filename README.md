@@ -62,7 +62,14 @@ npm install
 npm run dev
 ```
 
-Mở địa chỉ Vite in ra trên terminal (mặc định `http://localhost:5173`). Giao diện gọi API tại `http://localhost:3000/api`; có thể đặt `VITE_API_URL` nếu API chạy ở địa chỉ khác.
+### 4. Mở ứng dụng
+
+Giữ terminal API và Vite đang chạy, rồi mở trình duyệt tại:
+
+- `http://localhost:5173/` — trang chủ React, gồm đăng nhập/đăng ký và liên kết tới nội dung học.
+- `http://localhost:5173/jp/index.html` — thư viện bài học tiếng Nhật.
+
+Mở các trang qua địa chỉ Vite thay vì mở file HTML trực tiếp để tài nguyên tĩnh và điều hướng hoạt động nhất quán. Đăng nhập cần API và PostgreSQL đang chạy; các bài học tĩnh có thể xem mà không cần tài khoản.
 
 ## API xác thực
 
