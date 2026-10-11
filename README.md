@@ -85,3 +85,11 @@ Hiện các model `Flashcard` và `Submission` đã có trong schema nhưng chư
 ## Nội dung tiếng Nhật
 
 Mở `/jp/index.html` để vào thư viện. Các trang `phan01.html` đến `phan10.html` tạo lộ trình từ nền tảng đến N1; `test-n5.html` đến `test-n1.html` là bài kiểm tra theo cấp độ; `kiem-tra-thang-cap.html` là bài kiểm tra tổng hợp.
+
+### Cách hoạt động của bài trắc nghiệm
+
+- Các trang JLPT là HTML tĩnh, tải dữ liệu câu hỏi từ `client/public/jp/quiz-bank.js` rồi khởi tạo hành vi bằng `quiz-engine.js`. Vì vậy, phần luyện tập này không cần API hay tài khoản.
+- Ngân hàng chia câu hỏi theo cấp độ (`kana`, `n5`, `n4`, `n3n2`, `n2`, `n1`). Mỗi câu có mã định danh theo tên trang nguồn và số thứ tự; dữ liệu cũng lưu lựa chọn đúng, lựa chọn nhiễu và ngữ cảnh đọc nếu có.
+- Sau khi chấm bài, nút **Làm lại với bộ câu mới** chọn câu khác trong ngân hàng cùng cấp độ và trộn thứ tự lựa chọn. Với bài tổng hợp, việc chọn câu diễn ra riêng theo từng nhóm/cấp độ. Nếu ngân hàng không còn đủ câu phù hợp để tạo bộ mới, nút sẽ báo thiếu câu.
+- Khi thêm hoặc sửa câu hỏi, cần giữ nội dung câu và các lựa chọn đồng bộ giữa trang HTML nguồn với `quiz-bank.js`; engine dùng câu dẫn và tập lựa chọn để ghép câu đang hiển thị với mã trong ngân hàng. Không sửa dữ liệu sinh trong `quiz-bank.js` bằng tay nếu còn quy trình sinh dữ liệu được dùng trong dự án.
+- Tiến độ hoàn thành bài học được lưu cục bộ trong trình duyệt bằng `localStorage` (các khóa `done_bai*`). Dữ liệu này hiện không đồng bộ với tài khoản hay PostgreSQL; xóa dữ liệu trang web/trình duyệt có thể làm mất tiến độ.
