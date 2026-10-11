@@ -1,4 +1,5 @@
 $ErrorActionPreference = 'Stop'
+# Regenerate quiz-bank.js from the lesson and test HTML after editing quiz content.
 $root = if ($PSScriptRoot) { $PSScriptRoot } else { Join-Path (Get-Location).Path 'JP' }
 $levels = @('kana', 'n5', 'n4', 'n3n2', 'n2', 'n1')
 $bank = [ordered]@{}
@@ -126,6 +127,7 @@ foreach ($file in Get-ChildItem -Path $root -Filter '*.html') {
 }
 
 foreach ($level in $levels) {
+  # Keep the first occurrence of duplicate prompt/option sets within each level.
   $unique = [System.Collections.Generic.Dictionary[string, object]]::new([System.StringComparer]::Ordinal)
   foreach ($question in $bank[$level]) {
     $key = "$($question.kind)|$($question.prompt)|$($question.options.text -join '|')"

@@ -5,6 +5,7 @@ const prisma = require('./db');
 
 const app = express();
 
+// Middleware bảo mật và phân tích JSON được đăng ký trước các route API.
 app.use(helmet());
 const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
   .split(',')
@@ -13,6 +14,7 @@ const allowedOrigins = (process.env.CLIENT_ORIGIN || 'http://localhost:5173')
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json({ limit: '100kb' }));
 
+// Truy vấn thật vào DB để health check báo cả trạng thái PostgreSQL.
 app.get('/api/health', async (req, res) => {
   await prisma.$queryRaw`SELECT 1`;
   res.json({ ok: true, db: 'up' });
@@ -20,6 +22,7 @@ app.get('/api/health', async (req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 
+// Chuyển lỗi async từ route về một định dạng JSON thống nhất.
 app.use((err, req, res, next) => {
   if (res.headersSent) return next(err);
   console.error(err);

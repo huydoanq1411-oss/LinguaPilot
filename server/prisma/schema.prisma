@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  // Prisma đọc URL kết nối từ server/.env; không ghi thông tin đăng nhập vào schema.
   url      = env("DATABASE_URL")
 }
 
@@ -27,6 +28,7 @@ model User {
   submissions  Submission[]
 }
 
+// Lịch ôn được biểu diễn bằng số lần lặp, khoảng cách ngày và lần ôn kế tiếp.
 model Flashcard {
   id           Int      @id @default(autoincrement())
   userId       Int
@@ -44,6 +46,7 @@ model Flashcard {
   @@index([userId, nextReview])
 }
 
+// Bài nộp có thể lưu phản hồi có cấu trúc khác nhau trong trường JSON feedback.
 model Submission {
   id        Int      @id @default(autoincrement())
   userId    Int

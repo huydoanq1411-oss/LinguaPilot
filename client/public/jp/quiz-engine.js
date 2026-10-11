@@ -84,6 +84,7 @@
   }
 
   function identifyQuestion(node, level) {
+    // HTML vẫn là nội dung hiển thị; ghép câu dẫn và lựa chọn để tìm bản ghi ngân hàng.
     const prompt = normalized(node.querySelector('p')?.textContent || '')
       .replace(/^\d+[.)]?\s*/, '');
     const options = Array.from(node.querySelectorAll('.quiz-opts label'), (label) =>
@@ -112,6 +113,7 @@
 
   function chooseQuestions(level, count, usedIds, currentIds, currentSignature) {
     const levelBank = bankFor(level);
+    // Ưu tiên câu chưa dùng; khi cạn ngân hàng thì vẫn tránh lặp nguyên bộ hiện tại.
     let candidates = levelBank.filter((question) => !usedIds.has(question.id));
     if (candidates.length < count) {
       candidates = levelBank.filter((question) => !currentIds.has(question.id));

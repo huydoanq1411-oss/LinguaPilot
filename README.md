@@ -13,7 +13,7 @@ LinguaPilot là không gian học tiếng Nhật bằng tiếng Việt. Ứng d�
 
 ### 1. Cấu hình môi trường
 
-Tạo file `.env` ở thư mục gốc cho Docker Compose và file `server/.env` cho API. Đặt các biến Compose vào file gốc:
+Sao chép `.env.example` thành `.env` ở thư mục gốc cho Docker Compose và `server/.env.example` thành `server/.env` cho API. Nếu cần đổi địa chỉ API của giao diện, sao chép `client/.env.example` thành `client/.env`. Các file mẫu chỉ chứa giá trị minh họa; thay mật khẩu và bí mật bằng giá trị riêng trên máy của bạn. Đặt các biến Compose vào file gốc:
 
 ```dotenv
 POSTGRES_USER=linguapilot
@@ -91,5 +91,5 @@ Mở `/jp/index.html` để vào thư viện. Các trang `phan01.html` đến `p
 - Các trang JLPT là HTML tĩnh, tải dữ liệu câu hỏi từ `client/public/jp/quiz-bank.js` rồi khởi tạo hành vi bằng `quiz-engine.js`. Vì vậy, phần luyện tập này không cần API hay tài khoản.
 - Ngân hàng chia câu hỏi theo cấp độ (`kana`, `n5`, `n4`, `n3n2`, `n2`, `n1`). Mỗi câu có mã định danh theo tên trang nguồn và số thứ tự; dữ liệu cũng lưu lựa chọn đúng, lựa chọn nhiễu và ngữ cảnh đọc nếu có.
 - Sau khi chấm bài, nút **Làm lại với bộ câu mới** chọn câu khác trong ngân hàng cùng cấp độ và trộn thứ tự lựa chọn. Với bài tổng hợp, việc chọn câu diễn ra riêng theo từng nhóm/cấp độ. Nếu ngân hàng không còn đủ câu phù hợp để tạo bộ mới, nút sẽ báo thiếu câu.
-- Khi thêm hoặc sửa câu hỏi, cần giữ nội dung câu và các lựa chọn đồng bộ giữa trang HTML nguồn với `quiz-bank.js`; engine dùng câu dẫn và tập lựa chọn để ghép câu đang hiển thị với mã trong ngân hàng. Không sửa dữ liệu sinh trong `quiz-bank.js` bằng tay nếu còn quy trình sinh dữ liệu được dùng trong dự án.
+- Các trang HTML bài học/kiểm tra là nguồn câu hỏi; sau khi chỉnh câu, chạy `powershell -ExecutionPolicy Bypass -File .\\client\\public\\jp\\build-quiz-bank.ps1` từ thư mục gốc để tạo lại `quiz-bank.js`. Script phân cấp, lấy ngữ cảnh đọc và loại câu trùng theo cấp độ. Engine ghép câu đang hiển thị bằng câu dẫn và tập lựa chọn, nên cần giữ các phần này đồng bộ.
 - Tiến độ hoàn thành bài học được lưu cục bộ trong trình duyệt bằng `localStorage` (các khóa `done_bai*`). Dữ liệu này hiện không đồng bộ với tài khoản hay PostgreSQL; xóa dữ liệu trang web/trình duyệt có thể làm mất tiến độ.

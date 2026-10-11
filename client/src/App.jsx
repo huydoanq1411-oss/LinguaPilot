@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './App.css'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+// Chỉ lưu token; thông tin user được xác minh lại qua /auth/me khi tải trang.
 const TOKEN_KEY = 'linguapilot_token'
 const lessons = [
   { icon: 'あ', title: 'Bảng chữ cái', detail: 'Hiragana, Katakana và Kanji', href: '/jp/bang-chu-cai.html', tone: 'pink' },
@@ -12,6 +13,7 @@ const lessons = [
 
 async function api(path, options = {}) {
   const token = localStorage.getItem(TOKEN_KEY)
+  // Header Authorization chỉ được gửi khi đã có token trong trình duyệt.
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {

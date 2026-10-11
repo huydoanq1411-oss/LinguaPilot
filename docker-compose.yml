@@ -7,9 +7,12 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
+      # Cổng máy host 5434 được chuyển tiếp tới cổng PostgreSQL mặc định 5432.
       - "5434:5432"
+    # Volume có tên giữ dữ liệu DB sau khi container dừng hoặc được tạo lại.
     volumes:
       - pgdata:/var/lib/postgresql/data
+    # pgAdmin chờ DB sẵn sàng trước khi khởi động.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
