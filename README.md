@@ -72,6 +72,16 @@ Mở địa chỉ Vite in ra trên terminal (mặc định `http://localhost:517
 
 JWT có thời hạn 7 ngày. Trang chủ lưu token trong `localStorage` để khôi phục phiên trên cùng trình duyệt.
 
+## Mô hình dữ liệu
+
+Prisma schema hiện có ba model:
+
+- `User`: tài khoản với email duy nhất, mật khẩu đã băm, tên hiển thị và thời điểm tạo. Xóa user sẽ xóa các flashcard và bài nộp liên quan.
+- `Flashcard`: thẻ học thuộc về một user, có ngôn ngữ (`ja` hoặc `en`), cấp độ, mặt trước/mặt sau và các trường phục vụ lịch ôn (`repetitions`, `intervalDays`, `ease`, `nextReview`). Có index theo user và thời điểm ôn tiếp theo.
+- `Submission`: bài làm thuộc về một user, phân loại kỳ thi (`JLPT` hoặc `IELTS`), cấp độ, đề bài, nội dung, điểm tùy chọn, phản hồi JSON và thời điểm tạo. Có index theo user và thời điểm tạo.
+
+Hiện các model `Flashcard` và `Submission` đã có trong schema nhưng chưa có route API tương ứng; API được triển khai hiện tại chỉ bao gồm health check và xác thực.
+
 ## Nội dung tiếng Nhật
 
 Mở `/jp/index.html` để vào thư viện. Các trang `phan01.html` đến `phan10.html` tạo lộ trình từ nền tảng đến N1; `test-n5.html` đến `test-n1.html` là bài kiểm tra theo cấp độ; `kiem-tra-thang-cap.html` là bài kiểm tra tổng hợp.
