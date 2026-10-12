@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1d1d1b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LinguaPilot">
+<link rel="icon" type="image/svg+xml" href="../app-icon.svg">
+<link rel="apple-touch-icon" href="../app-icon-192.svg">
+<link rel="manifest" href="../manifest.webmanifest">
 <title>JLPT N2→N1 — Học Tiếng Nhật Từ 0 Đến N1</title>
 <style>
 /* ============ DESIGN TOKENS ============ */
@@ -417,6 +423,7 @@ footer.lesson-nav{
   transition: 0.3s;
 }
 .idx-topbar-btns button:hover, .idx-topbar-btns a:hover { background: var(--ai); color: #fff; border-color: var(--ai); }
+.idx-topbar-btns [hidden] { display: none !important; }
 
 /* Custom Scrollbar - keeping it simple based on theme */
 ::-webkit-scrollbar { width: 8px; }
@@ -434,12 +441,16 @@ footer.lesson-nav{
 .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
 .reveal.active { opacity: 1; transform: translateY(0); }
 </style>
+<style>
+@media(max-width:600px){.idx-topbar{padding:12px 10px}.idx-topbar-logo{font-size:1rem;white-space:nowrap}.idx-topbar-btns{gap:5px}.idx-topbar-btns button,.idx-topbar-btns a{padding:7px 9px;font-size:.72rem}}
+</style>
 </head>
 <body>
 <!-- Topbar -->
 <div class="idx-topbar">
-  <div class="idx-topbar-logo">🎌 JLPT N2→N1</div>
+  <div class="idx-topbar-logo"><img src="../app-icon.svg" alt="" width="32" height="32" style="vertical-align:middle;margin-right:8px;border-radius:7px">JLPT N2→N1</div>
   <div class="idx-topbar-btns">
+    <button id="installAppButton" type="button" aria-label="Thêm LinguaPilot vào màn hình chính" title="Thêm LinguaPilot vào màn hình chính" hidden>＋ Cài app</button>
     <button onclick="document.body.setAttribute('data-theme',document.body.getAttribute('data-theme')==='dark'?'light':'dark')">🌙 Dark</button>
     <a href="phan01.html">📄 Bắt đầu học</a>
   </div>
@@ -875,4 +886,6 @@ window.addEventListener('DOMContentLoaded', initScrollReveal);
 </div>
 <script src="quiz-bank.js"></script>
 <script src="quiz-engine.js"></script>
+<script src="../install-app.js"></script>
+<script>window.bindLinguaPilotInstallButton?.(document.getElementById('installAppButton'))</script>
 </body></html>

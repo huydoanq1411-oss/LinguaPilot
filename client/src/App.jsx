@@ -42,6 +42,10 @@ function App() {
     }
   }, [])
 
+  useEffect(() => {
+    window.bindLinguaPilotInstallButton?.(document.getElementById('installAppButton'))
+  }, [])
+
   async function submit(event) {
     event.preventDefault()
     setError('')
@@ -69,12 +73,13 @@ function App() {
     <div className="app-shell">
       <header className="topbar">
         <a className="brand" href="#home" aria-label="LinguaPilot trang chủ">
-          <span className="brand-mark">L</span><span>lingua<span className="brand-light">pilot</span></span>
+          <img className="brand-app-icon" src="/app-icon.svg" alt="" /><span>lingua<span className="brand-light">pilot</span></span>
         </a>
         <nav aria-label="Điều hướng chính">
           <a href="/jp/index.html">Khám phá</a>
           <a href="/jp/cau-truc-jlpt.html">Kỳ thi JLPT</a>
         </nav>
+        <button id="installAppButton" className="install-app-button" type="button" aria-label="Thêm LinguaPilot vào màn hình chính" title="Thêm LinguaPilot vào màn hình chính" hidden>＋ Cài app</button>
         {user ? <div className="account"><span className="avatar">{(user.displayName || user.email).slice(0, 1).toUpperCase()}</span><span className="account-name">{user.displayName || user.email}</span><button className="text-button" onClick={signOut}>Đăng xuất</button></div> : <a className="nav-cta" href="#account">Bắt đầu học <span>↗</span></a>}
       </header>
 
@@ -116,7 +121,7 @@ function App() {
           </form>}
         </section>
       </main>
-      <footer className="footer"><a className="brand" href="#home"><span className="brand-mark">L</span><span>lingua<span className="brand-light">pilot</span></span></a><span>Học một chút mỗi ngày, tiến xa hơn mỗi chặng đường.</span><a href="/jp/index.html">Thư viện tiếng Nhật ↗</a></footer>
+      <footer className="footer"><a className="brand" href="#home"><img className="brand-app-icon" src="/app-icon.svg" alt="" /><span>lingua<span className="brand-light">pilot</span></span></a><span>Học một chút mỗi ngày, tiến xa hơn mỗi chặng đường.</span><a href="/jp/index.html">Thư viện tiếng Nhật ↗</a></footer>
     </div>
   )
 }
