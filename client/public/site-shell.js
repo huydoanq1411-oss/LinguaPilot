@@ -6,7 +6,9 @@
       const home = document.createElement('a');
       home.href = '/';
       home.dataset.lpHome = 'true';
-      home.textContent = '\u2302 LinguaPilot';
+      home.className = 'idx-home-link';
+      home.setAttribute('aria-label', 'LinguaPilot - trang ch\u1ee7');
+      home.innerHTML = '<span class="idx-home-icon" aria-hidden="true">\u2302</span><span>Trang ch\u1ee7</span>';
       actions.prepend(home);
     }
     return;
