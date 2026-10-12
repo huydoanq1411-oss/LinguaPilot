@@ -74,8 +74,18 @@
     canvas.addEventListener(name, () => { drawing = false; });
   }
 
-  function vocabQuestions() {
-    return [...document.querySelectorAll('#kanjiVocabTable tbody tr')].map(row => {
+  let vocabPromise = null;
+  async function vocabQuestions() {
+    let table = document.querySelector('#kanjiVocabTable');
+    if (!table) {
+      if (!vocabPromise) vocabPromise = fetch('phan02.html').then(response => {
+        if (!response.ok) throw new Error('Không tải được danh sách từ vựng N5.');
+        return response.text();
+      }).then(html => new DOMParser().parseFromString(html, 'text/html').querySelector('#kanjiVocabTable'));
+      table = await vocabPromise;
+    }
+    if (!table) return [];
+    return [...table.querySelectorAll('tbody tr')].map(row => {
       const cells = [...row.cells].map(cell => cell.textContent.trim());
       if (cells.length < 3 || !cells[2] || cells[0] === 'Kanji') return null;
       const written = cells[0];
@@ -84,13 +94,19 @@
     }).filter(Boolean);
   }
 
-  function startQuestion() {
+  async function startQuestion() {
     clearInterval(timer);
     const mode = modeEl.value;
     if (mode === 'kana') {
       question = kana[Math.floor(Math.random() * kana.length)];
     } else {
-      const words = vocabQuestions();
+      let words;
+      try { words = await vocabQuestions(); }
+      catch (error) {
+        progressEl.textContent = 'Không tải được';
+        feedbackEl.textContent = error.message;
+        return;
+      }
       if (!words.length) {
         feedbackEl.textContent = 'Không tìm thấy danh sách từ vựng N5.';
         return;
