@@ -8,7 +8,7 @@
       home.dataset.lpHome = 'true';
       home.className = 'idx-home-link';
       home.setAttribute('aria-label', 'LinguaPilot - trang ch\u1ee7');
-      home.innerHTML = '<span class="idx-home-icon" aria-hidden="true">\u2302</span><span>Trang ch\u1ee7</span>';
+      home.innerHTML = '<span class="idx-home-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m3.5 10 8.5-7 8.5 7v10a1 1 0 0 1-1 1h-5.25v-6.5h-4.5V21H4.5a1 1 0 0 1-1-1z"/></svg></span><span>Trang ch\u1ee7</span>';
       actions.prepend(home);
     }
     return;

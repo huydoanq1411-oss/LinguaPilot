@@ -22,7 +22,8 @@
 .idx-topbar-btns .idx-home-link:hover{border-color:#78957c;background:#d7e5d5;color:#274b35;box-shadow:none}
 [data-theme="dark"] .idx-topbar-btns .idx-home-link{border-color:#536d58;background:#2c3d31;color:#d5e1d8}
 [data-theme="dark"] .idx-topbar-btns .idx-home-link:hover{border-color:#78957c;background:#385340;color:#fff}
-.idx-topbar-btns .idx-home-icon{font-size:1rem;line-height:1}
-@media(max-width:600px){.idx-topbar-btns .idx-home-link{padding:7px 9px;gap:5px;font-size:.72rem}.idx-topbar-btns .idx-home-icon{font-size:.85rem}}
+.idx-topbar-btns .idx-home-icon{display:inline-flex;width:17px;height:17px;align-items:center;justify-content:center;line-height:1}
+.idx-topbar-btns .idx-home-icon svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:600px){.idx-topbar-btns .idx-home-link{padding:7px 9px;gap:5px;font-size:.72rem}.idx-topbar-btns .idx-home-icon{width:15px;height:15px}.idx-topbar-btns .idx-home-icon svg{width:14px;height:14px}}
 .idx-card.alphabet-card{background:var(--washi);border-color:var(--line);border-top:4px solid var(--line)}
 .idx-card.alphabet-card:hover{background:var(--washi);border-color:var(--ai)}
