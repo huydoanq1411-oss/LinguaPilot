@@ -2,6 +2,52 @@
 
 LinguaPilot là không gian học tiếng Nhật bằng tiếng Việt. Ứng dụng gồm trang chủ React, thư viện bài học JLPT tĩnh và API Express/Prisma dùng PostgreSQL cho tài khoản người học.
 
+## 1. Công cụ dùng và để làm gì
+Phần	Công cụ	Dùng để làm gì
+Giao diện	React 19, Vite 8	Trang chủ, form đăng ký/đăng nhập, liên kết tới bài học
+Giao diện	ESLint	Kiểm tra lỗi code (npm run lint)
+Giao diện	Tailwind CSS 4	Có cài trong package.json nhưng chưa được dùng (cấu hình Vite và file CSS không gọi tới)
+Bài học	HTML/CSS/JS thuần (27 file trong client/public/jp)	Thư viện học tiếng Nhật, không cần server
+Bài học	kanjiapi.dev, Google Fonts	Tra cứu Kanji (API ngoài) và font chữ
+API	Node.js, Express 5	Chạy các đường dẫn /api/...
+API	bcryptjs	Mã hóa mật khẩu (cost 12)
+API	jsonwebtoken (JWT)	Cấp token đăng nhập
+API	helmet, cors	Header bảo mật và chỉ cho phép domain client gọi API
+Database	PostgreSQL 16, Prisma 6	Lưu dữ liệu, tạo bảng bằng migration
+Chạy ở máy	Docker Compose, pgAdmin	Chạy PostgreSQL ở máy bạn và giao diện xem database
+Đưa lên mạng	Vercel, Prisma Postgres, GitHub	Hosting client, server, database và tự deploy khi push
+## 2. Các thành phần và vai trò
+Thành phần	Thư mục	Nội dung
+Trang chủ React	client/src	Giới thiệu, đăng ký/đăng nhập, kiểm tra trạng thái API, lưu token trong localStorage
+Thư viện JLPT	client/public/jp	10 phần bài học (phan01 đến phan10), 5 bài test N5 đến N1, bảng chữ cái, tra Kanji, từ vựng N5, luyện viết, kiểm tra trình độ, cấu trúc JLPT
+API	server/src	Đăng ký, đăng nhập, xem phiên, kiểm tra sức khỏe
+Database	server/prisma	3 bảng (xem mục 4)
+## 3. Có 4 cách chạy
+#	Cách chạy	Cần chạy gì	Lệnh chính	Địa chỉ mở	Dùng được gì
+1	Đầy đủ trên máy	Docker (DB), server, client: 3 tiến trình	docker compose up -d db, rồi trong server: npx prisma migrate deploy và npm run dev, rồi trong client: npm run dev	http://localhost:5173	Tất cả, kể cả đăng nhập
+2	Chỉ phần học, mở trên điện thoại cùng Wi-Fi	Chỉ client	Trong client: npm run dev -- --host 0.0.0.0	http://<IP máy>:5173/jp/index.html	Bài học tĩnh. Đăng nhập không chạy vì điện thoại không gọi được localhost:3000
+3	Chỉ phần tĩnh, không cần server	Bất kỳ web server nào (Vite hoặc npm run build rồi npm run preview)	npm run dev hoặc npm run build	/jp/index.html	Toàn bộ bài học và test
+4	Trên Internet (hiện tại)	Không cần máy bạn	git push lên main	lingua-pilot.vercel.app	Tất cả, kể cả khi tắt máy
+
+Cách 1 cần 4 file cấu hình: .env ở gốc (cho Docker), server/.env (với DATABASE_URL, JWT_SECRET, CLIENT_ORIGIN, PORT) và client/.env (nếu đổi địa chỉ API). Các cổng mặc định: client 5173, server 3000, PostgreSQL 5434, pgAdmin 5050.
+
+## 4. API và dữ liệu
+Đường dẫn	Chức năng	Ghi chú
+GET /api/health	Kiểm tra server và database	Trả {"ok":true,"db":"up"}
+POST /api/auth/register	Đăng ký	Email hợp lệ, mật khẩu từ 8 ký tự, trả token
+POST /api/auth/login	Đăng nhập	Báo lỗi chung chung để tránh lộ email nào tồn tại
+GET /api/auth/me	Lấy thông tin người dùng	Cần token
+Bảng	Dùng để	Trạng thái
+User	Tài khoản (email, mật khẩu đã mã hóa, tên hiển thị)	Đang dùng
+Flashcard	Thẻ ôn tập theo lịch lặp lại (số lần ôn, khoảng cách ngày, ngày ôn kế)	Có bảng, chưa có API
+Submission	Bài nộp và phản hồi (kỳ thi JLPT hoặc IELTS)	Có bảng, chưa có API
+##5. Nhận xét
+Hai bảng chưa dùng: schema đã chừa chỗ cho thẻ ôn tập và bài nộp, kể cả ngôn ngữ tiếng Anh và kỳ thi IELTS. Phần code API và giao diện cho chúng chưa có.
+Đăng nhập chỉ để xác nhận phiên: hiện tại tài khoản chưa mở khóa tính năng nào, vì các bài học đều xem được không cần đăng nhập.
+Chưa giới hạn số lần đăng nhập sai: có thể thêm express-rate-limit sau này nếu mở cho nhiều người dùng.
+Còn 1 cảnh báo lint trong public/jp/quiz-engine.js (biến fresh không dùng), không ảnh hưởng chạy.
+Script start của server đòi file .env, nên chạy được ở máy nhưng sẽ lỗi nếu chạy ở nơi chỉ có biến môi trường (Vercel không dùng script này nên không bị ảnh hưởng).
+
 ## Thành phần
 
 - `client/`: React và Vite. Trang chủ giới thiệu lộ trình, liên kết tới bài học, tra cứu và bài kiểm tra JLPT; hỗ trợ đăng ký, đăng nhập và xem phiên người dùng.
