@@ -15,5 +15,6 @@
 .lp-sitebar-home{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border:1px solid #4a5149;border-radius:6px;color:#d5e1d8!important;font-size:12px;font-weight:600;white-space:nowrap}
 .lp-sitebar-home:hover{border-color:#78957c;background:#292f29}
 .lp-sitebar~.sidebar{top:64px!important;height:calc(100vh - 64px)!important}
-@media(max-width:760px){.lp-sitebar{min-height:58px;gap:12px;padding:8px 12px}.lp-sitebar-brand{gap:7px;font-size:14px}.lp-sitebar-brand img{width:30px;height:30px}.lp-sitebar-links{gap:11px}.lp-sitebar-links a{font-size:11px}.lp-sitebar-home{display:none}.lp-sitebar-install{min-height:36px;padding:0 9px;font-size:10px}}
-@media(max-width:460px){.lp-sitebar{justify-content:space-between}.lp-sitebar-links{display:none}.lp-sitebar-install{padding:0 8px}}
+@media(max-width:760px){.lp-sitebar{min-height:58px;gap:12px;padding:8px 12px}.lp-sitebar-brand{gap:7px;font-size:14px}.lp-sitebar-brand img{width:30px;height:30px}.lp-sitebar-links{gap:11px}.lp-sitebar-links a{font-size:11px}.lp-sitebar-home{min-height:36px;padding:0 9px;font-size:10px}.lp-sitebar-install{min-height:36px;padding:0 9px;font-size:10px}}
+@media(max-width:460px){.lp-sitebar{justify-content:space-between}.lp-sitebar-links{display:none}.lp-sitebar-home{padding:0 8px;font-size:10px}.lp-sitebar-install{padding:0 8px}}
+.idx-topbar-btns [data-lp-home]{font-weight:600}
