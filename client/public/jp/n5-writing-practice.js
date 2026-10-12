@@ -21,6 +21,17 @@
     ['ya','や'],['yu','ゆ'],['yo','よ'],['ra','ら'],['ri','り'],
     ['ru','る'],['re','れ'],['ro','ろ'],['wa','わ'],['wo','を'],['n','ん']
   ].map(([sound, answer]) => ({ prompt: `Âm ${sound}`, answers: [answer] }));
+  const katakana = [
+    ['a','ア'],['i','イ'],['u','ウ'],['e','エ'],['o','オ'],
+    ['ka','カ'],['ki','キ'],['ku','ク'],['ke','ケ'],['ko','コ'],
+    ['sa','サ'],['shi','シ'],['su','ス'],['se','セ'],['so','ソ'],
+    ['ta','タ'],['chi','チ'],['tsu','ツ'],['te','テ'],['to','ト'],
+    ['na','ナ'],['ni','ニ'],['nu','ヌ'],['ne','ネ'],['no','ノ'],
+    ['ha','ハ'],['hi','ヒ'],['fu','フ'],['he','ヘ'],['ho','ホ'],
+    ['ma','マ'],['mi','ミ'],['mu','ム'],['me','メ'],['mo','モ'],
+    ['ya','ヤ'],['yu','ユ'],['yo','ヨ'],['ra','ラ'],['ri','リ'],
+    ['ru','ル'],['re','レ'],['ro','ロ'],['wa','ワ'],['wo','ヲ'],['n','ン']
+  ].map(([sound, answer]) => ({ prompt: `Âm ${sound}`, answers: [answer] }));
 
   let question = null;
   let seconds = 15;
@@ -94,12 +105,27 @@
     }).filter(Boolean);
   }
 
+  function levelQuestions(level) {
+    const bank = window.JP_QUIZ_BANKS || {};
+    const source = level === 'n3' ? (bank.n3n2 || []) : level === 'n2' ? [...(bank.n3n2 || []), ...(bank.n2 || [])] : (bank[level] || []);
+    const isJapanese = value => /[\u3040-\u30ff\u3400-\u9fff]/.test(value);
+    return source.map(item => {
+      const prompt = item.prompt || '';
+      const open = prompt.lastIndexOf('（');
+      const close = prompt.lastIndexOf('）');
+      const vietnamesePrompt = open >= 0 && close > open ? prompt.slice(open + 1, close).trim() : '';
+      const correct = item.options?.find(option => option.correct)?.text || '';
+      return vietnamesePrompt && isJapanese(correct) ? { prompt: vietnamesePrompt, answers: [correct] } : null;
+    }).filter(Boolean);
+  }
+
   async function startQuestion() {
     clearInterval(timer);
     const mode = modeEl.value;
-    if (mode === 'kana') {
-      question = kana[Math.floor(Math.random() * kana.length)];
-    } else {
+    if (mode === 'hiragana' || mode === 'katakana') {
+      const alphabet = mode === 'katakana' ? katakana : kana;
+      question = alphabet[Math.floor(Math.random() * alphabet.length)];
+    } else if (mode === 'n5') {
       let words;
       try { words = await vocabQuestions(); }
       catch (error) {
@@ -113,6 +139,14 @@
       }
       question = words[vocabCursor % words.length];
       vocabCursor++;
+    } else {
+      const words = levelQuestions(mode);
+      if (!words.length) {
+        progressEl.textContent = 'Chưa có câu hỏi';
+        feedbackEl.textContent = `Chưa tìm thấy đề luyện ${mode.toUpperCase()} có đáp án chữ Nhật trong ngân hàng.`;
+        return;
+      }
+      question = words[Math.floor(Math.random() * words.length)];
     }
     promptEl.textContent = question.prompt;
     typedEl.value = '';

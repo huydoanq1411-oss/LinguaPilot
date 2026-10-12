@@ -15,11 +15,14 @@
   <section class="practice-card">
     <div class="eyebrow">Khu luyện tập riêng · N5</div>
     <h1>Luyện chữ cái và luyện từ vựng</h1>
-    <p class="intro">Chọn chế độ, xem gợi ý tiếng Việt rồi viết đáp án tiếng Nhật trên bảng. Mỗi lượt có 15 giây; bạn cũng có thể nộp sớm.</p>
+    <p class="intro">Chọn riêng Hiragana, Katakana hoặc cấp JLPT N1–N5; xem gợi ý tiếng Việt rồi viết đáp án tiếng Nhật trên bảng. Mỗi lượt có 15 giây và có thể nộp sớm.</p>
     <div class="writing-practice">
       <div class="writing-toolbar">
         <label for="writingMode">Chế độ</label>
-        <select id="writingMode"><option value="kana">Luyện chữ cái Hiragana</option><option value="vocab">Luyện từ vựng N5</option></select>
+        <select id="writingMode">
+          <optgroup label="Chữ cái"><option value="hiragana">Hiragana</option><option value="katakana">Katakana</option></optgroup>
+          <optgroup label="Từ vựng và đề luyện theo JLPT"><option value="n5">N5 · từ vựng</option><option value="n4">N4</option><option value="n3">N3</option><option value="n2">N2</option><option value="n1">N1</option></optgroup>
+        </select>
         <button type="button" id="writingNext">Câu mới</button>
       </div>
       <div class="writing-prompt" aria-live="polite"><span>Đề bài tiếng Việt</span><strong id="writingPrompt">Chọn “Câu mới” để bắt đầu</strong></div>
@@ -33,6 +36,6 @@
       <input id="writingTyped" type="text" lang="ja" autocomplete="off" placeholder="Gõ đáp án tiếng Nhật (tùy chọn)">
       <p id="writingFeedback" class="writing-feedback" aria-live="polite">Bộ nhận dạng chữ viết tay tải khi nộp lần đầu và cần kết nối Internet.</p>
     </div>
-    <p class="small">Từ vựng lấy từ danh sách đã thêm trong bài Ngữ pháp N5. Bộ nhận dạng có thể nhầm chữ viết tay; khi đó có thể nhập đáp án để đối chiếu.</p>
+    <p class="small">N5 dùng danh sách từ vựng đã thêm vào bài học. N1–N4 lấy câu luyện có đáp án tiếng Nhật từ ngân hàng đề hiện có. Bộ nhận dạng có thể nhầm chữ viết tay; khi đó có thể nhập đáp án để đối chiếu.</p>
   </section>
-</main><script src="n5-writing-practice.js"></script></body></html>
+</main><script src="quiz-bank.js"></script><script src="n5-writing-practice.js"></script></body></html>
