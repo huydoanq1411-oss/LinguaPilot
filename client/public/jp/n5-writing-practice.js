@@ -173,6 +173,23 @@
     return value.normalize('NFKC').toLocaleLowerCase('ja').replace(/[\s\p{P}\p{S}]/gu, '');
   }
 
+  function similarity(left, right) {
+    const a = [...normalize(left)];
+    const b = [...normalize(right)];
+    if (!a.length || !b.length) return 0;
+    const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      let diagonal = row[0];
+      row[0] = i;
+      for (let j = 1; j <= b.length; j++) {
+        const above = row[j];
+        row[j] = Math.min(row[j] + 1, row[j - 1] + 1, diagonal + (a[i - 1] === b[j - 1] ? 0 : 1));
+        diagonal = above;
+      }
+    }
+    return 1 - row[b.length] / Math.max(a.length, b.length);
+  }
+
   function loadOcr() {
     if (workerPromise) return workerPromise;
     workerPromise = new Promise((resolve, reject) => {
@@ -211,11 +228,20 @@
         return;
       }
     }
-    const accepted = question.answers.map(normalize);
-    const matches = [recognized, typed].some(value => value && accepted.includes(normalize(value)));
+    const candidates = [recognized, typed].filter(Boolean);
+    const best = candidates.reduce((result, candidate) => {
+      for (const answer of question.answers) {
+        const score = similarity(candidate, answer);
+        if (score > result.score) result = { score, exact: normalize(candidate) === normalize(answer) };
+      }
+      return result;
+    }, { score: 0, exact: false });
+    const shortestAnswer = Math.min(...question.answers.map(answer => [...normalize(answer)].length));
+    const threshold = shortestAnswer <= 1 ? 1 : shortestAnswer <= 3 ? 0.5 : shortestAnswer <= 6 ? 0.62 : 0.7;
+    const matches = best.score >= threshold;
     feedbackEl.className = `writing-feedback ${matches ? 'is-correct' : 'is-wrong'}`;
     if (matches) {
-      feedbackEl.textContent = `Chính xác! Đáp án: ${question.answers.join(' / ')}${recognized ? ` · Nhận dạng: ${recognized}` : ''}`;
+      feedbackEl.textContent = `${best.exact ? 'Chính xác' : `Gần đúng · độ giống ${Math.round(best.score * 100)}%`}! Đáp án: ${question.answers.join(' / ')}${recognized ? ` · Nhận dạng: ${recognized}` : ''}`;
       progressEl.textContent = 'Đúng';
     } else {
       feedbackEl.textContent = `Chưa khớp. Đáp án: ${question.answers.join(' / ')}${recognized ? ` · Hệ thống nhận dạng: ${recognized}` : ''}`;
