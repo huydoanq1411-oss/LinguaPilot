@@ -10,7 +10,12 @@ LinguaPilot là không gian học tiếng Nhật bằng tiếng Việt. Ứng d�
 - `docker-compose.yml`: PostgreSQL và pgAdmin.
 
 ## Chạy ứng dụng
-
+Bạn cần mở ứng dụng bằng địa chỉ mạng của máy tính, không dùng localhost trên điện thoại.
+1. Cho điện thoại và máy tính dùng cùng Wi‑Fi.
+2. Trong thư mục client, chạy:
+   npm run dev -- --host 0.0.0.0
+3. Tìm địa chỉ IPv4 của máy tính bằng ipconfig trong PowerShell, ví dụ 192.168.1.25.
+4. Trên điện thoại, mở http://192.168.1.25:5173/jp/index.html.
 ### 1. Cấu hình môi trường
 
 Sao chép `.env.example` thành `.env` ở thư mục gốc cho Docker Compose và `server/.env.example` thành `server/.env` cho API. Nếu cần đổi địa chỉ API của giao diện, sao chép `client/.env.example` thành `client/.env`. Các file mẫu chỉ chứa giá trị minh họa; thay mật khẩu và bí mật bằng giá trị riêng trên máy của bạn. Đặt các biến Compose vào file gốc:
