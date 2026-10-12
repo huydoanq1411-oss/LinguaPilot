@@ -18,9 +18,9 @@
 @media(max-width:760px){.lp-sitebar{min-height:58px;gap:12px;padding:8px 12px}.lp-sitebar-brand{gap:7px;font-size:14px}.lp-sitebar-brand img{width:30px;height:30px}.lp-sitebar-links{gap:11px}.lp-sitebar-links a{font-size:11px}.lp-sitebar-home{min-height:36px;padding:0 9px;font-size:10px}.lp-sitebar-install{min-height:36px;padding:0 9px;font-size:10px}}
 @media(max-width:460px){.lp-sitebar{justify-content:space-between}.lp-sitebar-links{display:none}.lp-sitebar-home{padding:0 8px;font-size:10px}.lp-sitebar-install{padding:0 8px}}
 .idx-topbar-btns [data-lp-home]{font-weight:600}
-.idx-topbar-btns .idx-home-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 18px;border-color:#345d43;background:#345d43;color:#fff;font-weight:700;box-shadow:0 5px 14px #15291b35;transition:background .18s ease,transform .18s ease,box-shadow .18s ease}
-.idx-topbar-btns .idx-home-link:hover{transform:translateY(-1px);border-color:#416e50;background:#416e50;color:#fff;box-shadow:0 7px 18px #15291b45}
-.idx-topbar-btns .idx-home-icon{display:grid;width:21px;height:21px;place-items:center;border-radius:50%;background:#ffffff22;font-size:15px;line-height:1}
-@media(max-width:600px){.idx-topbar-btns .idx-home-link{min-height:36px;padding:0 10px;gap:5px}.idx-topbar-btns .idx-home-icon{width:18px;height:18px;font-size:13px}}
+.idx-topbar-btns .idx-home-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 16px;border:1px solid var(--line);border-radius:20px;background:var(--washi);color:var(--sumi);font-size:.85rem;font-weight:500;box-shadow:none;transition:background .3s,border-color .3s,color .3s}
+.idx-topbar-btns .idx-home-link:hover{border-color:var(--ai);background:var(--ai);color:#fff;box-shadow:none}
+.idx-topbar-btns .idx-home-icon{font-size:1rem;line-height:1}
+@media(max-width:600px){.idx-topbar-btns .idx-home-link{padding:7px 9px;gap:5px;font-size:.72rem}.idx-topbar-btns .idx-home-icon{font-size:.85rem}}
 .idx-card.alphabet-card{background:var(--washi);border-color:var(--line);border-top:4px solid var(--line)}
 .idx-card.alphabet-card:hover{background:var(--washi);border-color:var(--ai)}
