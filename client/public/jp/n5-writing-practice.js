@@ -190,6 +190,71 @@
     return 1 - row[b.length] / Math.max(a.length, b.length);
   }
 
+  function inkPoints(source, inkOnly = true) {
+    const sourceCtx = source.getContext('2d');
+    const { data, width, height } = sourceCtx.getImageData(0, 0, source.width, source.height);
+    let left = width, top = height, right = -1, bottom = -1;
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const i = (y * width + x) * 4;
+        const visibleInk = inkOnly ? data[i + 3] > 24 && data[i] + data[i + 1] + data[i + 2] < 690 : data[i] + data[i + 1] + data[i + 2] < 510;
+        if (!visibleInk) continue;
+        left = Math.min(left, x); top = Math.min(top, y);
+        right = Math.max(right, x); bottom = Math.max(bottom, y);
+      }
+    }
+    if (right < left || bottom < top) return [];
+    const normalized = document.createElement('canvas');
+    normalized.width = normalized.height = 64;
+    const nctx = normalized.getContext('2d');
+    const scale = 48 / Math.max(right - left + 1, bottom - top + 1);
+    const w = (right - left + 1) * scale, h = (bottom - top + 1) * scale;
+    nctx.drawImage(source, left, top, right - left + 1, bottom - top + 1, (64 - w) / 2, (64 - h) / 2, w, h);
+    const pixels = nctx.getImageData(0, 0, 64, 64).data;
+    const points = [];
+    for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
+      const i = (y * 64 + x) * 4;
+      if (pixels[i + 3] > 24 && pixels[i] + pixels[i + 1] + pixels[i + 2] < 690) points.push([x, y]);
+    }
+    return points;
+  }
+
+  function renderAnswer(answer) {
+    const model = document.createElement('canvas');
+    model.width = model.height = 256;
+    const modelCtx = model.getContext('2d');
+    const count = [...answer].length;
+    modelCtx.fillStyle = '#111';
+    modelCtx.textAlign = 'center';
+    modelCtx.textBaseline = 'middle';
+    modelCtx.font = `${Math.min(180, Math.floor(210 / Math.max(1, count)))}px sans-serif`;
+    modelCtx.fillText(answer, 128, 128, 232);
+    return inkPoints(model, true);
+  }
+
+  function shapeSimilarity(answer) {
+    const drawn = inkPoints(canvas, true);
+    const model = renderAnswer(answer);
+    if (!drawn.length || !model.length) return 0;
+    const directedDistance = (from, to) => {
+      const targetPixels = new Set(to.map(([x, y]) => y * 64 + x));
+      let total = 0;
+      for (const [x, y] of from) {
+        let nearest = 10;
+        for (let dy = -10; dy <= 10; dy++) for (let dx = -10; dx <= 10; dx++) {
+          const distance = Math.hypot(dx, dy);
+          if (distance >= nearest) continue;
+          const nx = x + dx, ny = y + dy;
+          if (nx >= 0 && nx < 64 && ny >= 0 && ny < 64 && targetPixels.has(ny * 64 + nx)) nearest = distance;
+        }
+        total += nearest;
+      }
+      return total / from.length;
+    };
+    const distance = (directedDistance(drawn, model) + directedDistance(model, drawn)) / 2;
+    return Math.max(0, 1 - distance / 10);
+  }
+
   function loadOcr() {
     if (workerPromise) return workerPromise;
     workerPromise = new Promise((resolve, reject) => {
@@ -215,36 +280,37 @@
     feedbackEl.className = 'writing-feedback';
     const typed = typedEl.value.trim();
     let recognized = '';
+    let ocrError = '';
     try {
       feedbackEl.textContent = 'Đang nhận dạng chữ viết tay tiếng Nhật…';
       const worker = await loadOcr();
       const result = await worker.recognize(canvas);
       recognized = result.data.text.trim();
     } catch (error) {
-      if (!typed) {
-        feedbackEl.textContent = `${error.message} Hãy nhập đáp án tiếng Nhật bên dưới để hệ thống đối chiếu.`;
-        progressEl.textContent = 'Chưa chấm được';
-        submitEl.disabled = false;
-        return;
-      }
+      ocrError = error.message;
     }
     const candidates = [recognized, typed].filter(Boolean);
-    const best = candidates.reduce((result, candidate) => {
+    const bestText = candidates.reduce((result, candidate) => {
       for (const answer of question.answers) {
         const score = similarity(candidate, answer);
         if (score > result.score) result = { score, exact: normalize(candidate) === normalize(answer) };
       }
       return result;
     }, { score: 0, exact: false });
+    const bestShape = Math.max(...question.answers.map(shapeSimilarity));
     const shortestAnswer = Math.min(...question.answers.map(answer => [...normalize(answer)].length));
-    const threshold = shortestAnswer <= 1 ? 1 : shortestAnswer <= 3 ? 0.5 : shortestAnswer <= 6 ? 0.62 : 0.7;
-    const matches = best.score >= threshold;
+    const textThreshold = shortestAnswer <= 1 ? 1 : shortestAnswer <= 3 ? 0.5 : shortestAnswer <= 6 ? 0.62 : 0.7;
+    const matchesText = bestText.score >= textThreshold;
+    const matchesShape = bestShape >= (shortestAnswer <= 1 ? 0.42 : 0.46);
+    const matches = matchesText || matchesShape;
     feedbackEl.className = `writing-feedback ${matches ? 'is-correct' : 'is-wrong'}`;
     if (matches) {
-      feedbackEl.textContent = `${best.exact ? 'Chính xác' : `Gần đúng · độ giống ${Math.round(best.score * 100)}%`}! Đáp án: ${question.answers.join(' / ')}${recognized ? ` · Nhận dạng: ${recognized}` : ''}`;
+      const exact = matchesText && bestText.exact;
+      const score = matchesText ? Math.max(bestText.score, bestShape) : bestShape;
+      feedbackEl.textContent = `${exact ? 'Chính xác' : `Gần đúng · độ giống khoảng ${Math.round(score * 100)}%`}! Đáp án: ${question.answers.join(' / ')}${recognized ? ` · Nhận dạng: ${recognized}` : ''}`;
       progressEl.textContent = 'Đúng';
     } else {
-      feedbackEl.textContent = `Chưa khớp. Đáp án: ${question.answers.join(' / ')}${recognized ? ` · Hệ thống nhận dạng: ${recognized}` : ''}`;
+      feedbackEl.textContent = `Chưa đủ giống. Đáp án: ${question.answers.join(' / ')}${recognized ? ` · Hệ thống nhận dạng: ${recognized}` : ocrError ? ` · ${ocrError}` : ''}`;
       progressEl.textContent = 'Cần thử lại';
     }
   }
