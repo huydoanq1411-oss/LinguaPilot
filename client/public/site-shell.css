@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
+
+.lp-sitebar{position:sticky;top:0;z-index:2000;min-height:64px;display:flex;align-items:center;gap:clamp(18px,4vw,54px);padding:10px max(20px,calc((100vw - 1440px)/2 + 7%));border-bottom:1px solid #393a36;background:#1e1f1c;color:#d5e1d8;font-family:'DM Sans','Noto Sans JP',system-ui,sans-serif;box-shadow:0 4px 16px #11182018}
+.lp-sitebar a{text-decoration:none}
+.lp-sitebar-brand{display:inline-flex;align-items:center;gap:10px;color:#edf3eb!important;font-family:Manrope,'DM Sans',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.5px;white-space:nowrap}
+.lp-sitebar-brand img{width:34px;height:34px;border-radius:9px;object-fit:cover}
+.lp-sitebar-brand .lp-muted{color:#86a68d;font-weight:600}
+.lp-sitebar-links{display:flex;align-items:center;gap:clamp(14px,3vw,34px);margin-right:auto}
+.lp-sitebar-links a{color:#aab4a9;font-size:13px;font-weight:500;white-space:nowrap}
+.lp-sitebar-links a:hover{color:#f5f6f1}
+.lp-sitebar-actions{display:flex;align-items:center;gap:9px}
+.lp-sitebar-install{min-height:40px;padding:0 15px;border:1px solid #345d43;border-radius:6px;background:#345d43;color:#fff;font:600 12px 'DM Sans',system-ui,sans-serif;white-space:nowrap;cursor:pointer}
+.lp-sitebar-install:hover{background:#416e50}
+.lp-sitebar-install[hidden]{display:none!important}
+.lp-sitebar-home{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border:1px solid #4a5149;border-radius:6px;color:#d5e1d8!important;font-size:12px;font-weight:600;white-space:nowrap}
+.lp-sitebar-home:hover{border-color:#78957c;background:#292f29}
+.lp-sitebar~.sidebar{top:64px!important;height:calc(100vh - 64px)!important}
+@media(max-width:760px){.lp-sitebar{min-height:58px;gap:12px;padding:8px 12px}.lp-sitebar-brand{gap:7px;font-size:14px}.lp-sitebar-brand img{width:30px;height:30px}.lp-sitebar-links{gap:11px}.lp-sitebar-links a{font-size:11px}.lp-sitebar-home{display:none}.lp-sitebar-install{min-height:36px;padding:0 9px;font-size:10px}}
+@media(max-width:460px){.lp-sitebar{justify-content:space-between}.lp-sitebar-links{display:none}.lp-sitebar-install{padding:0 8px}}
