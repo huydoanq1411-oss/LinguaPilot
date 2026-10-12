@@ -53,7 +53,7 @@
     ctx.lineWidth = 5;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-    ctx.strokeStyle = '#172f40';
+    ctx.strokeStyle = '#345d43';
     if (previous.width && previous.height) ctx.drawImage(previous, 0, 0, previous.width, previous.height, 0, 0, rect.width, rect.height);
   }
 
