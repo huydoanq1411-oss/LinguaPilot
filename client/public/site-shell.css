@@ -22,3 +22,5 @@
 .idx-topbar-btns .idx-home-link:hover{transform:translateY(-1px);border-color:#416e50;background:#416e50;color:#fff;box-shadow:0 7px 18px #15291b45}
 .idx-topbar-btns .idx-home-icon{display:grid;width:21px;height:21px;place-items:center;border-radius:50%;background:#ffffff22;font-size:15px;line-height:1}
 @media(max-width:600px){.idx-topbar-btns .idx-home-link{min-height:36px;padding:0 10px;gap:5px}.idx-topbar-btns .idx-home-icon{width:18px;height:18px;font-size:13px}}
+.idx-card.alphabet-card{background:var(--washi);border-color:var(--line);border-top:4px solid var(--line)}
+.idx-card.alphabet-card:hover{background:var(--washi);border-color:var(--ai)}
