@@ -2,6 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const prisma = require('../db');
 const { sign, requireAuth } = require('../auth');
+const login = require('../login');
 
 // Luôn so sánh mật khẩu để giảm khác biệt thời gian giữa email tồn tại và không tồn tại.
 const DUMMY_HASH = bcrypt.hashSync('dummy', 12);
@@ -34,11 +35,17 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body || {};
-  const user = await prisma.user.findUnique({
-    where: { email: String(email || '').toLowerCase() },
-  });
-  const ok = await bcrypt.compare(String(password || ''), user ? user.passwordHash : DUMMY_HASH);
-  if (!user || !ok) return res.status(401).json({ error: 'Email hoặc mật khẩu không chính xác' });
+  const result = await login(prisma, bcrypt, DUMMY_HASH,
+    String(email || '').toLowerCase(), String(password || ''));
+  if (result.retryAfter) {
+    res.set('Retry-After', String(result.retryAfter));
+    return res.status(429).json({
+      error: `Đã đăng nhập sai 10 lần trong 15 phút. Vui lòng thử lại sau ${result.retryAfter} giây.`,
+      retryAfter: result.retryAfter,
+    });
+  }
+  const { user } = result;
+  if (!user) return res.status(401).json({ error: 'Email hoặc mật khẩu không chính xác' });
   res.json({ token: sign(user), user: publicUser(user) });
 });
 

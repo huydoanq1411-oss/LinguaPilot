@@ -18,6 +18,12 @@ enum Exam {
   IELTS
 }
 
+// Shared failed-login window, including email addresses that do not exist.
+model LoginThrottle {
+  key      String     @id
+  failures DateTime[] @default([])
+}
+
 model User {
   id           Int          @id @default(autoincrement())
   email        String       @unique

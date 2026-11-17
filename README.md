@@ -44,7 +44,7 @@ Submission	Bài nộp và phản hồi (kỳ thi JLPT hoặc IELTS)	Có bảng, 
 ##5. Nhận xét
 Hai bảng chưa dùng: schema đã chừa chỗ cho thẻ ôn tập và bài nộp, kể cả ngôn ngữ tiếng Anh và kỳ thi IELTS. Phần code API và giao diện cho chúng chưa có.
 Đăng nhập chỉ để xác nhận phiên: hiện tại tài khoản chưa mở khóa tính năng nào, vì các bài học đều xem được không cần đăng nhập.
-Chưa giới hạn số lần đăng nhập sai: có thể thêm express-rate-limit sau này nếu mở cho nhiều người dùng.
+Đăng nhập giới hạn 10 lần sai trong cửa sổ 15 phút theo email (không phân biệt chữ hoa/thường). Từ lần tiếp theo, API trả 429 với `Retry-After` và `retryAfter` (giây) cho tới khi lần sai cũ nhất hết hạn. Đăng nhập đúng xóa bộ đếm. Bộ đếm dùng PostgreSQL, dùng chung giữa các tiến trình và không mất khi khởi động lại API. Chạy `npx prisma generate` và `npx prisma migrate deploy` trong `server/` trước khi chạy phiên bản này. Giới hạn này chưa chặn việc thử hàng loạt email khác nhau từ cùng một IP.
 Đã loại biến không dùng trong `public/jp/quiz-engine.js`; chạy `npm run lint` tại `client` để kiểm tra phiên bản hiện tại.
 Script start chạy `node src/index.js` và dùng biến môi trường được cấp bởi nơi triển khai. Script dev tải thêm `server/.env`.
 
