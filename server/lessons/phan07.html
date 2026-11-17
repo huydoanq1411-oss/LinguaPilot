@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phần 07 — N1 Chương 1: Nhóm Ngữ Pháp Nền Tảng · LinguaPilot</title>
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --washi:#F6F1E4;
+  --washi-2:#EFE7D3;
+  --sumi:#2A2722;
+  --sumi-soft:#5B554A;
+  --ai:#1B4A6B;       /* indigo */
+  --ai-deep:#0F3349;
+  --hanko:#B33A2E;    /* hanko red */
+  --kin:#B6862C;       /* gold */
+  --line:#DCD2B8;
+  --card:#FFFDF8;
+  --radius:10px;
+  --shadow:0 2px 10px rgba(42,39,34,.08);
+  --font-display:'Shippori Mincho','Noto Serif JP',serif;
+  --font-body:'Noto Sans JP','Hiragino Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Courier New',monospace;
+}
+[data-theme="dark"]{
+  --washi:#1B1916;
+  --washi-2:#222019;
+  --sumi:#EDE6D6;
+  --sumi-soft:#B8AF9C;
+  --ai:#6FA8D6;
+  --ai-deep:#3A75A0;
+  --hanko:#E0695A;
+  --kin:#D9B25E;
+  --line:#3A362C;
+  --card:#221F1A;
+  --shadow:0 2px 14px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--washi); color:var(--sumi);
+  font-family:var(--font-body); line-height:1.7;
+  transition:background .3s,color .3s;
+}
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ===== BẢNG CHỮ CÁI TƯƠNG TÁC ===== */
+.kana-ref-section { scroll-margin-top: 20px; }
+.kana-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+.kana-tab { padding:8px 18px; border-radius:20px; border:2px solid var(--line); background:var(--card);
+  cursor:pointer; font-family:var(--font-display); font-size:.9rem; transition:.2s; color:var(--sumi); }
+.kana-tab.active { background:var(--ai); color:#fff; border-color:var(--ai); }
+.kana-tab:hover:not(.active) { border-color:var(--ai); color:var(--ai); }
+.kana-panel { display:none; }
+.kana-panel.active { display:block; }
+.kana-master-grid { display:grid; grid-template-columns: 60px repeat(5,1fr); gap:4px; }
+.kana-master-grid .kana-header { background:var(--ai); color:#fff; padding:6px 4px;
+  text-align:center; font-size:.72rem; font-weight:700; border-radius:4px; }
+.kana-master-grid .kana-row-label { background:var(--washi-2); display:flex; align-items:center;
+  justify-content:center; font-size:.7rem; color:var(--sumi-soft); border-radius:4px; font-weight:600; }
+.kana-cell-full { background:var(--card); border:1px solid var(--line); border-radius:6px;
+  padding:8px 4px; text-align:center; cursor:pointer; transition:.15s; position:relative; }
+.kana-cell-full:hover { border-color:var(--hanko); transform:scale(1.06); z-index:2; box-shadow:var(--shadow); }
+.kana-cell-full .main-char { font-family:var(--font-display); font-size:1.4rem; line-height:1.2;
+  display:block; }
+.kana-cell-full .sub-char { font-size:.75rem; color:var(--hanko); display:block; }
+.kana-cell-full .roma { font-size:.65rem; color:var(--sumi-soft); display:block; }
+.kana-cell-full.exception { background:linear-gradient(135deg,#fff5f5,#fff); border-color:var(--hanko); }
+[data-theme="dark"] .kana-cell-full.exception { background:linear-gradient(135deg,#2d1b17,#1e1510); }
+.kana-cell-full.empty { background:transparent; border:1px dashed var(--line); opacity:.4; cursor:default; }
+.kana-cell-full.empty:hover { transform:none; box-shadow:none; }
+.kanji-ref-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
+.kanji-ref-card { background:var(--card); border:1px solid var(--line); border-radius:8px;
+  padding:10px 8px; text-align:center; cursor:pointer; transition:.15s; }
+.kanji-ref-card:hover { border-color:var(--kin); transform:translateY(-2px); box-shadow:var(--shadow); }
+.kanji-ref-card .k-char { font-family:var(--font-display); font-size:2rem; color:var(--sumi); display:block; }
+.kanji-ref-card .k-on { font-size:.65rem; color:var(--hanko); }
+.kanji-ref-card .k-kun { font-size:.65rem; color:var(--ai); }
+.kanji-ref-card .k-mean { font-size:.72rem; color:var(--sumi-soft); margin-top:3px; font-style:italic; }
+.kana-search { width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:8px;
+  background:var(--card); color:var(--sumi); font-size:.95rem; margin-bottom:14px; }
+.kana-search:focus { outline:none; border-color:var(--ai); }
+.highlight-card { border-color:var(--kin) !important; background:rgba(182,134,44,.08) !important; }
+[data-theme="dark"] .highlight-card { background:rgba(182,134,44,.15) !important; }
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:var(--ai);}
+
+a{color:var(--ai);}
+
+/* ============ LAYOUT ============ */
+.app{display:flex; min-height:100vh;}
+.sidebar{
+  width:270px; flex-shrink:0; background:var(--ai-deep); color:#F6F1E4;
+  position:sticky; top:0; height:100vh; overflow-y:auto; padding:20px 0;
+}
+.sidebar h2{color:#F6F1E4; font-size:1.1rem; padding:0 20px; margin-bottom:4px;}
+.sidebar .sub{padding:0 20px; font-size:.78rem; color:#C9D7E2; margin-bottom:20px;}
+.sidebar nav a{
+  display:block; padding:9px 20px; color:#E4ECF1; text-decoration:none;
+  font-size:.92rem; border-left:3px solid transparent;
+}
+.sidebar nav a:hover, .sidebar nav a.active{
+  background:rgba(255,255,255,.08); border-left-color:var(--kin); color:#fff;
+}
+.sidebar nav .group-label{
+  padding:14px 20px 4px; font-size:.7rem; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--kin); font-weight:600;
+}
+
+main{flex:1; padding:32px 40px 80px; max-width:880px;}
+.topbar{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:24px; gap:12px; flex-wrap:wrap;
+}
+.controls{display:flex; gap:10px; align-items:center;}
+.btn{
+  border:1px solid var(--line); background:var(--card); color:var(--sumi);
+  padding:8px 14px; border-radius:var(--radius); cursor:pointer;
+  font-family:var(--font-body); font-size:.85rem; transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.btn:hover{border-color:var(--ai); color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08);}
+
+/* progress bar */
+.progress-wrap{background:var(--washi-2); border-radius:20px; height:10px; overflow:hidden; flex:1; max-width:260px;}
+.progress-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--ai),var(--kin));
+  width:4%;
+  transition:width .6s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+}
+.progress-bar::after {
+  content:'';
+  position:absolute;
+  right:0; top:0; bottom:0;
+  width:8px;
+  background:rgba(255,255,255,0.4);
+  border-radius:0 20px 20px 0;
+}
+.progress-label{font-size:.78rem; color:var(--sumi-soft); white-space:nowrap;}
+
+/* section card */
+.section{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px 28px; margin-bottom:22px; box-shadow:var(--shadow); scroll-margin-top:20px;
+  transition: all 0.35s ease;
+  animation: sectionFadeIn 0.6s ease-out both;
+}
+@keyframes sectionFadeIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section:hover {
+  box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+  border-color: var(--kin);
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .section:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.55); }
+.section .eyebrow{
+  font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--hanko); font-weight:600; margin-bottom:6px;
+}
+
+/* stamp / hero */
+.hero{
+  border:2px solid var(--ai); border-radius:var(--radius); padding:26px 28px;
+  background:linear-gradient(135deg,var(--card) 60%,var(--washi-2)); margin-bottom:26px; position:relative;
+  box-shadow: 0 4px 20px rgba(27,74,107,0.08);
+  transition: box-shadow 0.3s ease;
+}
+.hero:hover {
+  box-shadow: 0 8px 32px rgba(27,74,107,0.14);
+}
+.hanko-stamp{
+  position:absolute; top:20px; right:24px; width:60px; height:60px; border:2.5px solid var(--hanko);
+  border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--hanko);
+  font-family:var(--font-display); font-size:1.4rem; transform:rotate(-6deg); opacity:.85;
+}
+
+/* tables */
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.93rem;}
+th,td{border:1px solid var(--line); padding:8px 12px; text-align:left;}
+th{background:var(--washi-2); color:var(--ai); font-family:var(--font-display);}
+tr:nth-child(even) td{background:var(--washi);}
+
+/* note boxes */
+.box{
+  border-radius:var(--radius); padding:14px 18px; margin:16px 0; border-left:4px solid; font-size:.92rem;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.box:hover {
+  transform: translateX(3px);
+  box-shadow: 2px 4px 12px rgba(0,0,0,0.07);
+}
+.box.tip{background:#EAF3EC; border-color:#3F8C5C;}
+.box.warn{background:#FBEAE6; border-color:var(--hanko);}
+.box.note{background:#EAF1F7; border-color:var(--ai);}
+[data-theme="dark"] .box.tip{background:#1E2A20;}
+[data-theme="dark"] .box.warn{background:#2D1B17;}
+[data-theme="dark"] .box.note{background:#17222B;}
+.box b{display:block; margin-bottom:4px; font-family:var(--font-display);}
+
+/* code block */
+.code-wrap{position:relative; margin:14px 0;}
+pre{
+  background:var(--sumi); color:#F4F0E2; padding:16px 18px; border-radius:8px;
+  overflow-x:auto; font-family:var(--font-mono); font-size:.85rem; line-height:1.6;
+}
+[data-theme="dark"] pre{background:#0E0D0B;}
+.copy-btn{
+  position:absolute; top:8px; right:8px; background:rgba(255,255,255,.12); color:#fff;
+  border:none; padding:5px 10px; border-radius:6px; font-size:.72rem; cursor:pointer;
+}
+.copy-btn:hover{background:rgba(255,255,255,.22);}
+
+/* accordion */
+.accordion-item{border:1px solid var(--line); border-radius:8px; margin-bottom:8px; overflow:hidden;}
+.accordion-head{
+  background:var(--washi-2); padding:12px 16px; cursor:pointer; display:flex;
+  justify-content:space-between; align-items:center; font-weight:600; font-family:var(--font-display);
+  transition:all 0.2s ease;
+}
+.accordion-head:hover{color:var(--ai); background:var(--washi); padding-left:20px;}
+.accordion-item.open .accordion-head{
+  background:linear-gradient(90deg,var(--washi),var(--washi-2));
+  border-left:3px solid var(--ai); padding-left:13px;
+  color:var(--ai);
+}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 16px;}
+.accordion-body.open{padding:14px 16px;}
+.accordion-arrow{transition:transform .3s;}
+.accordion-item.open .accordion-arrow{transform:rotate(180deg);}
+
+/* flashcards */
+.flash-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; margin:14px 0;}
+.flashcard{
+  perspective:1000px; height:90px; cursor:pointer;
+}
+.flashcard-inner{
+  position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;
+}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+.flashcard-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-weight:600; text-align:center; padding:6px;
+  border:1px solid var(--line);
+}
+.flashcard-front{
+  background:linear-gradient(135deg,var(--ai),var(--ai-deep)); color:#fff;
+  font-family:var(--font-display); font-size:1.4rem;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+}
+.flashcard-back{
+  background:linear-gradient(135deg,var(--kin),#8B6520); color:#fff;
+  transform:rotateY(180deg); font-size:.85rem;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+}
+
+/* quiz */
+.quiz-q{margin-bottom:18px; padding-bottom:14px; border-bottom:1px dashed var(--line);}
+.quiz-q:last-child{border-bottom:none;}
+.quiz-opts label{
+  display:block; padding:8px 12px; margin:5px 0; border:1px solid var(--line); border-radius:6px; cursor:pointer; font-size:.9rem;
+}
+.quiz-opts label:hover{border-color:var(--ai);}
+.quiz-opts input{margin-right:8px;}
+.quiz-feedback{font-size:.85rem; margin-top:6px; font-weight:600; display:none;}
+.quiz-feedback.correct{color:#3F8C5C;}
+.quiz-feedback.wrong{color:var(--hanko);}
+.quiz-result{margin-top:14px; font-weight:700; font-family:var(--font-display); color:var(--ai); font-size:1.05rem;}
+
+/* roadmap table phase tags */
+.tag{display:inline-block; padding:2px 10px; border-radius:20px; font-size:.72rem; font-weight:600; color:#fff;}
+.tag.t1{background:#7C9A8C;} .tag.t2{background:#3F7CA0;} .tag.t3{background:#B6862C;}
+.tag.t4{background:#B33A2E;} .tag.t5{background:#6B4E9C;}
+
+/* back to top */
+#topBtn{
+  position:fixed; bottom:26px; right:26px; background:var(--ai); color:#fff; border:none;
+  width:46px; height:46px; border-radius:50%; font-size:1.2rem; cursor:pointer; box-shadow:var(--shadow);
+  display:none; align-items:center; justify-content:center; z-index:50;
+}
+#topBtn:hover{background:var(--hanko);}
+
+.kana-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:14px 0; text-align:center;}
+.kana-cell{
+  background:var(--washi-2); border:1px solid var(--line); border-radius:8px; padding:14px 4px;
+  transition: all 0.25s ease;
+}
+.kana-cell:hover {
+  transform: translateY(-3px) scale(1.05);
+  border-color: var(--ai);
+  box-shadow: 0 6px 16px rgba(27,74,107,0.12);
+  background: var(--card);
+}
+.kana-cell .ch{font-family:var(--font-display); font-size:1.8rem; color:var(--ai);}
+.kana-cell .rj{font-size:.78rem; color:var(--sumi-soft);}
+
+footer.lesson-nav{
+  display:flex; justify-content:space-between; align-items:center; margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
+}
+.next-hint{font-size:.85rem; color:var(--sumi-soft);}
+
+@media(max-width:780px){
+  .sidebar{position:fixed; left:-280px; z-index:100; transition:left .3s;}
+  .sidebar.open{left:0;}
+  main{padding:20px 16px 80px;}
+  .menu-toggle{display:inline-block !important;}
+}
+.menu-toggle{display:none; background:var(--ai); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;}
+</style>
+<style>
+@keyframes slideBg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.chapter-header{
+  background:linear-gradient(135deg, var(--ai-deep), var(--ai), #2A4A60);
+  background-size: 200% 200%;
+  animation: slideBg 12s ease infinite;
+  color:var(--washi); padding:32px 40px 28px; margin-bottom:28px;
+  border-radius:0 0 20px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-bottom: 2px solid var(--kin);
+}
+.chapter-header h1{color:#fff;font-size:1.8rem;margin:0 0 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.2);}
+.chapter-header p{color:rgba(255,255,255,0.9);margin:0;font-size:.95rem}
+.chapter-nav{
+  display:flex;gap:10px;padding:16px 40px;
+  background:var(--card);border-bottom:1px solid var(--line);
+  flex-wrap:wrap;align-items:center;
+}
+.chapter-nav a{
+  padding:6px 14px;border-radius:20px;font-size:.8rem;
+  border:1.5px solid var(--line);color:var(--sumi);text-decoration:none;
+  transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.chapter-nav a:hover{background:var(--ai);color:#fff;border-color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.chapter-nav a.active{background:var(--ai);color:#fff;border-color:var(--ai); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.back-home{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 18px;border-radius:20px;
+  background:rgba(255,255,255,.12);color:#fff;
+  text-decoration:none;font-size:.85rem;margin-bottom:14px;
+  border:1px solid rgba(255,255,255,.25);
+  transition:all 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+.back-home:hover{background:rgba(255,255,255,.25); transform:translateX(-3px);}
+.ch-progress{
+  height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:14px;
+}
+.ch-progress-bar{
+  height:100%;background:var(--kin);border-radius:2px;
+  width:83%;
+}
+/* ===== MỤC LỤC NHANH (TOC) ===== */
+.toc-btn{
+  position:fixed; bottom:84px; right:26px; background:var(--kin); color:#fff; border:none;
+  width:46px; height:46px; border-radius:50%; font-size:1.15rem; cursor:pointer; box-shadow:var(--shadow);
+  display:flex; align-items:center; justify-content:center; z-index:60; transition:.15s;
+}
+.toc-btn:hover{background:var(--hanko); transform:scale(1.06);}
+.toc-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:99; opacity:0; pointer-events:none; transition:.25s;
+}
+.toc-overlay.open{opacity:1; pointer-events:auto;}
+.toc-panel{
+  position:fixed; top:0; right:-360px; width:340px; max-width:88vw; height:100%; background:var(--card);
+  box-shadow:-4px 0 30px rgba(0,0,0,.18); z-index:100; transition:right .35s cubic-bezier(0.4,0,0.2,1); display:flex; flex-direction:column;
+}
+.toc-panel.open{right:0;}
+.toc-panel-header{
+  padding:18px 20px; background:var(--ai-deep); color:#fff; display:flex; justify-content:space-between; align-items:center;
+}
+.toc-panel-header h3{margin:0; font-size:1.05rem; font-family:var(--font-display);}
+.toc-close-btn{background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; line-height:1; padding:2px 6px;}
+.toc-panel-body{flex:1; overflow-y:auto; padding:10px 0;}
+.toc-group-label{
+  padding:10px 20px 6px; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  color:var(--sumi-soft); background:var(--washi-2); position:sticky; top:0;
+}
+.toc-item{
+  display:block; padding:9px 20px; font-size:.85rem; color:var(--sumi); text-decoration:none;
+  border-bottom:1px solid var(--washi-2); transition:all .2s ease;
+  border-left: 3px solid transparent;
+}
+.toc-item:hover{background:var(--washi-2); color:var(--ai); padding-left:24px; border-left-color:var(--kin);}
+.toc-item .toc-num{color:var(--ai); font-weight:700; margin-right:6px;}
+
+/* ===== NAV GỌN (DROPDOWN) — thay thế chapter-nav dài ===== */
+.nav-main{
+  display:flex; gap:6px; padding:14px 40px; background:var(--card); border-bottom:1px solid var(--line);
+  flex-wrap:wrap; align-items:center; position:relative; z-index:40;
+}
+.nav-main > a{
+  padding:8px 16px; border-radius:20px; font-size:.85rem; border:1.5px solid var(--line);
+  color:var(--sumi); text-decoration:none; transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.nav-main > a:hover, .nav-main > a.active{background:var(--ai); color:#fff; border-color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.nav-dd{position:relative;}
+.nav-dd-trigger{
+  padding:8px 16px; border-radius:20px; font-size:.85rem; border:1.5px solid var(--line);
+  color:var(--sumi); background:var(--card); cursor:pointer; transition:.15s; font-family:inherit;
+}
+.nav-dd-trigger:hover, .nav-dd-trigger.active, .nav-dd.open .nav-dd-trigger{background:var(--ai); color:#fff; border-color:var(--ai);}
+.nav-dd-menu{
+  position:absolute; top:calc(100% + 8px); left:0; min-width:230px; max-height:70vh; overflow-y:auto;
+  background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+  padding:8px; display:none; flex-direction:column; gap:2px; z-index:41;
+}
+.nav-dd.open .nav-dd-menu{display:flex;}
+.nav-dd-menu a{
+  padding:8px 12px; border-radius:8px; font-size:.83rem; color:var(--sumi); text-decoration:none; transition:.1s;
+}
+.nav-dd-menu a:hover{background:var(--washi-2);}
+.nav-dd-menu a.active{background:var(--ai); color:#fff;}
+.nav-dd-menu .nav-dd-divider{font-size:.68rem; text-transform:uppercase; letter-spacing:.04em; color:var(--sumi-soft);
+  padding:8px 12px 2px; font-weight:700;}
+
+/* ===== THEO DÕI TIẾN ĐỘ HỌC TẬP ===== */
+.lesson-done-toggle{
+  display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:16px;
+  border:1.5px solid var(--line); background:var(--card); color:var(--sumi-soft); cursor:pointer;
+  font-size:.78rem; font-family:var(--font-body); transition:.15s; float:right; margin:2px 0 8px 12px;
+}
+.lesson-done-toggle:hover{border-color:var(--ai); color:var(--ai);}
+.lesson-done-toggle.done{background:#3F8C5C; border-color:#3F8C5C; color:#fff;}
+.section.lesson-completed{border-left:4px solid #3F8C5C; padding-left:16px; margin-left:-16px;}
+.progress-summary{
+  display:flex; align-items:center; gap:10px; margin-top:10px; font-size:.82rem; color:rgba(255,255,255,.9);
+}
+.progress-summary .psum-bar{flex:1; max-width:220px; height:8px; background:rgba(255,255,255,.25); border-radius:4px; overflow:hidden;}
+.progress-summary .psum-fill{height:100%; background:var(--kin); border-radius:4px; transition:width .3s;}
+.toc-item.done-item{color:#3F8C5C;}
+.toc-item .toc-check{margin-right:4px;}
+
+</style>
+<link rel="stylesheet" href="/site-shell.css">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="/app-icon.svg">
+</head>
+<body>
+<div class="chapter-header">
+  <a href="index.html" class="back-home">← Trang chủ</a>
+  <h1>🔴 Phần 07 — N1 Chương 1: Nhóm Ngữ Pháp Nền Tảng</h1>
+  <p>50 cấu trúc N1 cốt lõi nhóm đầu · Kanji N1 · Từ vựng học thuật — Bài 121→140 · +18 bài bổ sung</p>
+  <div class="ch-progress"><div class="ch-progress-bar"></div></div>
+  <div class="progress-summary" id="progressSummary"></div>
+</div>
+
+<div class="nav-main">
+  <a href="index.html">🏠 Trang chủ</a>
+  <div class="nav-dd">
+    <button type="button" class="nav-dd-trigger active">📚 Học Bài ▾</button>
+    <div class="nav-dd-menu">
+      <a href="bang-chu-cai.html">📖 Bảng chữ cái</a>
+      <a href="tra-kanji.html">🔍 Tra Kanji trực tuyến</a>
+      <div class="nav-dd-divider">10 Phần Học</div>
+      <a href="phan01.html">Phần 01 — Kana</a>
+      <a href="phan02.html">Phần 02 — N5</a>
+      <a href="phan03.html">Phần 03 — N4</a>
+      <a href="phan04.html">Phần 04 — N3→N2</a>
+      <a href="phan05.html">Phần 05 — N2</a>
+      <a href="phan06.html">Phần 06 — N2+</a>
+      <a href="phan07.html" class="active">Phần 07 — N1-1</a>
+      <a href="phan08.html">Phần 08 — N1-2</a>
+      <a href="phan09.html">Phần 09 — N1-3</a>
+      <a href="phan10.html">Phần 10 — N1-4</a>
+    </div>
+  </div>
+  <div class="nav-dd">
+    <button type="button" class="nav-dd-trigger">📝 Kiểm Tra ▾</button>
+    <div class="nav-dd-menu">
+      <a href="kiem-tra-thang-cap.html">🎯 Test Tổng Hợp (30 câu)</a>
+      <a href="test-n5.html">Test N5 (25 câu)</a>
+      <a href="test-n4.html">Test N4 (25 câu)</a>
+      <a href="test-n3.html">Test N3→N2 (25 câu)</a>
+      <a href="test-n2.html">Test N2 (25 câu)</a>
+      <a href="test-n1.html">Test N1 (25 câu)</a>
+    </div>
+  </div>
+  <a href="tra-kanji.html">🔍 Tra Kanji</a>
+</div>
+
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:24px 20px 80px">
+  
+  <section class="section" id="bai121">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 JLPT N1 · Chương 1 · Ngữ pháp N1 nhóm 1</div>
+      <h2>第121課 — N1 Ngữ Pháp Nhóm 1: Lý Do & Điều Kiện Trang Trọng</h2>
+      <div class="box warn"><b>⚠️ Chào mừng đến với JLPT N1!</b> N1 là trình độ cao nhất — văn phong trang trọng, học thuật và văn học. Kỳ vọng: đọc được báo Nhật, sách chuyên ngành, xem phim không phụ đề.</div>
+
+      <h3>🔴 〜ゆえ(に)/〜ゆえの+N — Do/Vì (văn viết rất trang trọng)</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>N/Vの + <b>ゆえ(に)</b><br>adj + <b>ゆえ(に)</b></td><td>Do ~/Vì ~ (nguyên nhân — trang trọng, văn viết, tiểu thuyết)</td>
+          <td>若さ<b>ゆえの</b>過ち。= Lỗi lầm do còn trẻ.<br>無知<b>ゆえに</b>、傷つけてしまった。= Do vô tri mà đã làm tổn thương.<br>貧しさ<b>ゆえに</b>、夢をあきらめた。= Vì nghèo mà đã từ bỏ ước mơ.</td></tr>
+      </table>
+      <div class="box tip"><b>💡 ゆえに vs だから vs ので:</b> だから=hội thoại · ので=hơi trang trọng · ゆえに=văn học/văn bản chính thức</div>
+
+      <h3>🔴 〜いかんにかかわらず/〜いかんを問わず — Bất kể ~ thế nào</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>N + の + <b>いかんにかかわらず</b><br>N + の + <b>いかんを問わず</b></td><td>Bất kể ~ như thế nào/Dù ~ ra sao cũng ~ (văn bản hành chính, quy định)</td>
+          <td>理由の<b>いかんにかかわらず</b>、遅刻は許されない。<br>= Bất kể lý do gì, đi muộn không được chấp nhận.<br>結果の<b>いかんを問わず</b>、全力を尽くす。<br>= Bất kể kết quả ra sao cũng sẽ cố hết sức.</td></tr>
+        <tr><td>N + <b>いかんによっては</b></td><td>Tùy theo ~/Phụ thuộc vào ~</td>
+          <td>状況の<b>いかんによっては</b>、中止もありうる。<br>= Tùy theo tình huống, cũng có thể hủy.</td></tr>
+      </table>
+
+      <h3>🔴 〜なくして(は)/〜なくしては — Nếu không có ~ (thì không thể)</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>N + <b>なくして(は)</b><br>N + <b>なしには</b></td><td>Nếu không có ~/Thiếu ~ thì không thể ~ (điều kiện thiết yếu)</td>
+          <td>努力<b>なくして</b>、成功はない。= Không có nỗ lực thì không có thành công.<br>あなたの助け<b>なくしては</b>、完成できなかった。<br>= Nếu không có sự giúp đỡ của bạn, đã không hoàn thành được.<br>信頼<b>なくして</b>は、チームワークは成り立たない。<br>= Không có tin tưởng thì không thể có làm việc nhóm.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg121"></div>
+    </section>
+<section class="section" id="bai122">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Ngữ pháp nhóm 2</div>
+      <h2>第122課 — N1 Ngữ Pháp Nhóm 2: Tuyệt Đối & Không Thể Thiếu</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜たりとも〜ない</b></td><td>Dù chỉ ~ cũng không ~/Ngay cả ~ nhỏ nhất cũng không thể (nhấn mạnh tuyệt đối)</td>
+          <td>一瞬<b>たりとも</b>、気を抜いてはいけない。<br>= Không thể lơ là dù chỉ một giây.<br>一円<b>たりとも</b>、無駄にしない。= Không lãng phí dù chỉ một xu.<br>一人<b>たりとも</b>、残してはいけない。= Không được để lại dù chỉ một người.</td></tr>
+        <tr><td><b>〜をおいて〜ない</b></td><td>Ngoài ~ ra không có ~/Chỉ ~ mới ~ (nhấn mạnh duy nhất)</td>
+          <td>この仕事はあなた<b>をおいて</b>、できる人はいない。<br>= Ngoài bạn ra không có ai làm được việc này.<br>今<b>をおいて</b>、機会はない。= Ngoài lúc này ra không có cơ hội nào khác.</td></tr>
+        <tr><td><b>〜ずにはおかない</b><br><b>〜ないではおかない</b></td><td>Nhất định sẽ ~/Không thể không làm cho ~ (hành động tất yếu, thường là cảm xúc/tác động)</td>
+          <td>この映画は涙を誘わ<b>ずにはおかない</b>。<br>= Bộ phim này nhất định sẽ khiến người xem rơi lệ.<br>彼の話は笑わ<b>ずにはおかない</b>。<br>= Câu chuyện của anh ấy nhất định sẽ khiến cười.<br>このニュースは人々を驚か<b>ずにはおかない</b>。<br>= Tin tức này nhất định sẽ khiến mọi người kinh ngạc.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg122"></div>
+    </section>
+<section class="section" id="bai123">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Ngữ pháp nhóm 3</div>
+      <h2>第123課 — N1 Ngữ Pháp Nhóm 3: Xu Hướng & Vẻ Ngoài</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜ならいざしらず</b><br><b>〜はいざしらず</b></td><td>Nếu là ~ thì còn biết/hiểu được, nhưng ~ (chỉ trích điều bất hợp lý)</td>
+          <td>初心者<b>ならいざしらず</b>、プロがこんなミスをするとは。<br>= Người mới thì còn hiểu, nhưng chuyên gia mà mắc lỗi như vậy thì...<br>昔<b>はいざしらず</b>、現代でもこんな考えがあるとは。<br>= Ngày xưa thì còn biết, nhưng thời nay mà còn có quan niệm như vậy thì...</td></tr>
+        <tr><td><b>〜ともすると/〜ともすれば</b></td><td>Hay có xu hướng ~/Dễ dàng rơi vào ~ (xu hướng tiêu cực không mong muốn)</td>
+          <td><b>ともすると</b>、人は楽な方に流れがちだ。<br>= Người ta hay có xu hướng trôi về phía dễ dàng.<br>忙しいと<b>ともすれば</b>、健康を後回しにしてしまう。<br>= Khi bận rộn, hay có xu hướng xếp sức khỏe ra sau.</td></tr>
+        <tr><td><b>〜めく</b></td><td>Mang vẻ ~/Trở nên có vẻ giống ~ (chuyển biến mang sắc thái)</td>
+          <td>春<b>めいて</b>きた。= Đã bắt đầu mang vẻ mùa xuân.<br>皮肉<b>めいた</b>言い方をする。= Nói theo kiểu mang vẻ châm biếm.<br>謎<b>めいた</b>微笑み。= Nụ cười mang vẻ bí ẩn.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg123"></div>
+    </section>
+<section class="section" id="bai124">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Ngữ pháp nhóm 4</div>
+      <h2>第124課 — N1 Ngữ Pháp Nhóm 4: Cảm Xúc Sâu Sắc & Đánh Giá</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜てやまない</b></td><td>Mãi mãi ~/Không ngừng ~ (cảm xúc chân thành sâu sắc, thường dùng trong văn bản, thư)</td>
+          <td>ご成功を願っ<b>てやまない</b>。= Mãi mãi cầu chúc thành công.<br>平和を望ん<b>でやまない</b>。= Không ngừng mong mỏi hòa bình.<br>あなたの幸せを願っ<b>てやまない</b>。= Mãi mãi cầu mong hạnh phúc cho bạn.</td></tr>
+        <tr><td><b>〜にかたくない</b></td><td>Không khó để ~/Dễ dàng (tưởng tượng/hiểu được)</td>
+          <td>彼の苦しみは想像する<b>にかたくない</b>。<br>= Không khó để tưởng tượng nỗi đau khổ của anh ấy.<br>その決断がいかに難しかったか、察する<b>にかたくない</b>。<br>= Không khó để hiểu quyết định đó khó khăn đến mức nào.</td></tr>
+        <tr><td><b>〜かぎりだ</b></td><td>Thật ~/Thật là ~ (cảm xúc cực độ — thường là niềm vui, buồn bã, tự hào)</td>
+          <td>うれしい<b>かぎりだ</b>。= Thật là vui mừng vô cùng.<br>恥ずかしい<b>かぎりです</b>。= Thật là hổ thẹn vô cùng.<br>心強い<b>かぎりです</b>。= Thật là đáng tin cậy vô cùng.</td></tr>
+        <tr><td><b>〜(の)きわみ</b></td><td>Cực độ ~/Đỉnh điểm của ~ (N1 — mức độ tột cùng)</td>
+          <td>光栄の<b>きわみ</b>です。= Thật là vinh dự tột cùng.<br>恐縮の<b>きわみ</b>です。= Thật là không dám nhận.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg124"></div>
+    </section>
+<section class="section" id="bai125">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Ngữ pháp nhóm 5</div>
+      <h2>第125課 — N1 Ngữ Pháp Nhóm 5: Suy Đoán & Phê Phán Mạnh</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜とばかりに</b></td><td>Như thể muốn nói ~/Ra vẻ như ~ (hành động thể hiện ý định rõ ràng không cần lời)</td>
+          <td>今だとばかりに、飛び出した。= Ra vẻ như "đây là lúc rồi!", lao ra ngay.<br>嫌だとばかりに、首を横に振った。<br>= Ra vẻ như "không!", lắc đầu liên tục.<br>待っていたとばかりに微笑んだ。= Mỉm cười như thể đã chờ đợi mãi.</td></tr>
+        <tr><td><b>〜ではあるまいか</b><br><b>〜ではないか/〜ではなかろうか</b></td><td>Chẳng phải ~ sao? / Có lẽ ~ chăng? (phỏng đoán, đề xuất ý kiến lịch sự)</td>
+          <td>これこそが正解では<b>あるまいか</b>。= Chẳng phải đây chính là đáp án sao?<br>問題の本質はここにあるのでは<b>なかろうか</b>。<br>= Bản chất vấn đề có lẽ ở chỗ này chăng?</td></tr>
+        <tr><td><b>〜に(は)あたらない</b></td><td>Không cần ~/Không đáng ~/Không phải lúc để ~ (phản bác phản ứng thái quá)</td>
+          <td>驚くに<b>はあたらない</b>。= Không đáng ngạc nhiên.<br>そんなに落ち込む<b>にはあたらない</b>。<br>= Không cần phải nản lòng đến vậy.<br>感謝される<b>にはあたらない</b>。= Không đáng được cảm ơn (khiêm tốn).</td></tr>
+        <tr><td><b>〜もさることながら</b></td><td>~ thì đương nhiên rồi, nhưng còn ~ nữa (nhấn mạnh điều thứ hai quan trọng hơn)</td>
+          <td>味<b>もさることながら</b>、見た目も大切だ。<br>= Vị ngon thì đương nhiên rồi, nhưng ngoại hình cũng quan trọng.<br>技術<b>もさることながら</b>、人間性も重要だ。<br>= Kỹ thuật thì đương nhiên rồi, nhưng tính cách người cũng quan trọng.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg125"></div>
+    </section>
+<section class="section" id="bai126">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Ngữ pháp nhóm 6</div>
+      <h2>第126課 — N1 Ngữ Pháp Nhóm 6: Phương Tiện & Đại Diện</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>N + をもって</b></td><td>① Bằng ~/Thông qua ~ (phương tiện/cách thức — trang trọng)<br>② Kể từ ~/Vào ~ (mốc thời gian chính thức)</td>
+          <td>①実力<b>をもって</b>証明する。= Chứng minh bằng thực lực.<br>愛<b>をもって</b>接する。= Tiếp cận bằng tình yêu thương.<br>②本日<b>をもって</b>、閉店いたします。= Kể từ hôm nay, cửa hàng đóng cửa.</td></tr>
+        <tr><td><b>〜ともあろう(者が)</b></td><td>Là ~ mà lại ~ (phê phán mạnh — người ở vị trí cao mà làm điều không xứng)</td>
+          <td>医者<b>ともあろう者が</b>、こんな判断をするとは。<br>= Là bác sĩ mà lại đưa ra phán đoán như vậy thì...<br>大人<b>ともあろう者が</b>、子どもに負けてどうする。<br>= Là người lớn mà lại thua đứa trẻ thì làm sao được.</td></tr>
+        <tr><td><b>〜であれ/〜であろうと</b></td><td>Dù là ~/Dù ~ đi nữa cũng ~ (nhượng bộ mạnh, bất kỳ trường hợp nào)</td>
+          <td>どんな状況<b>であれ</b>、諦めない。= Dù trong tình huống nào cũng không bỏ cuộc.<br>誰<b>であろうと</b>、法律の前では平等だ。<br>= Dù là ai đi nữa cũng bình đẳng trước pháp luật.</td></tr>
+        <tr><td><b>〜ようでは/〜ようでは困る</b></td><td>Nếu cứ như ~ thì sẽ có vấn đề / Nếu cứ ~ thì không xong</td>
+          <td>そんなことで怒る<b>ようでは困る</b>。= Nếu tức giận vì chuyện như vậy thì không xong.<br>すぐ諦める<b>ようでは</b>、成長できない。= Nếu cứ từ bỏ ngay thì không thể trưởng thành.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg126"></div>
+    </section>
+<section class="section" id="bai127">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Ngữ pháp nhóm 7</div>
+      <h2>第127課 — N1 Ngữ Pháp Nhóm 7: Giá Trị & Cấm Đoán</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜に足る</b><br><b>〜に足りる</b></td><td>Xứng đáng ~/Đủ để ~ (đáp ứng tiêu chuẩn)</td>
+          <td>信頼する<b>に足る</b>人物だ。= Là người xứng đáng được tin tưởng.<br>尊敬する<b>に足る</b>先生だ。= Là giáo viên xứng đáng được kính trọng.<br>読む<b>に足る</b>本だ。= Là cuốn sách đáng đọc.</td></tr>
+        <tr><td><b>〜に足らない/〜に足りない</b></td><td>Không đáng ~/Không đủ để ~ (dưới tiêu chuẩn)</td>
+          <td>驚くに<b>足らない</b>。= Không đáng ngạc nhiên.<br>取り上げるに<b>足らない</b>問題。= Vấn đề không đáng được đề cập.</td></tr>
+        <tr><td><b>〜べからず/〜べからざる</b></td><td>Không được ~/Cấm ~ (ngôn ngữ quy định/biển báo/cổ điển)</td>
+          <td>立ち入る<b>べからず</b>。= Cấm vào.<br>芝生に入る<b>べからず</b>。= Cấm vào bãi cỏ.<br>許す<b>べからざる</b>行為。= Hành vi không thể tha thứ.</td></tr>
+        <tr><td><b>〜ずとも/〜なくとも</b></td><td>Dù không ~/Không nhất thiết phải ~ (= なくても nhưng trang trọng hơn)</td>
+          <td>言わ<b>ずとも</b>わかるはずだ。= Dù không nói cũng phải hiểu được.<br>行か<b>ずとも</b>、電話で十分だ。= Dù không đến, gọi điện cũng đủ rồi.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg127"></div>
+    </section>
+<section class="section" id="bai128">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Ngữ pháp nhóm 8</div>
+      <h2>第128課 — N1 Ngữ Pháp Nhóm 8: Kết Hợp Mục Đích (〜かたがた・〜がてら・〜かたわら)</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>N + かたがた</b></td><td>Vừa để ~ vừa để ~ (kết hợp 2 mục đích — trang trọng, thường trong lời thăm hỏi/thư từ)</td>
+          <td>お礼<b>かたがた</b>、ご挨拶に伺いました。<br>= Vừa để cảm ơn vừa để chào hỏi, tôi đã đến thăm.<br>ご報告<b>かたがた</b>、お願いも申し上げたい。<br>= Vừa để báo cáo vừa muốn nhờ vả thêm.</td></tr>
+        <tr><td><b>Vます(stem) + がてら</b><br><b>N + がてら</b></td><td>Vừa ~ vừa (kết hợp 2 việc cùng lúc — hội thoại nhẹ nhàng hơn かたがた)</td>
+          <td>散歩<b>がてら</b>、買い物をする。= Vừa đi dạo vừa mua sắm.<br>駅まで迎え<b>に行きがてら</b>、コーヒーを買ってきた。<br>= Vừa đi đón ở ga vừa mua cà phê.</td></tr>
+        <tr><td><b>Vる/Nの + かたわら</b></td><td>Trong khi ~ (song song, hai hoạt động chính)</td>
+          <td>仕事の<b>かたわら</b>、小説を書いている。= Trong khi làm việc, vừa viết tiểu thuyết.<br>育児の<b>かたわら</b>、勉強を続けている。<br>= Trong khi nuôi con, vẫn tiếp tục học.</td></tr>
+        <tr><td><b>〜を兼ねて</b></td><td>Kiêm ~/Kết hợp ~/Vừa là ~ vừa là ~</td>
+          <td>観光<b>を兼ねて</b>、出張に行った。= Đi công tác kết hợp du lịch.<br>練習<b>を兼ねた</b>発表。= Buổi thuyết trình kiêm luyện tập.</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Phân biệt:</b> かたがた=trang trọng, thư từ · がてら=hội thoại, hành động nhỏ kèm theo · かたわら=hai việc song song dài hạn · を兼ねて=hai mục đích chính thức</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg128"></div>
+    </section>
+<section class="section" id="bai129">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Ngữ pháp nhóm 9</div>
+      <h2>第129課 — N1 Ngữ Pháp Nhóm 9: Mục Đích Mãnh Liệt (〜んがために・〜んばかりに)</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>Vん + がために(の)</b></td><td>Để ~/Vì mục đích ~ (mục đích mãnh liệt, văn học/văn bản cổ điển)</td>
+          <td>合格せん<b>がために</b>、死に物狂いで勉強した。<br>= Để đậu, đã học như điên như dại.<br>生き残ら<b>んがために</b>、何でもした。<br>= Vì mục đích sống sót, đã làm mọi thứ.</td></tr>
+        <tr><td><b>Vん + ばかりに</b></td><td>Chỉ vì ~/Chỉ vì muốn ~ mà (nguyên nhân — thường dẫn đến kết quả tiêu cực)</td>
+          <td>合格せ<b>んばかりに</b>、夜も眠れなかった。<br>= Chỉ vì muốn đậu mà đêm cũng không ngủ được.<br>彼女の気を引か<b>んばかりに</b>、大声で笑った。<br>= Chỉ vì muốn thu hút sự chú ý của cô ấy mà cười to.</td></tr>
+        <tr><td><b>〜(の)ものを/〜ものを</b></td><td>Lẽ ra phải ~/Đáng nhẽ ~ (nuối tiếc, phàn nàn về điều không xảy ra đúng)</td>
+          <td>早く言えばよかった<b>ものを</b>。= Lẽ ra đã nói sớm hơn thì tốt.<br>謝れば済んだ<b>ものを</b>、頑固に黙っていた。<br>= Lẽ ra xin lỗi là xong, vậy mà cứ ngoan cố im lặng.</td></tr>
+        <tr><td><b>〜ながらに(して)</b></td><td>Trong khi ~/Ngay từ ~ (trạng thái không thay đổi trong suốt)</td>
+          <td>生まれ<b>ながらにして</b>、才能を持っていた。<br>= Ngay từ khi sinh ra đã có tài năng.<br>涙<b>ながらに</b>話した。= Kể trong nước mắt.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg129"></div>
+    </section>
+<section class="section" id="bai130">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Ngữ pháp nhóm 10</div>
+      <h2>第130課 — N1 Ngữ Pháp Nhóm 10: Thứ Tự & Hệ Quả Đặc Biệt</h2>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜手前(は)</b><br><small>てまえ</small></td><td>Trước mặt ~/Vì thể diện trước ~ (không thể làm khác vì đã nói/đã làm trước mặt ai đó)</td>
+          <td>みんなの<b>手前</b>、弱音を吐けない。<br>= Trước mặt mọi người, không thể than vãn.<br>宣言した<b>手前</b>、やめるわけにはいかない。<br>= Vì đã tuyên bố rồi, không thể bỏ được.</td></tr>
+        <tr><td><b>〜そばから</b></td><td>Vừa ~ thì lại ngay ~/Vừa làm xong thì lập tức lại ~ (lặp đi lặp lại không ngừng)</td>
+          <td>片付ける<b>そばから</b>、子どもが散らかす。<br>= Vừa dọn xong là con lại bày ngay.<br>覚える<b>そばから</b>、忘れてしまう。<br>= Vừa học xong là quên ngay.</td></tr>
+        <tr><td><b>〜が最後</b><br><b>〜たが最後</b></td><td>Một khi đã ~ thì ~ (hệ quả không thể đảo ngược, thường tiêu cực)</td>
+          <td>あの人に捕まっ<b>たが最後</b>、延々と話を聞かされる。<br>= Một khi bị người đó bắt chuyện thì phải nghe mãi không dứt.<br>スマホを触り始め<b>が最後</b>、止められない。<br>= Một khi đã bắt đầu dùng điện thoại thì không dừng được.</td></tr>
+        <tr><td><b>〜ともなしに/〜ともなく</b></td><td>Không chủ đích ~/Một cách vô thức ~ (N1 level của 〜ともなく)</td>
+          <td>聞く<b>ともなしに</b>聞こえてきた会話。<br>= Cuộc trò chuyện nghe được mà không cố ý nghe.<br>どこへ行く<b>ともなく</b>、ふらふら歩いた。= Lang thang không biết đi đâu.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg130"></div>
+    </section>
+<section class="section" id="bai131">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Từ vựng học thuật</div>
+      <h2>第131課 — N1 Từ Vựng: Học Thuật & Báo Chí Nâng Cao</h2>
+      <div class="box note"><b>📌 N1 yêu cầu khoảng 10.000–18.000 từ vựng.</b> Ưu tiên học từ theo chủ đề và văn cảnh thực tế.</div>
+      <table>
+        <tr><th>Từ</th><th>Đọc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>蓋然性</td><td>がいぜんせい</td><td>khả năng xảy ra, xác suất</td><td>蓋然性が高い・統計的蓋然性</td></tr>
+        <tr><td>恣意的</td><td>しいてき</td><td>tùy tiện, độc đoán</td><td>恣意的な判断・恣意的解釈</td></tr>
+        <tr><td>俯瞰</td><td>ふかん</td><td>nhìn từ trên xuống, nhìn toàn cảnh</td><td>全体を俯瞰する・俯瞰的視点</td></tr>
+        <tr><td>顕在化</td><td>けんざいか</td><td>hiện thực hóa, trở nên rõ ràng</td><td>問題が顕在化する</td></tr>
+        <tr><td>潜在的</td><td>せんざいてき</td><td>tiềm ẩn, tiềm năng</td><td>潜在的なリスク・潜在能力</td></tr>
+        <tr><td>脆弱性</td><td>ぜいじゃくせい</td><td>tính dễ tổn thương, lỗ hổng</td><td>システムの脆弱性・安全保障の脆弱性</td></tr>
+        <tr><td>醸成</td><td>じょうせい</td><td>tạo ra (dần dần), nuôi dưỡng</td><td>信頼を醸成する・雰囲気を醸成</td></tr>
+        <tr><td>逸脱</td><td>いつだつ</td><td>đi lệch, sai lệch khỏi chuẩn mực</td><td>規範から逸脱する・常軌を逸脱</td></tr>
+        <tr><td>懸念</td><td>けねん</td><td>lo ngại, lo lắng</td><td>懸念を示す・深刻な懸念</td></tr>
+        <tr><td>払拭</td><td>ふっしょく</td><td>xóa bỏ, quét sạch</td><td>不安を払拭する・疑念を払拭</td></tr>
+        <tr><td>踏襲</td><td>とうしゅう</td><td>noi theo, kế thừa</td><td>慣例を踏襲する・前例踏襲</td></tr>
+        <tr><td>逼迫</td><td>ひっぱく</td><td>căng thẳng, khẩn cấp, bị bóp nghẹt</td><td>財政が逼迫する・供給逼迫</td></tr>
+        <tr><td>斬新</td><td>ざんしん</td><td>mới mẻ, sáng tạo, độc đáo</td><td>斬新なアイデア・斬新なデザイン</td></tr>
+        <tr><td>齟齬</td><td>そご</td><td>bất đồng, không ăn khớp</td><td>認識に齟齬がある・齟齬を生じる</td></tr>
+        <tr><td>看過</td><td>かんか</td><td>bỏ qua, không để ý</td><td>看過できない・見過ごす</td></tr>
+        <tr><td>凌駕</td><td>りょうが</td><td>vượt trội, vượt qua</td><td>記録を凌駕する・人間を凌駕するAI</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg131"></div>
+    </section>
+<section class="section" id="bai132">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Từ vựng văn học</div>
+      <h2>第132課 — N1 Từ Vựng: Văn Học & Nghệ Thuật</h2>
+      <table>
+        <tr><th>Từ</th><th>Đọc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>情緒</td><td>じょうちょ/じょうしょ</td><td>tình cảm, xúc cảm</td><td>情緒豊かな文章・情緒不安定</td></tr>
+        <tr><td>情趣</td><td>じょうしゅ</td><td>thi vị, phong thái</td><td>情趣がある風景</td></tr>
+        <tr><td>哀愁</td><td>あいしゅう</td><td>nỗi buồn man mác</td><td>哀愁を帯びた曲・哀愁漂う</td></tr>
+        <tr><td>郷愁</td><td>きょうしゅう</td><td>nỗi nhớ quê, hoài niệm</td><td>郷愁を感じる・郷愁に駆られる</td></tr>
+        <tr><td>侘び寂び</td><td>わびさび</td><td>wabi-sabi (vẻ đẹp giản dị, cô tịch)</td><td>日本の美意識・侘び寂びの庭</td></tr>
+        <tr><td>余韻</td><td>よいん</td><td>dư âm, dư vị</td><td>余韻が残る・余韻を楽しむ</td></tr>
+        <tr><td>含蓄</td><td>がんちく</td><td>hàm ý sâu sắc, nội hàm phong phú</td><td>含蓄のある言葉</td></tr>
+        <tr><td>象徴</td><td>しょうちょう</td><td>biểu tượng</td><td>平和の象徴・象徴的な場面</td></tr>
+        <tr><td>隠喩</td><td>いんゆ</td><td>ẩn dụ</td><td>隠喩表現・隠喩を用いる</td></tr>
+        <tr><td>逆説</td><td>ぎゃくせつ</td><td>nghịch lý, paradox</td><td>逆説的な真実・逆説を含む</td></tr>
+        <tr><td>皮肉</td><td>ひにく</td><td>mỉa mai, châm biếm</td><td>皮肉を言う・皮肉な運命</td></tr>
+        <tr><td>風刺</td><td>ふうし</td><td>châm biếm (xã hội)</td><td>風刺画・社会風刺</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg132"></div>
+    </section>
+<section class="section" id="bai133">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Từ vựng triết học</div>
+      <h2>第133課 — N1 Từ Vựng: Triết Học & Tư Tưởng</h2>
+      <table>
+        <tr><th>Từ</th><th>Đọc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>認識論</td><td>にんしきろん</td><td>nhận thức luận, epistemology</td><td>デカルトの認識論</td></tr>
+        <tr><td>存在論</td><td>そんざいろん</td><td>bản thể luận, ontology</td><td>存在論的問い</td></tr>
+        <tr><td>弁証法</td><td>べんしょうほう</td><td>biện chứng pháp</td><td>ヘーゲルの弁証法</td></tr>
+        <tr><td>実存主義</td><td>じつぞんしゅぎ</td><td>chủ nghĩa hiện sinh</td><td>サルトルの実存主義</td></tr>
+        <tr><td>功利主義</td><td>こうりしゅぎ</td><td>chủ nghĩa vị lợi, utilitarianism</td><td>功利主義的判断</td></tr>
+        <tr><td>相対主義</td><td>そうたいしゅぎ</td><td>chủ nghĩa tương đối</td><td>文化的相対主義</td></tr>
+        <tr><td>普遍主義</td><td>ふへんしゅぎ</td><td>chủ nghĩa phổ quát</td><td>人権の普遍主義</td></tr>
+        <tr><td>二元論</td><td>にげんろん</td><td>nhị nguyên luận, dualism</td><td>心身二元論</td></tr>
+        <tr><td>唯物論</td><td>ゆいぶつろん</td><td>chủ nghĩa duy vật</td><td>マルクスの唯物論</td></tr>
+        <tr><td>超越</td><td>ちょうえつ</td><td>siêu việt, vượt qua giới hạn</td><td>限界を超越する・超越的存在</td></tr>
+        <tr><td>内在</td><td>ないざい</td><td>nội tại, bản thân sự vật</td><td>内在的価値・内在論</td></tr>
+        <tr><td>パラダイム</td><td>—</td><td>mô hình tư duy, paradigm</td><td>パラダイムシフト・科学的パラダイム</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg133"></div>
+    </section>
+<section class="section" id="bai134">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Từ vựng kinh tế</div>
+      <h2>第134課 — N1 Từ Vựng: Kinh Tế Học Nâng Cao</h2>
+      <table>
+        <tr><th>Từ</th><th>Đọc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>寡占</td><td>かせん</td><td>độc quyền nhóm, oligopoly</td><td>寡占市場・寡占企業</td></tr>
+        <tr><td>独占</td><td>どくせん</td><td>độc quyền, monopoly</td><td>独占禁止法・市場独占</td></tr>
+        <tr><td>外部性</td><td>がいぶせい</td><td>ngoại tác, externality</td><td>負の外部性・正の外部性</td></tr>
+        <tr><td>情報の非対称性</td><td>じょうほうのひたいしょうせい</td><td>bất đối xứng thông tin</td><td>市場の失敗・モラルハザード</td></tr>
+        <tr><td>モラルハザード</td><td>—</td><td>rủi ro đạo đức, moral hazard</td><td>金融のモラルハザード</td></tr>
+        <tr><td>トレードオフ</td><td>—</td><td>đánh đổi, trade-off</td><td>効率と公平のトレードオフ</td></tr>
+        <tr><td>限界費用</td><td>げんかいひよう</td><td>chi phí cận biên, marginal cost</td><td>限界費用ゼロ社会</td></tr>
+        <tr><td>需給均衡</td><td>じゅきゅうきんこう</td><td>cân bằng cung cầu</td><td>市場の需給均衡</td></tr>
+        <tr><td>量的緩和</td><td>りょうてきかんわ</td><td>nới lỏng định lượng, QE</td><td>量的緩和政策・日銀の政策</td></tr>
+        <tr><td>財政出動</td><td>ざいせいしゅつどう</td><td>kích thích tài khóa</td><td>景気対策としての財政出動</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg134"></div>
+    </section>
+<section class="section" id="bai135">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Kanji</div>
+      <h2>第135課 — N1 Kanji: 200 Kanji N1 Nhóm 1 (Bảng tham khảo)</h2>
+      <div class="box note"><b>📌 N1 yêu cầu ~2.000 Kanji.</b> Bài này trình bày 30 Kanji N1 tần suất cao nhất — xem bảng Kanji N1 trong bảng chữ cái phía trên.</div>
+      <div class="kanji-ref-grid" id="kanjiN1GridCh1"></div>
+      <div class="box tip"><b>💡 Chiến lược Kanji N1:</b><br>
+        ① WaniKani (level 50-60) — 3-4 giờ/ngày trong 1 năm<br>
+        ② Đọc báo Nhật hằng ngày (Asahi, Nikkei) — gặp Kanji trong ngữ cảnh<br>
+        ③ Kanji Kentei (漢検2級) — thi song song với JLPT N1<br>
+        ④ Anki deck N1 Kanji — ôn SRS mỗi ngày 20 phút</div>
+    </section>
+<section class="section" id="bai136">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Đọc hiểu</div>
+      <h2>第136課 — N1 Đọc Hiểu: Văn Bản Học Thuật (~800 chữ)</h2>
+      <div class="box note"><b>📌 N1 đọc hiểu đặc điểm:</b> Bài đọc dài ~600-1000 chữ · Từ vựng học thuật và chuyên ngành · Câu hỏi suy luận phức tạp · Thời gian hạn hẹp</div>
+
+      <div class="code-wrap"><pre><code>【テーマ：テクノロジーと人間の主体性】
+
+人工知能の急速な発展は、人間の主体性という根本的な問いを私たちに突きつけている。
+チェスや囲碁においてAIが人間を凌駕したことは記憶に新しいが、今や医療診断、
+法律文書の作成、さらには創造的な芸術作品の制作においても、AIが人間と肩を
+並べるか、あるいはそれを超える水準に達しつつある。
+
+この状況において、人々が懸念するのは「人間固有の価値とは何か」という問いだ。
+デカルトが「我思う、ゆえに我あり」と述べて以来、思考能力こそが人間の本質と
+されてきた。しかしAIが高度な推論を行えるようになった今、この前提は揺らぎ
+始めているのかもしれない。
+
+しかし、ここで注意すべきは、AIはあくまでデータとアルゴリズムに基づいて
+動作するという点だ。AIは与えられたデータのパターンを認識し、最適解を
+導き出すことはできる。だが、「なぜ生きるのか」「何が善いことか」という
+価値の問いに対して、AIは自己の経験や感情なくして答えることはできない。
+
+真に重要なのは、AIを単なる道具として主体的に活用する人間の能力だろう。
+テクノロジーの発展は、人間を脅かすものではなく、人間がより人間らしい
+活動——創造、共感、倫理的判断——に集中できる環境をもたらすものとして
+捉え直す必要があるのではないだろうか。</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+      <form id="qrn1_136">
+        <div class="quiz-q"><p><b>1.</b>「人間の主体性」という問いが生じた背景は何ですか？</p>
+          <div class="quiz-opts"><label><input type="radio" name="n1a1" value="w">人間がチェスで負けたこと</label><label><input type="radio" name="n1a1" value="c">AIが様々な分野で人間を超えつつあること</label><label><input type="radio" name="n1a1" value="w">デカルトの哲学が否定されたこと</label><label><input type="radio" name="n1a1" value="w">医療分野でのAI活用</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>2.</b> 筆者がAIの限界として挙げているのは何ですか？</p>
+          <div class="quiz-opts"><label><input type="radio" name="n1a2" value="w">計算速度が遅い点</label><label><input type="radio" name="n1a2" value="w">芸術作品を作れない点</label><label><input type="radio" name="n1a2" value="c">自己の経験や感情なしに価値の問いに答えられない点</label><label><input type="radio" name="n1a2" value="w">データが少ない点</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>3.</b> 筆者の最終的な主張は何ですか？</p>
+          <div class="quiz-opts"><label><input type="radio" name="n1a3" value="w">AIの発展を止めるべきだ</label><label><input type="radio" name="n1a3" value="w">人間はAIに負けてしまう</label><label><input type="radio" name="n1a3" value="c">AIを道具として活用し、人間らしい活動に集中すべきだ</label><label><input type="radio" name="n1a3" value="w">AIに倫理的判断を任せるべきだ</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>4.</b>「凌駕する」の意味は？</p>
+          <div class="quiz-opts"><label><input type="radio" name="n1a4" value="w">近づく</label><label><input type="radio" name="n1a4" value="w">協力する</label><label><input type="radio" name="n1a4" value="c">超え、上回る</label><label><input type="radio" name="n1a4" value="w">下回る</label></div><div class="quiz-feedback"></div></div>
+        <button type="button" class="btn" onclick="runQuiz('qrn1_136',4,'qres_136')">採点する</button>
+        <div class="quiz-result" id="qres_136"></div>
+      </form>
+    </section>
+<section class="section" id="bai137">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Đọc hiểu tư tưởng</div>
+      <h2>第137課 — N1 Đọc Hiểu: Bài Luận Tư Tưởng (Wabi-Sabi)</h2>
+      <div class="code-wrap"><pre><code>【テーマ：不完全さの美学——わびと現代】
+
+完璧であることへの執着が、現代社会を疲弊させている。SNSには加工された
+完璧な写真が溢れ、人々は理想的な自分と現実の自分との乖離に苦しんでいる。
+こうした時代だからこそ、日本固有の美意識である「わびさび」を見直すことに
+意味があるのではないだろうか。
+
+「わび」とは、質素さや不完全さの中に美を見出す感性だ。千利休が完成させた
+茶道には、欠けた茶碗や曲がった竹に美を感じる精神が宿っている。これは
+単なる懐古趣味ではなく、「あるがままを受け入れる」という深い知恵だ。
+
+心理学者のブレネー・ブラウンが提唱する「脆弱性の力」も、同様の洞察を
+異なる文化的文脈から述べている。弱さや不完全さを認め、それを隠さないことが、
+より深い人間的なつながりを生むという。
+
+翻って考えれば、完璧主義は自己防衛の一形態に過ぎず、本当の強さとは
+不完全な自分を受け入れる勇気の中にあるのかもしれない。わびさびの精神は、
+現代人が失いかけた「足るを知る」哲学として、今こそ再評価されるべきだろう。</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <div class="box tip"><b>💡 重要語句:</b> 乖離=khoảng cách/tách biệt · 懐古趣味=hoài cổ · 脆弱性=tính dễ tổn thương · 翻って=nhìn lại/ngược lại · 足るを知る=biết đủ</div>
+    </section>
+<section class="section" id="bai138">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Nghe hiểu</div>
+      <h2>第138課 — N1 Nghe Hiểu: Script Đầy Đủ & Chiến Thuật</h2>
+      <div class="box note"><b>📌 N1 Nghe hiểu khác N2:</b> Tốc độ nhanh hơn · Từ vựng học thuật hơn · Ý kiến phức tạp hơn · Không cho đọc trước câu hỏi (問題3, 5)</div>
+
+      <h3>🎧 Script N1 — 問題3 (統合理解)</h3>
+      <div class="code-wrap"><pre><code>【テーマ討論：少子化対策について】
+
+男：今回の議題は少子化対策です。政府は様々な経済的支援策を打ち出していますが、
+   効果が出ていないように思います。原因はどこにあると思いますか？
+
+女：経済的支援も重要ですが、私は「働き方」の問題がより根本的だと思います。
+   長時間労働が当たり前の社会では、子育てと仕事の両立が非常に困難です。
+   男性の育児参加を促進するためにも、まず労働文化を変える必要があります。
+
+男：おっしゃる通りですね。スウェーデンでは父親の育休取得率が90%を超えると
+   聞きます。制度だけでなく、文化的な変革が必要ということでしょうか。
+
+女：そうです。さらに言えば、「子どもを持つこと」を個人の選択として尊重しつつも、
+   社会全体で子育てを支援するという意識の転換も欠かせないと思います。
+
+【質問】この二人の共通の認識は何ですか？
+→ 経済的支援だけでなく、社会・文化的変革も必要だということ ✅</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+      <h3>🎯 N1 聴解 5大チェックポイント</h3>
+      <table>
+        <tr><th>チェック項目</th><th>何を聴くか</th></tr>
+        <tr><td>① 話者の立場</td><td>賛成？反対？中立？具体的にどの立場か</td></tr>
+        <tr><td>② 論点の核心</td><td>「一番重要なこと」「根本的な原因」は何か</td></tr>
+        <tr><td>③ 逆接のシグナル</td><td>「しかし・ただし・むしろ・とはいえ・けれども」の後</td></tr>
+        <tr><td>④ 結論のシグナル</td><td>「つまり・要するに・結局・ということは」の後</td></tr>
+        <tr><td>⑤ 話者間の共通点/相違点</td><td>2人が議論する場合：何に同意し、何が違うか</td></tr>
+      </table>
+    </section>
+<section class="section" id="bai139">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🏆 Đề Thi Thử N1 — Đề 1</div>
+      <h2>第139課 — 🏆 Đề Thi Thử N1 Đề 1 (30 câu tổng hợp)</h2>
+      <p>Bao gồm ngữ pháp N1 mới học + từ vựng + đọc hiểu. Thời gian: <b>40 phút</b>. Đạt <b>21/30 (70%)</b> = tiến bộ tốt!</p>
+      <form id="qfn1e1">
+        <div class="quiz-q"><p><b>1.</b> 若さ___の過ち。(N1: do/vì)</p><div class="quiz-opts"><label><input type="radio" name="n1q1" value="c">ゆえの</label><label><input type="radio" name="n1q1" value="w">からの</label><label><input type="radio" name="n1q1" value="w">なのでの</label><label><input type="radio" name="n1q1" value="w">だからの</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>2.</b> 理由の___、遅刻は許されない。(bất kể lý do gì)</p><div class="quiz-opts"><label><input type="radio" name="n1q2" value="c">いかんにかかわらず</label><label><input type="radio" name="n1q2" value="w">にもかかわらず</label><label><input type="radio" name="n1q2" value="w">にかかわらず</label><label><input type="radio" name="n1q2" value="w">のいかんで</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>3.</b> 努力___、成功はない。(không có nỗ lực thì)</p><div class="quiz-opts"><label><input type="radio" name="n1q3" value="c">なくして</label><label><input type="radio" name="n1q3" value="w">なしでは</label><label><input type="radio" name="n1q3" value="w">なければ</label><label><input type="radio" name="n1q3" value="w">がなければ</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>4.</b> 一瞬___、気を抜いてはいけない。</p><div class="quiz-opts"><label><input type="radio" name="n1q4" value="c">たりとも</label><label><input type="radio" name="n1q4" value="w">だけでも</label><label><input type="radio" name="n1q4" value="w">さえも</label><label><input type="radio" name="n1q4" value="w">ほどでも</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>5.</b> あなた___、この仕事ができる人はいない。</p><div class="quiz-opts"><label><input type="radio" name="n1q5" value="c">をおいて</label><label><input type="radio" name="n1q5" value="w">をぬきに</label><label><input type="radio" name="n1q5" value="w">をよそに</label><label><input type="radio" name="n1q5" value="w">をはじめ</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>6.</b> この映画は涙を誘わ___。(nhất định khiến khóc)</p><div class="quiz-opts"><label><input type="radio" name="n1q6" value="c">ずにはおかない</label><label><input type="radio" name="n1q6" value="w">ずにはいられない</label><label><input type="radio" name="n1q6" value="w">ないではすまない</label><label><input type="radio" name="n1q6" value="w">ずにはすまない</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>7.</b> 初心者___、プロがミスするとは。</p><div class="quiz-opts"><label><input type="radio" name="n1q7" value="c">ならいざしらず</label><label><input type="radio" name="n1q7" value="w">ならではの</label><label><input type="radio" name="n1q7" value="w">ならともかく</label><label><input type="radio" name="n1q7" value="w">ならまだしも</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>8.</b> ともすると、人は楽な方に___。</p><div class="quiz-opts"><label><input type="radio" name="n1q8" value="c">流れがちだ</label><label><input type="radio" name="n1q8" value="w">流れるものだ</label><label><input type="radio" name="n1q8" value="w">流れるはずだ</label><label><input type="radio" name="n1q8" value="w">流れてならない</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>9.</b> 春___きた。(mang vẻ mùa xuân)</p><div class="quiz-opts"><label><input type="radio" name="n1q9" value="c">めいて</label><label><input type="radio" name="n1q9" value="w">らしく</label><label><input type="radio" name="n1q9" value="w">っぽく</label><label><input type="radio" name="n1q9" value="w">ように</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>10.</b> ご成功を願って___。(mãi mãi cầu chúc)</p><div class="quiz-opts"><label><input type="radio" name="n1q10" value="c">やまない</label><label><input type="radio" name="n1q10" value="w">ならない</label><label><input type="radio" name="n1q10" value="w">いられない</label><label><input type="radio" name="n1q10" value="w">たまらない</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>11.</b> 驚くには___。(không đáng ngạc nhiên)</p><div class="quiz-opts"><label><input type="radio" name="n1q11" value="c">あたらない</label><label><input type="radio" name="n1q11" value="w">足らない</label><label><input type="radio" name="n1q11" value="w">かたくない</label><label><input type="radio" name="n1q11" value="w">すぎない</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>12.</b> 彼の苦しみは想像する___。(không khó để tưởng tượng)</p><div class="quiz-opts"><label><input type="radio" name="n1q12" value="c">にかたくない</label><label><input type="radio" name="n1q12" value="w">にあたらない</label><label><input type="radio" name="n1q12" value="w">に足らない</label><label><input type="radio" name="n1q12" value="w">にすぎない</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>13.</b> 光栄の___です。(vinh dự tột cùng)</p><div class="quiz-opts"><label><input type="radio" name="n1q13" value="c">きわみ</label><label><input type="radio" name="n1q13" value="w">かぎり</label><label><input type="radio" name="n1q13" value="w">ほど</label><label><input type="radio" name="n1q13" value="w">まで</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>14.</b> 今だ___に、飛び出した。(như thể muốn nói)</p><div class="quiz-opts"><label><input type="radio" name="n1q14" value="c">とばかり</label><label><input type="radio" name="n1q14" value="w">というように</label><label><input type="radio" name="n1q14" value="w">とともに</label><label><input type="radio" name="n1q14" value="w">かのように</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>15.</b> 本日___、閉店いたします。(kể từ hôm nay)</p><div class="quiz-opts"><label><input type="radio" name="n1q15" value="c">をもって</label><label><input type="radio" name="n1q15" value="w">によって</label><label><input type="radio" name="n1q15" value="w">において</label><label><input type="radio" name="n1q15" value="w">をきっかけに</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>16.</b> お礼___、ご挨拶に伺いました。(kết hợp mục đích — trang trọng)</p><div class="quiz-opts"><label><input type="radio" name="n1q16" value="c">かたがた</label><label><input type="radio" name="n1q16" value="w">がてら</label><label><input type="radio" name="n1q16" value="w">かたわら</label><label><input type="radio" name="n1q16" value="w">を兼ねて</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>17.</b> 散歩___、買い物をした。(vừa đi dạo vừa)</p><div class="quiz-opts"><label><input type="radio" name="n1q17" value="c">がてら</label><label><input type="radio" name="n1q17" value="w">かたがた</label><label><input type="radio" name="n1q17" value="w">かたわら</label><label><input type="radio" name="n1q17" value="w">ついでに</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>18.</b> 仕事の___、小説を書いている。(song song — dài hạn)</p><div class="quiz-opts"><label><input type="radio" name="n1q18" value="c">かたわら</label><label><input type="radio" name="n1q18" value="w">かたがた</label><label><input type="radio" name="n1q18" value="w">がてら</label><label><input type="radio" name="n1q18" value="w">かたかた</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>19.</b> 合格せん___、死に物狂いで勉強した。(để đậu — văn học)</p><div class="quiz-opts"><label><input type="radio" name="n1q19" value="c">がために</label><label><input type="radio" name="n1q19" value="w">ために</label><label><input type="radio" name="n1q19" value="w">ようと</label><label><input type="radio" name="n1q19" value="w">んばかりに</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>20.</b> 片付ける___、子どもが散らかす。(vừa dọn là lại bày)</p><div class="quiz-opts"><label><input type="radio" name="n1q20" value="c">そばから</label><label><input type="radio" name="n1q20" value="w">そばで</label><label><input type="radio" name="n1q20" value="w">かたわら</label><label><input type="radio" name="n1q20" value="w">とたんに</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>語彙21.</b> 財政が___する。(căng thẳng, khẩn cấp)</p><div class="quiz-opts"><label><input type="radio" name="n1q21" value="c">逼迫</label><label><input type="radio" name="n1q21" value="w">払拭</label><label><input type="radio" name="n1q21" value="w">踏襲</label><label><input type="radio" name="n1q21" value="w">顕在化</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>語彙22.</b> 問題を___できない。(bỏ qua)</p><div class="quiz-opts"><label><input type="radio" name="n1q22" value="c">看過</label><label><input type="radio" name="n1q22" value="w">逸脱</label><label><input type="radio" name="n1q22" value="w">醸成</label><label><input type="radio" name="n1q22" value="w">凌駕</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>語彙23.</b> 不安を___する。(xóa bỏ)</p><div class="quiz-opts"><label><input type="radio" name="n1q23" value="c">払拭</label><label><input type="radio" name="n1q23" value="w">逸脱</label><label><input type="radio" name="n1q23" value="w">懸念</label><label><input type="radio" name="n1q23" value="w">俯瞰</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>語彙24.</b> 全体を___する。(nhìn toàn cảnh từ trên)</p><div class="quiz-opts"><label><input type="radio" name="n1q24" value="c">俯瞰</label><label><input type="radio" name="n1q24" value="w">踏襲</label><label><input type="radio" name="n1q24" value="w">逼迫</label><label><input type="radio" name="n1q24" value="w">醸成</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>語彙25.</b> AIが人間を___する。(vượt trội)</p><div class="quiz-opts"><label><input type="radio" name="n1q25" value="c">凌駕</label><label><input type="radio" name="n1q25" value="w">看過</label><label><input type="radio" name="n1q25" value="w">払拭</label><label><input type="radio" name="n1q25" value="w">逸脱</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>読解26.</b> Theo bài 136, AI không thể làm gì?</p><div class="quiz-opts"><label><input type="radio" name="n1q26" value="w">Tính toán nhanh</label><label><input type="radio" name="n1q26" value="w">Nhận biết mẫu dữ liệu</label><label><input type="radio" name="n1q26" value="c">Trả lời câu hỏi về giá trị từ kinh nghiệm/cảm xúc</label><label><input type="radio" name="n1q26" value="w">Chơi cờ</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>27.</b> 医者___者が、こんな判断をするとは。(là bác sĩ mà lại)</p><div class="quiz-opts"><label><input type="radio" name="n1q27" value="c">ともあろう</label><label><input type="radio" name="n1q27" value="w">にあたる</label><label><input type="radio" name="n1q27" value="w">であれば</label><label><input type="radio" name="n1q27" value="w">にしては</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>28.</b> 生まれ___にして、才能を持っていた。(ngay từ khi sinh ra)</p><div class="quiz-opts"><label><input type="radio" name="n1q28" value="c">ながら</label><label><input type="radio" name="n1q28" value="w">てこそ</label><label><input type="radio" name="n1q28" value="w">はじめて</label><label><input type="radio" name="n1q28" value="w">とともに</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>29.</b> みんなの___、弱音を吐けない。(vì thể diện)</p><div class="quiz-opts"><label><input type="radio" name="n1q29" value="c">手前</label><label><input type="radio" name="n1q29" value="w">前で</label><label><input type="radio" name="n1q29" value="w">ところを</label><label><input type="radio" name="n1q29" value="w">目では</label></div><div class="quiz-feedback"></div></div>
+        <div class="quiz-q"><p><b>30.</b> 立ち入る___。(cấm vào — ngôn ngữ biển báo)</p><div class="quiz-opts"><label><input type="radio" name="n1q30" value="c">べからず</label><label><input type="radio" name="n1q30" value="w">べきでない</label><label><input type="radio" name="n1q30" value="w">ではいけない</label><label><input type="radio" name="n1q30" value="w">てはならない</label></div><div class="quiz-feedback"></div></div>
+        <button type="button" class="btn" style="background:var(--hanko);color:#fff;padding:14px 36px;font-size:1.1rem;margin-top:16px" onclick="runQuizN1E1()">🏆 Nộp Đề Thi Thử N1 Đề 1</button>
+        <div class="quiz-result" id="qrn1e1" style="font-size:1.2rem;margin-top:18px;padding:20px;border-radius:8px;"></div>
+      </form>
+    </section>
+<section class="section" id="bai140">
+      <div class="eyebrow" style="background:var(--hanko);color:#fff">🔴 N1 · Tổng ôn Chương 1</div>
+      <h2>第140課 — N1 Chương 1 Tổng Ôn + Kế Hoạch Học N1</h2>
+
+      <h3>📊 20 Cấu Trúc N1 Đã Học (Bài 121-139)</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa gọn</th><th>Chương</th></tr>
+        <tr><td>〜ゆえに/ゆえの</td><td>do ~/vì ~ (văn học)</td><td>Bài 121</td></tr>
+        <tr><td>〜いかんにかかわらず</td><td>bất kể ~ thế nào</td><td>Bài 121</td></tr>
+        <tr><td>〜なくして(は)</td><td>nếu không có ~/thiếu ~</td><td>Bài 121</td></tr>
+        <tr><td>〜たりとも〜ない</td><td>dù chỉ ~ cũng không</td><td>Bài 122</td></tr>
+        <tr><td>〜をおいて〜ない</td><td>ngoài ~ ra không có ~</td><td>Bài 122</td></tr>
+        <tr><td>〜ずにはおかない</td><td>nhất định sẽ làm cho ~</td><td>Bài 122</td></tr>
+        <tr><td>〜ならいざしらず</td><td>nếu là ~ thì còn biết</td><td>Bài 123</td></tr>
+        <tr><td>〜ともすると/ともすれば</td><td>hay có xu hướng ~</td><td>Bài 123</td></tr>
+        <tr><td>〜めく</td><td>mang vẻ ~/trở nên giống ~</td><td>Bài 123</td></tr>
+        <tr><td>〜てやまない</td><td>mãi mãi ~ (cảm xúc sâu)</td><td>Bài 124</td></tr>
+        <tr><td>〜にかたくない</td><td>không khó để ~</td><td>Bài 124</td></tr>
+        <tr><td>〜かぎりだ</td><td>thật là ~ (cực độ)</td><td>Bài 124</td></tr>
+        <tr><td>〜とばかりに</td><td>như thể muốn nói ~</td><td>Bài 125</td></tr>
+        <tr><td>〜ではあるまいか</td><td>chẳng phải ~ sao?</td><td>Bài 125</td></tr>
+        <tr><td>〜もさることながら</td><td>~ thì đương nhiên rồi nhưng ~</td><td>Bài 125</td></tr>
+        <tr><td>〜をもって</td><td>bằng ~/kể từ ~</td><td>Bài 126</td></tr>
+        <tr><td>〜ともあろう者が</td><td>là ~ mà lại ~ (phê phán)</td><td>Bài 126</td></tr>
+        <tr><td>〜かたがた/〜がてら/〜かたわら</td><td>kết hợp mục đích</td><td>Bài 128</td></tr>
+        <tr><td>〜んがために/〜んばかりに</td><td>mục đích mãnh liệt</td><td>Bài 129</td></tr>
+        <tr><td>〜手前/〜そばから/〜が最後</td><td>thứ tự đặc biệt</td><td>Bài 130</td></tr>
+      </table>
+
+      <h3>📅 Kế Hoạch Học N1 — 18 Tháng</h3>
+      <table>
+        <tr><th>Giai đoạn</th><th>Thời gian</th><th>Trọng tâm</th><th>Mục tiêu</th></tr>
+        <tr><td>Giai đoạn 1</td><td>Tháng 1–3</td><td>Củng cố N2 · Học N1 Gr 1-5 · Kanji 100 chữ</td><td>Đề N2 đạt 85%+ · Hiểu 50% báo NHK</td></tr>
+        <tr><td>Giai đoạn 2</td><td>Tháng 4–6</td><td>N1 Gr 6-12 · Từ vựng học thuật · Đọc báo hằng ngày</td><td>Đọc hiểu 70% Asahi · Nghe NHK radio</td></tr>
+        <tr><td>Giai đoạn 3</td><td>Tháng 7–9</td><td>Đọc văn học · Nghe chuyên sâu · Luyện đề N1</td><td>Đề N1 thử đạt 60%+</td></tr>
+        <tr><td>Giai đoạn 4</td><td>Tháng 10–12</td><td>Ôn tổng hợp · Luyện tốc độ · Chiến thuật thi</td><td>Đề N1 thử đạt 70%+</td></tr>
+        <tr><td>Giai đoạn 5</td><td>Tháng 13–18</td><td>Đọc sách chuyên ngành · Nói chuyện người bản xứ</td><td>JLPT N1 Đậu ✅</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Tài liệu học N1 thiết yếu:</b><br>
+        ① <b>新完全マスターN1</b> (文法·読解·聴解) — sách bài tập chuẩn nhất<br>
+        ② <b>日本語総まとめN1</b> — tổng ôn nhanh<br>
+        ③ <b>Asahi Shimbun / NHK</b> — báo và radio thực tế<br>
+        ④ <b>青空文庫</b> (aozora.gr.jp) — đọc văn học Nhật miễn phí<br>
+        ⑤ <b>Anki N1 deck</b> — 5.000 từ N1 với SRS<br>
+        ⑥ <b>Nihongo no Mori (YouTube)</b> — video giải thích N1 miễn phí</div>
+    </section>
+<section class="section" id="bai213">
+      <div class="eyebrow">🔴 Bài bổ sung · N1 Chương 1 Mở Rộng</div>
+      <h2>第213課 — Bổ Sung: Nhóm Cấu Trúc Nhượng Bộ N1 Dễ Nhầm</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Nhóm cấu trúc "nhượng bộ" (dù ~ nhưng ~) N1 có nhiều biến thể trang trọng — phân biệt sắc thái để dùng đúng ngữ cảnh văn viết/hội thoại học thuật.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜とはいえ</b></td><td>Tuy nói là ~ nhưng thực tế ~ (nhượng bộ nhẹ)</td><td>安い<b>とはいえ</b>、品質は悪くない。= Tuy rẻ nhưng chất lượng không tệ.</td></tr>
+        <tr><td><b>〜ながらも</b></td><td>Mặc dù ~ (nhấn mạnh sự mâu thuẫn nội tại)</td><td>忙しい<b>ながらも</b>、彼は毎日運動している。= Dù bận rộn, anh ấy vẫn tập thể dục mỗi ngày.</td></tr>
+        <tr><td><b>〜つつも</b></td><td>Dù biết/làm ~ nhưng vẫn ~ (thường đi với động từ nhận thức)</td><td>悪いと知り<b>つつも</b>、やめられなかった。= Dù biết là xấu nhưng vẫn không bỏ được.</td></tr>
+        <tr><td><b>〜とはいうものの</b></td><td>Tuy nói/tuy vậy ~ (trang trọng hơn とはいえ)</td><td>景気は回復した<b>とはいうものの</b>、まだ不安定だ。= Tuy kinh tế đã hồi phục nhưng vẫn chưa ổn định.</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Phân biệt nhanh</b> とはいえ/とはいうものの thường đứng sau MỆNH ĐỀ hoàn chỉnh, còn ながらも/つつも gắn trực tiếp sau thân động từ/tính từ. とはいうものの trang trọng nhất, hay gặp trong bài báo/luận văn.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg213"></div>
+    </section>
+<section class="section" id="bai214">
+      <div class="eyebrow">🔴 Bài bổ sung · N1 Chương 1 Mở Rộng</div>
+      <h2>第214課 — Bổ Sung: Từ Vựng Học Thuật N1 Chủ Đề Tâm Lý Học</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Chủ đề tâm lý học xuất hiện thường xuyên trong bài đọc N1 — bổ sung 8 từ vựng học thuật cốt lõi.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>潜在意識</td><td>せんざいいしき</td><td>tiềm thức</td></tr>
+        <tr><td>先入観</td><td>せんにゅうかん</td><td>định kiến, thành kiến</td></tr>
+        <tr><td>固定観念</td><td>こていかんねん</td><td>quan niệm cố hữu</td></tr>
+        <tr><td>自己肯定感</td><td>じここうていかん</td><td>cảm giác tự chấp nhận bản thân</td></tr>
+        <tr><td>承認欲求</td><td>しょうにんよっきゅう</td><td>nhu cầu được công nhận</td></tr>
+        <tr><td>依存</td><td>いぞん</td><td>sự phụ thuộc, lệ thuộc</td></tr>
+        <tr><td>克服</td><td>こくふく</td><td>vượt qua, khắc phục</td></tr>
+        <tr><td>葛藤</td><td>かっとう</td><td>xung đột nội tâm, giằng xé</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg214"></div>
+    </section>
+<section class="section" id="bai233">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 2 · N1 Chương 1</div>
+      <h2>第233課 — Bổ Sung: Kính Ngữ Khiêm Nhường Nâng Cao (謙譲語II)</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">謙譲語II (丁重語) là dạng khiêm nhường cao cấp nhất, dùng khi nói về hành động của MÌNH trước người có địa vị cao, khác với 謙譲語I thông thường.</p>
+      <table>
+        <tr><th>Động từ thường</th><th>謙譲語II</th><th>Ví dụ</th></tr>
+        <tr><td>言う</td><td>申す</td><td>私はグエンと<b>申します</b>。= Tôi tên là Nguyễn ạ.</td></tr>
+        <tr><td>する</td><td>いたす</td><td>私が担当<b>いたします</b>。= Tôi sẽ phụ trách việc này ạ.</td></tr>
+        <tr><td>いる</td><td>おる</td><td>只今、東京に<b>おります</b>。= Hiện tôi đang ở Tokyo ạ.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg233"></div>
+    </section>
+<section class="section" id="bai234">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 2 · N1 Từ Vựng</div>
+      <h2>第234課 — Bổ Sung: Từ Vựng Chính Trị & Xã Hội N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng học thuật cấp cao, thường gặp trong bài đọc thời sự/xã luận N1.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>格差</td><td>かくさ</td><td>khoảng cách (giàu nghèo, chênh lệch)</td></tr>
+        <tr><td>少子高齢化</td><td>しょうしこうれいか</td><td>tỷ lệ sinh thấp và già hóa dân số</td></tr>
+        <tr><td>財政赤字</td><td>ざいせいあかじ</td><td>thâm hụt ngân sách</td></tr>
+        <tr><td>世論</td><td>よろん / せろん</td><td>dư luận</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg234"></div>
+    </section>
+<section class="section" id="bai253">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 3 · N1 Chương 1</div>
+      <h2>第253課 — Bổ Sung: Cấu Trúc Điều Kiện Bắt Buộc N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Nhóm cấu trúc diễn tả điều kiện tiên quyết bắt buộc — hay gặp trong văn bản học thuật/quy định.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜なしには〜ない</b></td><td>Nếu không có ~ thì không thể ~ (nhấn mạnh điều kiện tiên quyết)</td><td>努力<b>なしには</b>成功はあり得<b>ない</b>。= Không có nỗ lực thì không thể có thành công.</td></tr>
+        <tr><td><b>〜たる者</b></td><td>Là người ở cương vị ~ thì phải ~ (trách nhiệm đi kèm địa vị)</td><td>リーダー<b>たる者</b>、責任感が必要だ。= Là người lãnh đạo thì cần có trách nhiệm.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg253"></div>
+    </section>
+<section class="section" id="bai254">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 3 · N1 Từ Vựng</div>
+      <h2>第254課 — Bổ Sung: Từ Vựng Khoa Học Công Nghệ N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng học thuật chủ đề khoa học công nghệ, hay xuất hiện trong bài đọc N1 hiện đại.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>技術革新</td><td>ぎじゅつかくしん</td><td>đổi mới công nghệ</td></tr>
+        <tr><td>普及</td><td>ふきゅう</td><td>sự phổ biến, lan rộng</td></tr>
+        <tr><td>倫理</td><td>りんり</td><td>đạo đức, luân lý</td></tr>
+        <tr><td>依存度</td><td>いぞんど</td><td>mức độ phụ thuộc</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg254"></div>
+    </section>
+<section class="section" id="bai273">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 4 · N1 Chương 1</div>
+      <h2>第273課 — Bổ Sung: Cấu Trúc Cấm Đoán & Suy Đoán Hiển Nhiên N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Nhóm cấu trúc trang trọng thể hiện điều không được phép hoặc điều dễ dàng suy đoán được.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜べからざる</b></td><td>Không được phép ~ (dạng định ngữ của べからず)</td><td>許す<b>べからざる</b>行為だ。= Đó là hành vi không thể tha thứ.</td></tr>
+        <tr><td><b>〜にかたくない</b></td><td>Không khó để ~ (suy đoán/tưởng tượng)</td><td>彼の苦労は想像<b>にかたくない</b>。= Không khó để tưởng tượng những khó khăn của anh ấy.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg273"></div>
+    </section>
+<section class="section" id="bai274">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 4 · N1 Từ Vựng</div>
+      <h2>第274課 — Bổ Sung: Từ Vựng Luật Pháp & Tư Pháp N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng học thuật cấp cao chủ đề pháp lý — hay gặp trong bài đọc N1 khó.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>裁判</td><td>さいばん</td><td>xét xử, tòa án</td></tr>
+        <tr><td>訴訟</td><td>そしょう</td><td>vụ kiện tụng</td></tr>
+        <tr><td>証拠</td><td>しょうこ</td><td>bằng chứng</td></tr>
+        <tr><td>審議</td><td>しんぎ</td><td>thẩm định, xét duyệt</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg274"></div>
+    </section>
+<section class="section" id="bai293">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 5 · N1 Chương 1</div>
+      <h2>第293課 — Bổ Sung: Cấu Trúc Bối Cảnh & Thái Độ Ngầm N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Nhóm cấu trúc trang trọng diễn tả lý do hoàn cảnh hoặc thái độ/hành động thể hiện ý định ngầm.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜こととて</b></td><td>Vì là việc ~ nên (lý do mang tính bao biện, trang trọng)</td><td>慣れない<b>こととて</b>、失礼があったかもしれません。= Vì chưa quen nên có thể đã có chỗ thất lễ.</td></tr>
+        <tr><td><b>〜とばかりに</b></td><td>Như thể muốn nói/thể hiện ngay ~ (hành động biểu lộ ý định)</td><td>チャンスだ<b>とばかりに</b>、飛びついた。= Như thể nói "đây là cơ hội", anh ta lao vào ngay.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg293"></div>
+    </section>
+<section class="section" id="bai294">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 5 · N1 Từ Vựng</div>
+      <h2>第294課 — Bổ Sung: Từ Vựng Ngôn Ngữ Học & Văn Học N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng học thuật chủ đề ngôn ngữ/văn học — hay gặp trong bài đọc phân tích văn bản N1.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>語彙</td><td>ごい</td><td>vốn từ vựng</td></tr>
+        <tr><td>表現力</td><td>ひょうげんりょく</td><td>khả năng diễn đạt</td></tr>
+        <tr><td>文脈</td><td>ぶんみゃく</td><td>văn cảnh, ngữ cảnh</td></tr>
+        <tr><td>修辞</td><td>しゅうじ</td><td>tu từ, cách diễn đạt hoa mỹ</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg294"></div>
+    </section>
+<section class="section" id="bai313">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 6 · N1 Chương 1</div>
+      <h2>第313課 — Bổ Sung: 〜んがために vs 〜べく So Sánh Sắc Thái Mục Đích</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Cả 2 đều diễn tả mục đích trang trọng nhưng sắc thái khác biệt tinh tế.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Sắc thái</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜べく</b></td><td>Mục đích trung tính, hướng tới hành động cụ thể</td><td>解決す<b>べく</b>、会議を開いた。= Để giải quyết, đã tổ chức cuộc họp.</td></tr>
+        <tr><td><b>〜んがために</b></td><td>Mục đích mạnh mẽ, quyết tâm cao, đôi khi bất chấp thủ đoạn</td><td>成功せ<b>んがために</b>、手段を選ばなかった。= Để thành công, đã không từ thủ đoạn nào.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg313"></div>
+    </section>
+<section class="section" id="bai314">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 6 · N1 Từ Vựng</div>
+      <h2>第314課 — Bổ Sung: Từ Vựng Triết Học & Tư Duy N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng học thuật cấp cao chủ đề triết học/tư duy trừu tượng.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>本質</td><td>ほんしつ</td><td>bản chất</td></tr>
+        <tr><td>概念</td><td>がいねん</td><td>khái niệm</td></tr>
+        <tr><td>矛盾</td><td>むじゅん</td><td>mâu thuẫn</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg314"></div>
+    </section>
+<section class="section" id="bai333">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 7 · N1 Chương 1</div>
+      <h2>第333課 — Bổ Sung: 〜が最後 vs 〜たら最後 Cấu Trúc "Một Khi Đã"</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Cấu trúc diễn tả "một khi đã ~ thì chắc chắn ~" — ôn sâu thêm cách dùng với cả 2 dạng nối.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜が最後</b></td><td>Một khi đã ~ thì chắc chắn (kết quả không mong muốn)</td><td>彼は始めた<b>が最後</b>、止まらない。= Một khi anh ấy đã bắt đầu thì không dừng lại được.</td></tr>
+        <tr><td><b>〜たら最後</b></td><td>Tương tự nhưng nhấn mạnh điều kiện giả định hơn</td><td>この本を読み始め<b>たら最後</b>、止められない。= Một khi đã bắt đầu đọc cuốn sách này thì không dừng được.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg333"></div>
+    </section>
+<section class="section" id="bai334">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 7 · N1 Từ Vựng</div>
+      <h2>第334課 — Bổ Sung: Từ Vựng Lịch Sử & Văn Hóa N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng học thuật chủ đề lịch sử — hay xuất hiện trong bài đọc N1 mang tính nhân văn.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>伝承</td><td>でんしょう</td><td>truyền thừa, lưu truyền</td></tr>
+        <tr><td>衰退</td><td>すいたい</td><td>suy thoái, suy tàn</td></tr>
+        <tr><td>継承</td><td>けいしょう</td><td>kế thừa</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg334"></div>
+    </section>
+<section class="section" id="bai353">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 8 · N1 Chương 1</div>
+      <h2>第353課 — Bổ Sung: 〜んばかりの vs 〜と言わんばかりに Tổng Ôn Nhóm んばかり</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Hệ thống hóa lại toàn bộ nhóm cấu trúc んばかり đã học rải rác qua các vòng trước.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Chức năng</th></tr>
+        <tr><td>〜んばかりだ</td><td>Vị ngữ, như thể sắp ~ (Bài 219)</td></tr>
+        <tr><td>〜んばかりに</td><td>Trạng ngữ bổ nghĩa động từ (Bài 231)</td></tr>
+        <tr><td>〜んばかりの+N</td><td>Định ngữ bổ nghĩa danh từ (Bài 339)</td></tr>
+        <tr><td>〜と言わんばかりに</td><td>Biểu cảm/thái độ ngầm (Bài 257)</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg353"></div>
+    </section>
+<section class="section" id="bai354">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 8 · N1 Từ Vựng</div>
+      <h2>第354課 — Bổ Sung: Từ Vựng Địa Lý & Khí Hậu N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng học thuật chủ đề địa lý/khí hậu — hay xuất hiện trong bài đọc N1 khoa học tự nhiên.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>気候変動</td><td>きこうへんどう</td><td>biến đổi khí hậu</td></tr>
+        <tr><td>生態系</td><td>せいたいけい</td><td>hệ sinh thái</td></tr>
+        <tr><td>地層</td><td>ちそう</td><td>địa tầng</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg354"></div>
+    </section>
+<section class="section" id="bai373">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 9 · N1 Chương 1</div>
+      <h2>第373課 — Bổ Sung: 〜と相まって vs 〜と併せて</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Ôn sâu thêm cấu trúc と相まって (Bài 219) và so sánh với と併せて.</p>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>〜と相まって</b></td><td>Kết hợp với ~ tạo hiệu ứng cộng hưởng (đã học Bài 219)</td><td>円安が物価上昇<b>と相まって</b>、生活は苦しくなった。</td></tr>
+        <tr><td><b>〜と併せて</b></td><td>Cùng với ~ (kết hợp đơn giản, trung tính hơn)</td><td>資料<b>と併せて</b>、説明を行う。= Cùng với tài liệu, sẽ tiến hành giải thích.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg373"></div>
+    </section>
+<section class="section" id="bai374">
+      <div class="eyebrow">🔴 Bài bổ sung Vòng 9 · N1 Từ Vựng</div>
+      <h2>第374課 — Bổ Sung: Từ Vựng Y Học Chuyên Sâu N1</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng y học học thuật cấp cao — hay gặp trong bài đọc N1 khoa học.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>臨床</td><td>りんしょう</td><td>lâm sàng</td></tr>
+        <tr><td>治療法</td><td>ちりょうほう</td><td>phương pháp điều trị</td></tr>
+        <tr><td>副作用</td><td>ふくさよう</td><td>tác dụng phụ</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg374"></div>
+    </section>
+</div>
+
+<script>
+
+/* ============ SIDEBAR ACTIVE LINK + MOBILE TOGGLE ============ */
+const sidebar = document.getElementById('sidebar');
+ 
+document.querySelectorAll('.sidebar nav a').forEach(link=>{
+  link.addEventListener('click', ()=> sidebar.classList.remove('open'));
+});
+
+/* ============ COPY CODE ============ */
+function copyCode(btn){
+  const code = btn.previousElementSibling.innerText;
+  navigator.clipboard.writeText(code).then(()=>{
+    const old = btn.textContent;
+    btn.textContent = 'Đã copy ✓';
+    setTimeout(()=> btn.textContent = old, 1500);
+  });
+}
+
+ 
+ 
+
+/* ============ HÀM QUIZ CHUNG ============ */
+function runQuiz(formId, total, resultId){
+  const form=document.getElementById(formId);
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn đáp án.';return;}
+    if(sel.value==='c'){score++;fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}
+    else{fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi, xem lại nhé.';}
+  });
+  const msg=score===total?'Hoàn hảo! 🎉':score>=Math.ceil(total*0.7)?'Tốt lắm! 💪':'Ôn lại bài nhé 📖';
+  document.getElementById(resultId).textContent=`Kết quả: ${score}/${total} — ${msg}`;
+}
+
+/* ============ FLASHCARD GENERATOR ============ */
+function makeFlashcards(gridId, data){
+  const g=document.getElementById(gridId);
+  if(!g)return;
+  data.forEach(item=>{
+    const c=document.createElement('div');c.className='flashcard';
+    c.innerHTML=`<div class="flashcard-inner"><div class="flashcard-face flashcard-front">${item.f}</div><div class="flashcard-face flashcard-back">${item.b}</div></div>`;
+    c.addEventListener('click',()=>c.classList.toggle('flipped'));
+    g.appendChild(c);
+  });
+}
+
+/* ===== BẢNG CHỮ CÁI JS ===== */
+
+// Kanji data N5
+
+// Kanji N4 data
+
+function buildKanjiGrid(data, gridId){
+  const g=document.getElementById(gridId);
+  if(!g)return;
+  data.forEach(d=>{
+    const c=document.createElement('div');
+    c.className='kanji-ref-card';
+    c.innerHTML=`<span class="k-char">${d.k}</span><span class="k-on">音: ${d.on}</span><span class="k-kun">訓: ${d.kun}</span><span class="k-mean">${d.m}</span>`;
+    c.onclick=()=>showKanjiPopup(d);
+    g.appendChild(c);
+  });
+}
+
+/* ===== KANJI N1 DATA ===== */
+const kanjiN1Data=[
+  {k:'模倣',on:'モホウ',kun:'まねる',m:'bắt chước, mô phỏng',ex:'創造と模倣・模倣品'},
+  {k:'矛盾',on:'ムジュン',kun:'—',m:'mâu thuẫn',ex:'矛盾する・矛盾点'},
+  {k:'概念',on:'ガイネン',kun:'—',m:'khái niệm',ex:'基本概念・概念図'},
+  {k:'抽象',on:'チュウショウ',kun:'—',m:'trừu tượng',ex:'抽象的・抽象画'},
+  {k:'顕著',on:'ケンチョ',kun:'いちじるしい',m:'nổi bật, rõ rệt',ex:'顕著な効果・顕著な特徴'},
+  {k:'懸念',on:'ケネン',kun:'—',m:'lo ngại',ex:'懸念される・懸念を示す'},
+  {k:'逸脱',on:'イツダツ',kun:'それる',m:'đi lệch, sai lệch',ex:'規則から逸脱する'},
+  {k:'醸成',on:'ジョウセイ',kun:'かもす',m:'tạo ra (bầu không khí)',ex:'雰囲気を醸成する'},
+  {k:'脆弱',on:'ゼイジャク',kun:'もろい',m:'dễ vỡ, dễ tổn thương',ex:'脆弱性・脆弱な体制'},
+  {k:'払拭',on:'フッショク',kun:'ぬぐう',m:'xóa bỏ, quét sạch',ex:'不安を払拭する'},
+  {k:'踏襲',on:'トウシュウ',kun:'ふむ',m:'noi theo, kế thừa',ex:'前例を踏襲する'},
+  {k:'恣意',on:'シイ',kun:'—',m:'tùy tiện, độc đoán',ex:'恣意的な判断'},
+  {k:'俯瞰',on:'フカン',kun:'みおろす',m:'nhìn từ trên xuống, tổng quan',ex:'全体を俯瞰する'},
+  {k:'斬新',on:'ザンシン',kun:'—',m:'mới mẻ, sáng tạo',ex:'斬新なアイデア'},
+  {k:'逡巡',on:'シュンジュン',kun:'ためらう',m:'do dự, ngần ngại',ex:'逡巡なく決断する'},
+  {k:'隔絶',on:'カクゼツ',kun:'へだてる',m:'cách biệt, tách biệt',ex:'世間から隔絶された'},
+  {k:'敷衍',on:'フエン',kun:'のべる',m:'giải thích rộng hơn, triển khai',ex:'考えを敷衍する'},
+  {k:'凌駕',on:'リョウガ',kun:'しのぐ',m:'vượt trội, vượt qua',ex:'記録を凌駕する'},
+  {k:'蹂躙',on:'ジュウリン',kun:'ふみにじる',m:'chà đạp, giày xéo',ex:'権利を蹂躙する'},
+  {k:'憂慮',on:'ユウリョ',kun:'うれえる',m:'lo âu, lo ngại',ex:'深く憂慮する'},
+  {k:'齟齬',on:'ソゴ',kun:'くいちがう',m:'sự bất đồng, mâu thuẫn',ex:'認識の齟齬'},
+  {k:'看過',on:'カンカ',kun:'みすごす',m:'bỏ qua, không để ý',ex:'看過できない問題'},
+  {k:'帰趨',on:'キスウ',kun:'—',m:'xu hướng, diễn biến',ex:'事態の帰趨を見守る'},
+  {k:'瑕疵',on:'カシ',kun:'きず',m:'khiếm khuyết, tỳ vết',ex:'瑕疵担保責任'},
+  {k:'蓋然',on:'ガイゼン',kun:'—',m:'khả năng, xác suất',ex:'蓋然性が高い'},
+  {k:'敷設',on:'フセツ',kun:'しく',m:'xây dựng, lắp đặt',ex:'鉄道を敷設する'},
+  {k:'醜悪',on:'シュウアク',kun:'みにくい',m:'xấu xa, đáng ghê tởm',ex:'醜悪な行為'},
+  {k:'赦免',on:'シャメン',kun:'ゆるす',m:'tha thứ, đặc xá',ex:'罪を赦免する'},
+  {k:'逼迫',on:'ヒッパク',kun:'せまる',m:'căng thẳng, khẩn cấp',ex:'財政が逼迫する'},
+  {k:'嗜好',on:'シコウ',kun:'このむ',m:'sở thích, khẩu vị',ex:'嗜好品・個人の嗜好'}
+];
+
+/* ===== QUIZ N1 ĐỀ 2 ===== */
+
+buildKanjiGrid(kanjiN1Data,'kanjiN1GridCh1');
+
+/* ===== FLASHCARDS N1 BÀI 121-140 ===== */
+makeFlashcards('fg121',[
+  {f:'〜ゆえに/ゆえの',b:'do ~/vì ~ (văn học/trang trọng)'},
+  {f:'〜いかんにかかわらず',b:'bất kể ~ thế nào'},
+  {f:'〜いかんによっては',b:'tùy theo ~/phụ thuộc vào ~'},
+  {f:'〜なくして(は)',b:'nếu không có ~/thiếu ~ thì không thể'}
+]);
+makeFlashcards('fg122',[
+  {f:'〜たりとも〜ない',b:'dù chỉ ~ cũng không (tuyệt đối)'},
+  {f:'〜をおいて〜ない',b:'ngoài ~ ra không có ~ (duy nhất)'},
+  {f:'〜ずにはおかない',b:'nhất định sẽ làm cho ~ (tất yếu)'},
+  {f:'一瞬たりとも気を抜けない',b:'không thể lơ là dù một giây'}
+]);
+makeFlashcards('fg123',[
+  {f:'〜ならいざしらず',b:'nếu là ~ thì còn biết, nhưng ~'},
+  {f:'〜ともすると/ともすれば',b:'hay có xu hướng ~ (tiêu cực)'},
+  {f:'〜めく',b:'mang vẻ ~/trở nên giống ~'},
+  {f:'春めいてきた',b:'đã bắt đầu mang vẻ mùa xuân'}
+]);
+makeFlashcards('fg124',[
+  {f:'〜てやまない',b:'mãi mãi ~/không ngừng ~ (cảm xúc)'},
+  {f:'〜にかたくない',b:'không khó để ~ (dễ tưởng tượng)'},
+  {f:'〜かぎりだ',b:'thật là ~ (cảm xúc cực độ)'},
+  {f:'〜(の)きわみ',b:'cực độ ~/đỉnh điểm của ~'}
+]);
+makeFlashcards('fg125',[
+  {f:'〜とばかりに',b:'như thể muốn nói ~/ra vẻ như ~'},
+  {f:'〜ではあるまいか',b:'chẳng phải ~ sao? (phỏng đoán)'},
+  {f:'〜にあたらない',b:'không cần ~/không đáng ~'},
+  {f:'〜もさることながら',b:'~ thì đương nhiên rồi, nhưng còn ~'}
+]);
+makeFlashcards('fg126',[
+  {f:'N + をもって① ',b:'bằng ~/thông qua ~ (phương tiện)'},
+  {f:'N + をもって②',b:'kể từ ~ (mốc thời gian chính thức)'},
+  {f:'〜ともあろう者が',b:'là ~ mà lại ~ (phê phán vị thế cao)'},
+  {f:'〜ようでは困る',b:'nếu cứ như ~ thì không xong'}
+]);
+makeFlashcards('fg127',[
+  {f:'〜に足る',b:'xứng đáng ~/đủ để ~'},
+  {f:'〜に足らない',b:'không đáng ~/không đủ để ~'},
+  {f:'〜べからず',b:'cấm ~/không được ~ (biển báo/cổ điển)'},
+  {f:'〜ずとも',b:'dù không ~/không nhất thiết (trang trọng)'}
+]);
+makeFlashcards('fg128',[
+  {f:'N + かたがた',b:'vừa A vừa B (trang trọng, thư từ)'},
+  {f:'Vます + がてら',b:'vừa ~ vừa (hội thoại, nhẹ hơn)'},
+  {f:'Vる/Nの + かたわら',b:'trong khi ~ (song song dài hạn)'},
+  {f:'〜を兼ねて',b:'kiêm ~/kết hợp mục đích'}
+]);
+makeFlashcards('fg129',[
+  {f:'〜んがために',b:'để ~/vì mục đích ~ (văn học mãnh liệt)'},
+  {f:'〜んばかりに',b:'chỉ vì muốn ~ mà (nguyên nhân)'},
+  {f:'〜ものを',b:'lẽ ra ~/đáng nhẽ ~ (nuối tiếc)'},
+  {f:'〜ながらに(して)',b:'trong khi ~/ngay từ ~ (không thay đổi)'}
+]);
+makeFlashcards('fg130',[
+  {f:'〜手前(は)',b:'trước mặt ~/vì thể diện trước ~'},
+  {f:'〜そばから',b:'vừa ~ thì lại ngay ~ (lặp đi lặp lại)'},
+  {f:'〜が最後/〜たが最後',b:'một khi đã ~ thì ~ (không đảo ngược)'},
+  {f:'〜ともなしに',b:'không chủ đích ~/vô thức ~'}
+]);
+makeFlashcards('fg131',[
+  {f:'蓋然性',b:'がいぜんせい — khả năng xảy ra, xác suất'},
+  {f:'恣意的',b:'しいてき — tùy tiện, độc đoán'},
+  {f:'俯瞰',b:'ふかん — nhìn từ trên xuống, tổng quan'},
+  {f:'脆弱性',b:'ぜいじゃくせい — tính dễ tổn thương'},
+  {f:'醸成',b:'じょうせい — tạo ra dần dần'},
+  {f:'逸脱',b:'いつだつ — đi lệch khỏi chuẩn mực'},
+  {f:'払拭',b:'ふっしょく — xóa bỏ, quét sạch'},
+  {f:'凌駕',b:'りょうが — vượt trội, vượt qua'}
+]);
+makeFlashcards('fg132',[
+  {f:'情緒',b:'じょうちょ — tình cảm, xúc cảm'},
+  {f:'哀愁',b:'あいしゅう — nỗi buồn man mác'},
+  {f:'郷愁',b:'きょうしゅう — nỗi nhớ quê, hoài niệm'},
+  {f:'余韻',b:'よいん — dư âm, dư vị'},
+  {f:'象徴',b:'しょうちょう — biểu tượng'},
+  {f:'逆説',b:'ぎゃくせつ — nghịch lý'},
+  {f:'皮肉',b:'ひにく — mỉa mai, châm biếm'},
+  {f:'風刺',b:'ふうし — châm biếm xã hội'}
+]);
+makeFlashcards('fg133',[
+  {f:'認識論',b:'にんしきろん — nhận thức luận'},
+  {f:'弁証法',b:'べんしょうほう — biện chứng pháp'},
+  {f:'実存主義',b:'じつぞんしゅぎ — chủ nghĩa hiện sinh'},
+  {f:'功利主義',b:'こうりしゅぎ — chủ nghĩa vị lợi'},
+  {f:'パラダイム',b:'mô hình tư duy, paradigm'},
+  {f:'超越',b:'ちょうえつ — siêu việt'},
+  {f:'相対主義',b:'そうたいしゅぎ — chủ nghĩa tương đối'},
+  {f:'二元論',b:'にげんろん — nhị nguyên luận'}
+]);
+makeFlashcards('fg134',[
+  {f:'寡占',b:'かせん — độc quyền nhóm, oligopoly'},
+  {f:'独占',b:'どくせん — độc quyền, monopoly'},
+  {f:'外部性',b:'がいぶせい — ngoại tác, externality'},
+  {f:'モラルハザード',b:'rủi ro đạo đức, moral hazard'},
+  {f:'トレードオフ',b:'đánh đổi, trade-off'},
+  {f:'量的緩和',b:'りょうてきかんわ — nới lỏng định lượng QE'},
+  {f:'限界費用',b:'げんかいひよう — chi phí cận biên'},
+  {f:'財政出動',b:'ざいせいしゅつどう — kích thích tài khóa'}
+]);
+
+/* ===== QUIZ N1 ĐỀ 1 ===== */
+function runQuizN1E1(){
+  const form=document.getElementById('qfn1e1');
+  const names=[...new Set([...form.querySelectorAll('input[type=radio]')].map(i=>i.name))];
+  let score=0;
+  names.forEach(n=>{
+    const sel=form.querySelector(`input[name="${n}"]:checked`);
+    const fb=form.querySelector(`input[name="${n}"]`).closest('.quiz-q').querySelector('.quiz-feedback');
+    if(!sel){if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='⚠️ Chưa chọn.';}return;}
+    if(sel.value==='c'){score++;if(fb){fb.style.display='block';fb.className='quiz-feedback correct';fb.textContent='✓ Chính xác!';}}
+    else{if(fb){fb.style.display='block';fb.className='quiz-feedback wrong';fb.textContent='✗ Sai rồi.';}}
+  });
+  const r=document.getElementById('qrn1e1');r.style.border='2px solid';
+  const pct=Math.round(score/30*100);
+  if(pct>=80){r.style.borderColor='#8B0000';r.innerHTML=`🔴 <b>${score}/30 (${pct}%)</b> — XUẤT SẮC! N1 đang trong tầm tay!`;}
+  else if(pct>=70){r.style.borderColor='var(--kin)';r.innerHTML=`✅ <b>${score}/30 (${pct}%)</b> — Tốt lắm! Tiếp tục học N1 Chương 2!`;}
+  else if(pct>=50){r.style.borderColor='var(--ai)';r.innerHTML=`📚 <b>${score}/30 (${pct}%)</b> — Đang tiến bộ. Ôn lại Bài 121-130 rồi thử lại!`;}
+  else{r.style.borderColor='var(--hanko)';r.innerHTML=`📖 <b>${score}/30 (${pct}%)</b> — N1 còn khó. Hãy củng cố N2 thật vững trước!`;}
+}
+
+/* ===== MEGA QUIZ (30 câu) ===== */
+
+function showKanjiPopup(d){
+  document.getElementById('popupContent').innerHTML=`
+    <div style="text-align:center;margin-bottom:14px">
+      <span style="font-family:var(--font-display);font-size:4rem;color:var(--ai)">${d.k}</span>
+    </div>
+    <table style="width:100%;font-size:.9rem">
+      <tr><td style="color:var(--sumi-soft);padding:4px 8px">音読み</td><td><b>${d.on}</b></td></tr>
+      <tr><td style="color:var(--sumi-soft);padding:4px 8px">訓読み</td><td><b>${d.kun}</b></td></tr>
+      <tr><td style="color:var(--sumi-soft);padding:4px 8px">Nghĩa</td><td><b>${d.m}</b></td></tr>
+      <tr><td style="color:var(--sumi-soft);padding:4px 8px">Ví dụ</td><td><b>${d.ex||'—'}</b></td></tr>
+    </table>`;
+  const p=document.getElementById('kanjiPopup');
+  p.style.display='flex';
+  p.onclick=e=>{if(e.target===p)closePopup();};
+}
+function closePopup(){document.getElementById('kanjiPopup').style.display='none';}
+
+window.addEventListener('scroll',()=>{document.getElementById('topBtn').style.display=window.scrollY>400?'flex':'none';});
+
+/* ===== BÀI BỔ SUNG 213-214 ===== */
+makeFlashcards('fg213',[
+  {f:'〜とはいえ',b:'tuy nói là ~ nhưng thực tế ~ (nhượng bộ nhẹ)'},
+  {f:'〜ながらも',b:'mặc dù ~ (mâu thuẫn nội tại)'},
+  {f:'〜つつも',b:'dù biết/làm ~ nhưng vẫn ~'},
+  {f:'〜とはいうものの',b:'tuy vậy ~ (trang trọng hơn とはいえ)'}
+]);
+makeFlashcards('fg214',[
+  {f:'潜在意識',b:'せんざいいしき — tiềm thức'},
+  {f:'先入観',b:'せんにゅうかん — định kiến, thành kiến'},
+  {f:'固定観念',b:'こていかんねん — quan niệm cố hữu'},
+  {f:'自己肯定感',b:'じここうていかん — cảm giác tự chấp nhận bản thân'},
+  {f:'承認欲求',b:'しょうにんよっきゅう — nhu cầu được công nhận'},
+  {f:'依存',b:'いぞん — sự phụ thuộc'},
+  {f:'克服',b:'こくふく — vượt qua, khắc phục'},
+  {f:'葛藤',b:'かっとう — xung đột nội tâm'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 2: 233-234 ===== */
+makeFlashcards('fg233',[
+  {f:'言う → 申す',b:'謙譲語II — 私はグエンと申します'},
+  {f:'する → いたす',b:'謙譲語II — 私が担当いたします'},
+  {f:'いる → おる',b:'謙譲語II — 只今、東京におります'}
+]);
+makeFlashcards('fg234',[
+  {f:'格差',b:'かくさ — khoảng cách (giàu nghèo)'},
+  {f:'少子高齢化',b:'しょうしこうれいか — sinh thấp, già hóa dân số'},
+  {f:'財政赤字',b:'ざいせいあかじ — thâm hụt ngân sách'},
+  {f:'世論',b:'よろん/せろん — dư luận'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 3: 253-254 ===== */
+makeFlashcards('fg253',[
+  {f:'〜なしには〜ない',b:'nếu không có ~ thì không thể ~'},
+  {f:'〜たる者',b:'là người ở cương vị ~ thì phải ~'}
+]);
+makeFlashcards('fg254',[
+  {f:'技術革新',b:'ぎじゅつかくしん — đổi mới công nghệ'},
+  {f:'普及',b:'ふきゅう — sự phổ biến, lan rộng'},
+  {f:'倫理',b:'りんり — đạo đức, luân lý'},
+  {f:'依存度',b:'いぞんど — mức độ phụ thuộc'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 4: 273-274 ===== */
+makeFlashcards('fg273',[
+  {f:'〜べからざる',b:'không được phép ~ (định ngữ của べからず)'},
+  {f:'〜にかたくない',b:'không khó để ~ (suy đoán, tưởng tượng)'}
+]);
+makeFlashcards('fg274',[
+  {f:'裁判',b:'さいばん — xét xử, tòa án'},
+  {f:'訴訟',b:'そしょう — vụ kiện tụng'},
+  {f:'証拠',b:'しょうこ — bằng chứng'},
+  {f:'審議',b:'しんぎ — thẩm định, xét duyệt'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 5: 293-294 ===== */
+makeFlashcards('fg293',[
+  {f:'〜こととて',b:'vì là việc ~ nên (lý do bao biện, trang trọng)'},
+  {f:'〜とばかりに',b:'như thể muốn nói/thể hiện ngay ~'}
+]);
+makeFlashcards('fg294',[
+  {f:'語彙',b:'ごい — vốn từ vựng'},
+  {f:'表現力',b:'ひょうげんりょく — khả năng diễn đạt'},
+  {f:'文脈',b:'ぶんみゃく — văn cảnh, ngữ cảnh'},
+  {f:'修辞',b:'しゅうじ — tu từ'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 6: 313-314 ===== */
+makeFlashcards('fg313',[
+  {f:'〜べく',b:'mục đích trung tính, hướng tới hành động cụ thể'},
+  {f:'〜んがために',b:'mục đích mạnh mẽ, quyết tâm cao'}
+]);
+makeFlashcards('fg314',[
+  {f:'本質',b:'ほんしつ — bản chất'},
+  {f:'概念',b:'がいねん — khái niệm'},
+  {f:'矛盾',b:'むじゅん — mâu thuẫn'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 7: 333-334 ===== */
+makeFlashcards('fg333',[
+  {f:'〜が最後',b:'một khi đã ~ thì chắc chắn (kết quả không mong muốn)'},
+  {f:'〜たら最後',b:'tương tự, nhấn mạnh điều kiện giả định hơn'}
+]);
+makeFlashcards('fg334',[
+  {f:'伝承',b:'でんしょう — truyền thừa, lưu truyền'},
+  {f:'衰退',b:'すいたい — suy thoái, suy tàn'},
+  {f:'継承',b:'けいしょう — kế thừa'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 8: 353-354 ===== */
+makeFlashcards('fg353',[
+  {f:'〜んばかりだ',b:'vị ngữ, như thể sắp ~'},
+  {f:'〜んばかりに',b:'trạng ngữ bổ nghĩa động từ'},
+  {f:'〜んばかりの+N',b:'định ngữ bổ nghĩa danh từ'},
+  {f:'〜と言わんばかりに',b:'biểu cảm/thái độ ngầm'}
+]);
+makeFlashcards('fg354',[
+  {f:'気候変動',b:'きこうへんどう — biến đổi khí hậu'},
+  {f:'生態系',b:'せいたいけい — hệ sinh thái'},
+  {f:'地層',b:'ちそう — địa tầng'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 9: 373-374 ===== */
+makeFlashcards('fg373',[
+  {f:'〜と相まって',b:'kết hợp với ~ tạo hiệu ứng cộng hưởng'},
+  {f:'〜と併せて',b:'cùng với ~ (kết hợp đơn giản, trung tính)'}
+]);
+makeFlashcards('fg374',[
+  {f:'臨床',b:'りんしょう — lâm sàng'},
+  {f:'治療法',b:'ちりょうほう — phương pháp điều trị'},
+  {f:'副作用',b:'ふくさよう — tác dụng phụ'}
+]);
+
+function openToc(){
+  document.getElementById('tocPanel').classList.add('open');
+  document.getElementById('tocOverlay').classList.add('open');
+}
+function closeToc(){
+  document.getElementById('tocPanel').classList.remove('open');
+  document.getElementById('tocOverlay').classList.remove('open');
+}
+
+/* ===== NAV DROPDOWN TOGGLE ===== */
+document.querySelectorAll('.nav-dd-trigger').forEach(trigger=>{
+  trigger.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const dd = trigger.closest('.nav-dd');
+    const wasOpen = dd.classList.contains('open');
+    document.querySelectorAll('.nav-dd.open').forEach(d=>d.classList.remove('open'));
+    if(!wasOpen) dd.classList.add('open');
+  });
+});
+document.addEventListener('click', ()=>{
+  document.querySelectorAll('.nav-dd.open').forEach(d=>d.classList.remove('open'));
+});
+
+/* ===== THEO DÕI TIẾN ĐỘ HỌC TẬP ===== */
+function pSafeGet(key){ try{ return localStorage.getItem(key); }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return null; } }
+function pSafeSet(key, val){ try{ localStorage.setItem(key, val); return true; }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return false; } }
+
+function isLessonDone(baiId){ return pSafeGet('done_'+baiId) === '1'; }
+function setLessonDone(baiId, done){ return pSafeSet('done_'+baiId, done ? '1' : '0'); }
+
+function updateProgressSummary(){
+  const sections = document.querySelectorAll('.section[id^="bai"]');
+  let done = 0;
+  sections.forEach(s=>{ if(isLessonDone(s.id)) done++; });
+  const total = sections.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  const summaryEl = document.getElementById('progressSummary');
+  if(summaryEl){
+    summaryEl.innerHTML = `
+      <span>📊 Tiến độ: <b>${done}/${total} bài</b> (${pct}%)</span>
+      <div class="psum-bar"><div class="psum-fill" style="width:${pct}%"></div></div>
+    `;
+  }
+}
+
+function toggleLessonDone(btn, baiId){
+  const nowDone = !isLessonDone(baiId);
+  if (!setLessonDone(baiId, nowDone)) return;
+  btn.classList.toggle('done', nowDone);
+  btn.textContent = nowDone ? '✓ Đã học' : '☐ Đánh dấu đã học';
+  const section = document.getElementById(baiId);
+  if(section) section.classList.toggle('lesson-completed', nowDone);
+  const tocItem = document.querySelector(`.toc-item[href="#${baiId}"]`);
+  if(tocItem){
+    tocItem.classList.toggle('done-item', nowDone);
+    const checkSpan = tocItem.querySelector('.toc-check');
+    if(nowDone && !checkSpan){
+      const span = document.createElement('span');
+      span.className = 'toc-check';
+      span.textContent = '✓';
+      tocItem.insertBefore(span, tocItem.firstChild);
+    } else if(!nowDone && checkSpan){
+      checkSpan.remove();
+    }
+  }
+  updateProgressSummary();
+}
+
+function initProgressTracking(){
+  const sections = document.querySelectorAll('.section[id^="bai"]');
+  sections.forEach(section=>{
+    const baiId = section.id;
+    const done = isLessonDone(baiId);
+    if(done) section.classList.add('lesson-completed');
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lesson-done-toggle' + (done ? ' done' : '');
+    btn.textContent = done ? '✓ Đã học' : '☐ Đánh dấu đã học';
+    btn.onclick = ()=> toggleLessonDone(btn, baiId);
+
+    const firstChild = section.firstElementChild;
+    if(firstChild) section.insertBefore(btn, firstChild);
+    else section.appendChild(btn);
+
+    if(done){
+      const tocItem = document.querySelector(`.toc-item[href="#${baiId}"]`);
+      if(tocItem){
+        tocItem.classList.add('done-item');
+        const span = document.createElement('span');
+        span.className = 'toc-check';
+        span.textContent = '✓';
+        tocItem.insertBefore(span, tocItem.firstChild);
+      }
+    }
+  });
+  updateProgressSummary();
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initProgressTracking);
+} else {
+  initProgressTracking();
+}
+
+</script>
+
+<button class="toc-btn" onclick="openToc()" title="Mục lục">📑</button>
+<div class="toc-overlay" id="tocOverlay" onclick="closeToc()"></div>
+<div class="toc-panel" id="tocPanel">
+  <div class="toc-panel-header">
+    <h3>📑 Mục Lục (38 bài)</h3>
+    <button class="toc-close-btn" onclick="closeToc()">✕</button>
+  </div>
+  <div class="toc-panel-body">
+<div class="toc-group-label">📖 Bài gốc</div>
+      <a href="#bai121" class="toc-item" onclick="closeToc()"><span class="toc-num">121.</span>N1 Ngữ Pháp Nhóm 1: Lý Do & Điều Kiện Trang Trọng</a>
+      <a href="#bai122" class="toc-item" onclick="closeToc()"><span class="toc-num">122.</span>N1 Ngữ Pháp Nhóm 2: Tuyệt Đối & Không Thể Thiếu</a>
+      <a href="#bai123" class="toc-item" onclick="closeToc()"><span class="toc-num">123.</span>N1 Ngữ Pháp Nhóm 3: Xu Hướng & Vẻ Ngoài</a>
+      <a href="#bai124" class="toc-item" onclick="closeToc()"><span class="toc-num">124.</span>N1 Ngữ Pháp Nhóm 4: Cảm Xúc Sâu Sắc & Đánh Giá</a>
+      <a href="#bai125" class="toc-item" onclick="closeToc()"><span class="toc-num">125.</span>N1 Ngữ Pháp Nhóm 5: Suy Đoán & Phê Phán Mạnh</a>
+      <a href="#bai126" class="toc-item" onclick="closeToc()"><span class="toc-num">126.</span>N1 Ngữ Pháp Nhóm 6: Phương Tiện & Đại Diện</a>
+      <a href="#bai127" class="toc-item" onclick="closeToc()"><span class="toc-num">127.</span>N1 Ngữ Pháp Nhóm 7: Giá Trị & Cấm Đoán</a>
+      <a href="#bai128" class="toc-item" onclick="closeToc()"><span class="toc-num">128.</span>N1 Ngữ Pháp Nhóm 8: Kết Hợp Mục Đích (〜かたがた・〜がてら・〜かたわら)</a>
+      <a href="#bai129" class="toc-item" onclick="closeToc()"><span class="toc-num">129.</span>N1 Ngữ Pháp Nhóm 9: Mục Đích Mãnh Liệt (〜んがために・〜んばかりに)</a>
+      <a href="#bai130" class="toc-item" onclick="closeToc()"><span class="toc-num">130.</span>N1 Ngữ Pháp Nhóm 10: Thứ Tự & Hệ Quả Đặc Biệt</a>
+      <a href="#bai131" class="toc-item" onclick="closeToc()"><span class="toc-num">131.</span>N1 Từ Vựng: Học Thuật & Báo Chí Nâng Cao</a>
+      <a href="#bai132" class="toc-item" onclick="closeToc()"><span class="toc-num">132.</span>N1 Từ Vựng: Văn Học & Nghệ Thuật</a>
+      <a href="#bai133" class="toc-item" onclick="closeToc()"><span class="toc-num">133.</span>N1 Từ Vựng: Triết Học & Tư Tưởng</a>
+      <a href="#bai134" class="toc-item" onclick="closeToc()"><span class="toc-num">134.</span>N1 Từ Vựng: Kinh Tế Học Nâng Cao</a>
+      <a href="#bai135" class="toc-item" onclick="closeToc()"><span class="toc-num">135.</span>N1 Kanji: 200 Kanji N1 Nhóm 1 (Bảng tham khảo)</a>
+      <a href="#bai136" class="toc-item" onclick="closeToc()"><span class="toc-num">136.</span>N1 Đọc Hiểu: Văn Bản Học Thuật (~800 chữ)</a>
+      <a href="#bai137" class="toc-item" onclick="closeToc()"><span class="toc-num">137.</span>N1 Đọc Hiểu: Bài Luận Tư Tưởng (Wabi-Sabi)</a>
+      <a href="#bai138" class="toc-item" onclick="closeToc()"><span class="toc-num">138.</span>N1 Nghe Hiểu: Script Đầy Đủ & Chiến Thuật</a>
+      <a href="#bai139" class="toc-item" onclick="closeToc()"><span class="toc-num">139.</span>🏆 Đề Thi Thử N1 Đề 1 (30 câu tổng hợp)</a>
+      <a href="#bai140" class="toc-item" onclick="closeToc()"><span class="toc-num">140.</span>N1 Chương 1 Tổng Ôn + Kế Hoạch Học N1</a>
+<div class="toc-group-label">✨ Bài bổ sung</div>
+      <a href="#bai213" class="toc-item" onclick="closeToc()"><span class="toc-num">213.</span>Bổ Sung: Nhóm Cấu Trúc Nhượng Bộ N1 Dễ Nhầm</a>
+      <a href="#bai214" class="toc-item" onclick="closeToc()"><span class="toc-num">214.</span>Bổ Sung: Từ Vựng Học Thuật N1 Chủ Đề Tâm Lý Học</a>
+      <a href="#bai233" class="toc-item" onclick="closeToc()"><span class="toc-num">233.</span>Bổ Sung: Kính Ngữ Khiêm Nhường Nâng Cao (謙譲語II)</a>
+      <a href="#bai234" class="toc-item" onclick="closeToc()"><span class="toc-num">234.</span>Bổ Sung: Từ Vựng Chính Trị & Xã Hội N1</a>
+      <a href="#bai253" class="toc-item" onclick="closeToc()"><span class="toc-num">253.</span>Bổ Sung: Cấu Trúc Điều Kiện Bắt Buộc N1</a>
+      <a href="#bai254" class="toc-item" onclick="closeToc()"><span class="toc-num">254.</span>Bổ Sung: Từ Vựng Khoa Học Công Nghệ N1</a>
+      <a href="#bai273" class="toc-item" onclick="closeToc()"><span class="toc-num">273.</span>Bổ Sung: Cấu Trúc Cấm Đoán & Suy Đoán Hiển Nhiên N1</a>
+      <a href="#bai274" class="toc-item" onclick="closeToc()"><span class="toc-num">274.</span>Bổ Sung: Từ Vựng Luật Pháp & Tư Pháp N1</a>
+      <a href="#bai293" class="toc-item" onclick="closeToc()"><span class="toc-num">293.</span>Bổ Sung: Cấu Trúc Bối Cảnh & Thái Độ Ngầm N1</a>
+      <a href="#bai294" class="toc-item" onclick="closeToc()"><span class="toc-num">294.</span>Bổ Sung: Từ Vựng Ngôn Ngữ Học & Văn Học N1</a>
+      <a href="#bai313" class="toc-item" onclick="closeToc()"><span class="toc-num">313.</span>Bổ Sung: 〜んがために vs 〜べく So Sánh Sắc Thái Mục Đích</a>
+      <a href="#bai314" class="toc-item" onclick="closeToc()"><span class="toc-num">314.</span>Bổ Sung: Từ Vựng Triết Học & Tư Duy N1</a>
+      <a href="#bai333" class="toc-item" onclick="closeToc()"><span class="toc-num">333.</span>Bổ Sung: 〜が最後 vs 〜たら最後 Cấu Trúc "Một Khi Đã"</a>
+      <a href="#bai334" class="toc-item" onclick="closeToc()"><span class="toc-num">334.</span>Bổ Sung: Từ Vựng Lịch Sử & Văn Hóa N1</a>
+      <a href="#bai353" class="toc-item" onclick="closeToc()"><span class="toc-num">353.</span>Bổ Sung: 〜んばかりの vs 〜と言わんばかりに Tổng Ôn Nhóm んばかり</a>
+      <a href="#bai354" class="toc-item" onclick="closeToc()"><span class="toc-num">354.</span>Bổ Sung: Từ Vựng Địa Lý & Khí Hậu N1</a>
+      <a href="#bai373" class="toc-item" onclick="closeToc()"><span class="toc-num">373.</span>Bổ Sung: 〜と相まって vs 〜と併せて</a>
+      <a href="#bai374" class="toc-item" onclick="closeToc()"><span class="toc-num">374.</span>Bổ Sung: Từ Vựng Y Học Chuyên Sâu N1</a>
+  </div>
+</div>
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:0 20px 24px">
+  <section class="section" id="ghi-chu-07-1">
+    <div class="eyebrow">N1 · Đọc đúng phong cách</div>
+    <h2>Nhận biết mẫu văn viết và giới hạn kết hợp</h2>
+    <table>
+      <tr><th>Mẫu</th><th>Dạng đứng trước</th><th>Sắc thái</th></tr>
+      <tr><td>ゆえ(に) / ゆえの</td><td>Danh từ + の / tính từ / thể thường</td><td>Nguyên nhân trang trọng, thiên về văn viết.</td></tr>
+      <tr><td>いかんにかかわらず</td><td>N + の + mẫu</td><td>Bất kể nội dung/tình trạng; hay gặp trong quy định và văn bản chính thức.</td></tr>
+      <tr><td>なくして(は)</td><td>Danh từ</td><td>Điều kiện thiết yếu: nếu thiếu A thì B không thành.</td></tr>
+    </table>
+    <div class="box tip"><b>Phương pháp ghi nhớ</b> Với từng cấu trúc, ghi đủ ba mục: dạng kết hợp, văn phong và một cụm từ thường đi cùng. Ví dụ: 理由のいかん, 努力なくして, 若さゆえ.</div>
+  </section>
+</div>
+<button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script src="quiz-bank.js"></script>
+<script src="quiz-engine.js"></script>
+<script src="/site-shell.js"></script>
+</body></html>

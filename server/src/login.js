@@ -7,7 +7,7 @@ const MAX_FAILURES = 10;
 module.exports = async function login(prisma, bcrypt, dummyHash, email, password) {
   const key = createHash('sha256').update(email).digest('hex');
   return prisma.$transaction(async (tx) => {
-    await tx.loginThrottle.upsert({ where: { key }, create: { key }, update: {} });
+    await tx.$executeRaw`INSERT INTO "LoginThrottle" ("key") VALUES (${key}) ON CONFLICT ("key") DO NOTHING`;
     await tx.$queryRaw`SELECT "key" FROM "LoginThrottle" WHERE "key" = ${key} FOR UPDATE`;
     const now = Date.now();
     const state = await tx.loginThrottle.findUnique({ where: { key } });

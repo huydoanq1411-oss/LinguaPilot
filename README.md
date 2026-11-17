@@ -7,7 +7,7 @@ Phần	Công cụ	Dùng để làm gì
 Giao diện	React 19, Vite 8	Trang chủ, form đăng ký/đăng nhập, liên kết tới bài học
 Giao diện	ESLint	Kiểm tra lỗi code (npm run lint)
 Giao diện	Tailwind CSS 4	Có cài trong package.json nhưng chưa được dùng (cấu hình Vite và file CSS không gọi tới)
-Bài học	HTML/CSS/JS thuần (22 trang HTML trong client/public/jp)	Thư viện học tiếng Nhật, không cần server
+Bài học	HTML/CSS/JS thuần (22 nguồn HTML trong server/lessons)	Nội dung được API cấp sau khi đăng nhập; client/public/jp chỉ chứa trang tải
 Bài học	kanjiapi.dev, Google Fonts	Tra cứu Kanji (API ngoài) và font chữ
 API	Node.js, Express 5	Chạy các đường dẫn /api/...
 API	bcryptjs	Mã hóa mật khẩu (cost 12)
@@ -25,8 +25,8 @@ Database	server/prisma	3 bảng (xem mục 4)
 ## 3. Có 4 cách chạy
 #	Cách chạy	Cần chạy gì	Lệnh chính	Địa chỉ mở	Dùng được gì
 1	Đầy đủ trên máy	Docker (DB), server, client: 3 tiến trình	docker compose up -d db, rồi trong server: npx prisma migrate deploy và npm run dev, rồi trong client: npm run dev	http://localhost:5173	Tất cả, kể cả đăng nhập
-2	Chỉ phần học, mở trên điện thoại cùng Wi-Fi	Chỉ client	Trong client: npm run dev -- --host 0.0.0.0	http://<IP máy>:5173/jp/index.html	Bài học tĩnh. Đăng nhập không chạy vì điện thoại không gọi được localhost:3000
-3	Chỉ phần tĩnh, không cần server	Bất kỳ web server nào (Vite hoặc npm run build rồi npm run preview)	npm run dev hoặc npm run build	/jp/index.html	Toàn bộ bài học và test
+2	Mở trên điện thoại cùng Wi-Fi	Client, API và DB	Client: npm run dev -- --host 0.0.0.0	http://<IP máy>:5173	Đặt VITE_API_URL theo IP máy và thêm origin này vào CLIENT_ORIGIN; mở cổng API trên mạng cục bộ
+3	Chỉ giao diện, không có API	Client	 npm run dev	/	Xem trang giới thiệu; bài học yêu cầu đăng nhập và API hoạt động
 4	Trên Internet (hiện tại)	Không cần máy bạn	git push lên main	lingua-pilot.vercel.app	Tất cả, kể cả khi tắt máy
 
 Cách 1 cần 4 file cấu hình: .env ở gốc (cho Docker), server/.env (với DATABASE_URL, JWT_SECRET, CLIENT_ORIGIN, PORT) và client/.env (nếu đổi địa chỉ API). Các cổng mặc định: client 5173, server 3000, PostgreSQL 5434, pgAdmin 5050.
@@ -43,7 +43,7 @@ Flashcard	Thẻ ôn tập theo lịch lặp lại (số lần ôn, khoảng các
 Submission	Bài nộp và phản hồi (kỳ thi JLPT hoặc IELTS)	Có bảng, chưa có API
 ##5. Nhận xét
 Hai bảng chưa dùng: schema đã chừa chỗ cho thẻ ôn tập và bài nộp, kể cả ngôn ngữ tiếng Anh và kỳ thi IELTS. Phần code API và giao diện cho chúng chưa có.
-Đăng nhập chỉ để xác nhận phiên: hiện tại tài khoản chưa mở khóa tính năng nào, vì các bài học đều xem được không cần đăng nhập.
+Đăng nhập là điều kiện để mở thư viện, bài học, công cụ tra cứu và bài kiểm tra. API kiểm tra JWT và tài khoản trước khi cấp nội dung. Xem SPEC.md về hợp đồng truy cập.
 Đăng nhập giới hạn 10 lần sai trong cửa sổ 15 phút theo email (không phân biệt chữ hoa/thường). Từ lần tiếp theo, API trả 429 với `Retry-After` và `retryAfter` (giây) cho tới khi lần sai cũ nhất hết hạn. Đăng nhập đúng xóa bộ đếm. Bộ đếm dùng PostgreSQL, dùng chung giữa các tiến trình và không mất khi khởi động lại API. Chạy `npx prisma generate` và `npx prisma migrate deploy` trong `server/` trước khi chạy phiên bản này. Giới hạn này chưa chặn việc thử hàng loạt email khác nhau từ cùng một IP.
 Đã loại biến không dùng trong `public/jp/quiz-engine.js`; chạy `npm run lint` tại `client` để kiểm tra phiên bản hiện tại.
 Script start chạy `node src/index.js` và dùng biến môi trường được cấp bởi nơi triển khai. Script dev tải thêm `server/.env`.
@@ -51,7 +51,8 @@ Script start chạy `node src/index.js` và dùng biến môi trường được
 ## Thành phần
 
 - `client/`: React và Vite. Trang chủ giới thiệu lộ trình, liên kết tới bài học, tra cứu và bài kiểm tra JLPT; hỗ trợ đăng ký, đăng nhập và xem phiên người dùng.
-- `client/public/jp/`: bài học, tra cứu Kanji và bài kiểm tra JLPT N5 đến N1.
+- `client/public/jp/`: trang tải bài học, chuyển về đăng nhập nếu chưa có phiên hợp lệ.
+- `server/lessons/`: nguồn bài học, tra cứu Kanji, bài kiểm tra JLPT N5 đến N1 và ngân hàng câu hỏi; API chỉ cấp sau khi xác thực.
 - `server/`: Express API, xác thực JWT và Prisma schema/migrations.
 - `docker-compose.yml`: PostgreSQL và pgAdmin.
 
@@ -120,7 +121,14 @@ Giữ terminal API và Vite đang chạy, rồi mở trình duyệt tại:
 - `http://localhost:5173/` — trang chủ React, gồm đăng nhập/đăng ký và liên kết tới nội dung học.
 - `http://localhost:5173/jp/index.html` — thư viện bài học tiếng Nhật.
 
-Mở các trang qua địa chỉ Vite thay vì mở file HTML trực tiếp để tài nguyên tĩnh và điều hướng hoạt động nhất quán. Đăng nhập cần API và PostgreSQL đang chạy; các bài học tĩnh có thể xem mà không cần tài khoản.
+Mở các trang qua địa chỉ Vite thay vì mở file HTML trực tiếp. Bài học yêu cầu đăng nhập, API và PostgreSQL hoạt động. Đăng nhập thành công sẽ mở thư viện hoặc quay lại bài học đã chọn.
+
+### Triển khai lên Vercel
+
+- Dự án frontend: Root Directory `client`, giữ `VITE_API_URL` trỏ tới API production (hiện tại `https://lingua-pilot-api.vercel.app/api`), build `npm run build`.
+- Dự án API: Root Directory `server`. `server/vercel.json` đặt build `npm run build` để chạy `prisma generate && prisma migrate deploy`, đồng thời đóng gói `lessons/**` vào Function. Giữ `DATABASE_URL`, `JWT_SECRET`, `CLIENT_ORIGIN` trong Environment Variables của dự án API.
+- Nếu build báo migration không kết nối được DB, kiểm tra URL kết nối dùng cho migration trong cấu hình DB/Vercel. Không bỏ qua migration rồi phát hành API thiếu bảng `LoginThrottle`.
+- Deploy API trước frontend khi có thể; kiểm tra `/api/health`, sau đó thử đăng nhập và mở bài. Chỉ health thành công chưa chứng minh bảng giới hạn đăng nhập đã tồn tại.
 
 ## API xác thực
 
@@ -146,8 +154,8 @@ Mở `/jp/index.html` để vào thư viện. Các trang `phan01.html` đến `p
 
 ### Cách hoạt động của bài trắc nghiệm
 
-- Các trang JLPT là HTML tĩnh, tải dữ liệu câu hỏi từ `client/public/jp/quiz-bank.js` rồi khởi tạo hành vi bằng `quiz-engine.js`. Vì vậy, phần luyện tập này không cần API hay tài khoản.
+- Các trang JLPT có nguồn tại `server/lessons`. Sau khi xác thực, API cấp HTML và nhúng ngân hàng câu hỏi cần cho `quiz-engine.js`. Phần chấm bài chạy trên trình duyệt; lần mở bài yêu cầu API và tài khoản.
 - Ngân hàng chia câu hỏi theo cấp độ (`kana`, `n5`, `n4`, `n3n2`, `n2`, `n1`). Mỗi câu có mã định danh theo tên trang nguồn và số thứ tự; dữ liệu cũng lưu lựa chọn đúng, lựa chọn nhiễu và ngữ cảnh đọc nếu có.
 - Sau khi chấm bài, nút **Làm lại với bộ câu mới** chọn câu khác trong ngân hàng cùng cấp độ và trộn thứ tự lựa chọn. Với bài tổng hợp, việc chọn câu diễn ra riêng theo từng nhóm/cấp độ. Nếu ngân hàng không còn đủ câu phù hợp để tạo bộ mới, nút sẽ báo thiếu câu.
-- Các trang HTML bài học/kiểm tra là nguồn câu hỏi; sau khi chỉnh câu, chạy `powershell -ExecutionPolicy Bypass -File .\\client\\public\\jp\\build-quiz-bank.ps1` từ thư mục gốc để tạo lại `quiz-bank.js`. Script phân cấp, lấy ngữ cảnh đọc và loại câu trùng theo cấp độ. Engine ghép câu đang hiển thị bằng câu dẫn và tập lựa chọn, nên cần giữ các phần này đồng bộ.
+- Các trang HTML bài học/kiểm tra trong `server/lessons` là nguồn câu hỏi; sau khi chỉnh câu, chạy `powershell -ExecutionPolicy Bypass -File .\server\lessons\build-quiz-bank.ps1` từ thư mục gốc để tạo lại `quiz-bank.js`. Script phân cấp, lấy ngữ cảnh đọc và loại câu trùng theo cấp độ. Engine ghép câu đang hiển thị bằng câu dẫn và tập lựa chọn, nên cần giữ các phần này đồng bộ.
 - Tiến độ hoàn thành bài học được lưu cục bộ trong trình duyệt bằng `localStorage` (các khóa `done_bai*`). Dữ liệu này hiện không đồng bộ với tài khoản hay PostgreSQL; xóa dữ liệu trang web/trình duyệt có thể làm mất tiến độ.

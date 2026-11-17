@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import { lessonDestination } from './lesson-navigation'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 // Chỉ lưu token; thông tin user được xác minh lại qua /auth/me khi tải trang.
@@ -64,7 +65,7 @@ function App() {
           setUser(null)
           setSessionNotice('Phiên đã hết hạn. Vui lòng đăng nhập lại.')
         } else {
-          setSessionNotice('Chưa xác minh được phiên. Đã giữ phiên để thử lại khi có mạng; bạn vẫn có thể đọc bài học.')
+          setSessionNotice('Chưa xác minh được phiên. Vui lòng kiểm tra kết nối và thử lại để mở bài học.')
         }
       }
     }
@@ -93,9 +94,12 @@ function App() {
         localStorage.setItem(TOKEN_KEY, result.token)
         setSessionNotice('')
       } catch {
-        setSessionNotice('Đã đăng nhập trong phiên này nhưng trình duyệt không lưu được phiên. Tải lại trang có thể cần đăng nhập lại.')
+        setSessionNotice('Trình duyệt không lưu được phiên. Vui lòng cho phép lưu dữ liệu website rồi đăng nhập lại để mở bài học.')
+        memoryToken = null
+        return
       }
       setUser(result.user)
+      window.location.assign(lessonDestination(window.location.search))
     } catch (err) {
       setError(err.message)
     } finally {
@@ -164,7 +168,7 @@ function App() {
             <label>Mật khẩu<input type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} required minLength="8" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="Ít nhất 8 ký tự" /></label>
             {error && <p className="form-error" role="alert">{error}</p>}
             <button className="primary-button auth-submit" disabled={busy}>{busy ? 'Đang xử lý…' : authMode === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'} <span>→</span></button>
-            <p className="privacy-note">Đăng nhập chưa đồng bộ tiến độ. Đăng xuất kết thúc phiên trên trình duyệt này.</p>
+            <p className="privacy-note">Đăng nhập để mở bài học. Tiến độ học vẫn lưu riêng trên trình duyệt này.</p>
           </form>}
         </section>
       </main>

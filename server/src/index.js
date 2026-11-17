@@ -21,6 +21,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/lessons', require('./routes/lessons'));
 
 // Chuyển lỗi async từ route về một định dạng JSON thống nhất.
 app.use((err, req, res, next) => {

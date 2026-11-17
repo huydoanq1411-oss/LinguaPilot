@@ -8,10 +8,10 @@ function fixture() {
   let tail = Promise.resolve();
   const tx = {
     $queryRaw: async () => [],
+    $executeRaw: async (_sql, key) => {
+      if (!rows.has(key)) rows.set(key, { failures: [] });
+    },
     loginThrottle: {
-      upsert: async ({ where }) => {
-        if (!rows.has(where.key)) rows.set(where.key, { failures: [] });
-      },
       findUnique: async ({ where }) => rows.get(where.key),
       update: async ({ where, data }) => rows.set(where.key, data),
     },

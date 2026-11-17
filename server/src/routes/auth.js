@@ -51,7 +51,7 @@ router.post('/login', async (req, res) => {
 
 router.get('/me', requireAuth, async (req, res) => {
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
-  if (!user) return res.status(404).json({ error: 'Không tìm thấy user' });
+  if (!user) return res.status(401).json({ error: 'Phiên không còn hợp lệ. Vui lòng đăng nhập lại.' });
   res.json(publicUser(user));
 });
 

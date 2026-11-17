@@ -1,0 +1,2257 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phần 01 — Hệ Thống Kana & Phát Âm · LinguaPilot</title>
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --washi:#F6F1E4;
+  --washi-2:#EFE7D3;
+  --sumi:#2A2722;
+  --sumi-soft:#5B554A;
+  --ai:#1B4A6B;       /* indigo */
+  --ai-deep:#0F3349;
+  --hanko:#B33A2E;    /* hanko red */
+  --kin:#B6862C;       /* gold */
+  --line:#DCD2B8;
+  --card:#FFFDF8;
+  --radius:10px;
+  --shadow:0 2px 10px rgba(42,39,34,.08);
+  --font-display:'Shippori Mincho','Noto Serif JP',serif;
+  --font-body:'Noto Sans JP','Hiragino Sans',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Courier New',monospace;
+}
+[data-theme="dark"]{
+  --washi:#1B1916;
+  --washi-2:#222019;
+  --sumi:#EDE6D6;
+  --sumi-soft:#B8AF9C;
+  --ai:#6FA8D6;
+  --ai-deep:#3A75A0;
+  --hanko:#E0695A;
+  --kin:#D9B25E;
+  --line:#3A362C;
+  --card:#221F1A;
+  --shadow:0 2px 14px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--washi); color:var(--sumi);
+  font-family:var(--font-body); line-height:1.7;
+  transition:background .3s,color .3s;
+}
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+/* ===== BẢNG CHỮ CÁI TƯƠNG TÁC ===== */
+.kana-ref-section { scroll-margin-top: 20px; }
+.kana-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+.kana-tab { padding:8px 18px; border-radius:20px; border:2px solid var(--line); background:var(--card);
+  cursor:pointer; font-family:var(--font-display); font-size:.9rem; transition:.2s; color:var(--sumi); }
+.kana-tab.active { background:var(--ai); color:#fff; border-color:var(--ai); }
+.kana-tab:hover:not(.active) { border-color:var(--ai); color:var(--ai); }
+.kana-panel { display:none; }
+.kana-panel.active { display:block; }
+.kana-master-grid { display:grid; grid-template-columns: 60px repeat(5,1fr); gap:4px; }
+.kana-master-grid .kana-header { background:var(--ai); color:#fff; padding:6px 4px;
+  text-align:center; font-size:.72rem; font-weight:700; border-radius:4px; }
+.kana-master-grid .kana-row-label { background:var(--washi-2); display:flex; align-items:center;
+  justify-content:center; font-size:.7rem; color:var(--sumi-soft); border-radius:4px; font-weight:600; }
+.kana-cell-full { background:var(--card); border:1px solid var(--line); border-radius:6px;
+  padding:8px 4px; text-align:center; cursor:pointer; transition:.15s; position:relative; }
+.kana-cell-full:hover { border-color:var(--hanko); transform:scale(1.06); z-index:2; box-shadow:var(--shadow); }
+.kana-cell-full .main-char { font-family:var(--font-display); font-size:1.4rem; line-height:1.2;
+  display:block; }
+.kana-cell-full .sub-char { font-size:.75rem; color:var(--hanko); display:block; }
+.kana-cell-full .roma { font-size:.65rem; color:var(--sumi-soft); display:block; }
+.kana-cell-full.exception { background:linear-gradient(135deg,#fff5f5,#fff); border-color:var(--hanko); }
+[data-theme="dark"] .kana-cell-full.exception { background:linear-gradient(135deg,#2d1b17,#1e1510); }
+.kana-cell-full.empty { background:transparent; border:1px dashed var(--line); opacity:.4; cursor:default; }
+.kana-cell-full.empty:hover { transform:none; box-shadow:none; }
+.kanji-ref-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:10px; }
+.kanji-ref-card { background:var(--card); border:1px solid var(--line); border-radius:8px;
+  padding:10px 8px; text-align:center; cursor:pointer; transition:.15s; }
+.kanji-ref-card:hover { border-color:var(--kin); transform:translateY(-2px); box-shadow:var(--shadow); }
+.kanji-ref-card .k-char { font-family:var(--font-display); font-size:2rem; color:var(--sumi); display:block; }
+.kanji-ref-card .k-on { font-size:.65rem; color:var(--hanko); }
+.kanji-ref-card .k-kun { font-size:.65rem; color:var(--ai); }
+.kanji-ref-card .k-mean { font-size:.72rem; color:var(--sumi-soft); margin-top:3px; font-style:italic; }
+.kana-search { width:100%; padding:10px 14px; border:1px solid var(--line); border-radius:8px;
+  background:var(--card); color:var(--sumi); font-size:.95rem; margin-bottom:14px; }
+.kana-search:focus { outline:none; border-color:var(--ai); }
+.highlight-card { border-color:var(--kin) !important; background:rgba(182,134,44,.08) !important; }
+[data-theme="dark"] .highlight-card { background:rgba(182,134,44,.15) !important; }
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:var(--ai);}
+
+a{color:var(--ai);}
+
+/* ============ LAYOUT ============ */
+.app{display:flex; min-height:100vh;}
+.sidebar{
+  width:270px; flex-shrink:0; background:var(--ai-deep); color:#F6F1E4;
+  position:sticky; top:0; height:100vh; overflow-y:auto; padding:20px 0;
+}
+.sidebar h2{color:#F6F1E4; font-size:1.1rem; padding:0 20px; margin-bottom:4px;}
+.sidebar .sub{padding:0 20px; font-size:.78rem; color:#C9D7E2; margin-bottom:20px;}
+.sidebar nav a{
+  display:block; padding:9px 20px; color:#E4ECF1; text-decoration:none;
+  font-size:.92rem; border-left:3px solid transparent;
+}
+.sidebar nav a:hover, .sidebar nav a.active{
+  background:rgba(255,255,255,.08); border-left-color:var(--kin); color:#fff;
+}
+.sidebar nav .group-label{
+  padding:14px 20px 4px; font-size:.7rem; text-transform:uppercase;
+  letter-spacing:.08em; color:var(--kin); font-weight:600;
+}
+
+main{flex:1; padding:32px 40px 80px; max-width:880px;}
+.topbar{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:24px; gap:12px; flex-wrap:wrap;
+}
+.controls{display:flex; gap:10px; align-items:center;}
+.btn{
+  border:1px solid var(--line); background:var(--card); color:var(--sumi);
+  padding:8px 14px; border-radius:var(--radius); cursor:pointer;
+  font-family:var(--font-body); font-size:.85rem; transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.btn:hover{border-color:var(--ai); color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08);}
+
+/* progress bar */
+.progress-wrap{background:var(--washi-2); border-radius:20px; height:10px; overflow:hidden; flex:1; max-width:260px;}
+.progress-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--ai),var(--kin));
+  width:4%;
+  transition:width .6s cubic-bezier(0.4,0,0.2,1);
+  position:relative;
+}
+.progress-bar::after {
+  content:'';
+  position:absolute;
+  right:0; top:0; bottom:0;
+  width:8px;
+  background:rgba(255,255,255,0.4);
+  border-radius:0 20px 20px 0;
+}
+.progress-label{font-size:.78rem; color:var(--sumi-soft); white-space:nowrap;}
+
+/* section card */
+.section{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  padding:24px 28px; margin-bottom:22px; box-shadow:var(--shadow); scroll-margin-top:20px;
+  transition: all 0.35s ease;
+  animation: sectionFadeIn 0.6s ease-out both;
+}
+@keyframes sectionFadeIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section:hover {
+  box-shadow: 0 8px 28px rgba(0,0,0,0.13);
+  border-color: var(--kin);
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .section:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.55); }
+.section .eyebrow{
+  font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; color:var(--hanko); font-weight:600; margin-bottom:6px;
+}
+
+/* stamp / hero */
+.hero{
+  border:2px solid var(--ai); border-radius:var(--radius); padding:26px 28px;
+  background:linear-gradient(135deg,var(--card) 60%,var(--washi-2)); margin-bottom:26px; position:relative;
+  box-shadow: 0 4px 20px rgba(27,74,107,0.08);
+  transition: box-shadow 0.3s ease;
+}
+.hero:hover {
+  box-shadow: 0 8px 32px rgba(27,74,107,0.14);
+}
+.hanko-stamp{
+  position:absolute; top:20px; right:24px; width:60px; height:60px; border:2.5px solid var(--hanko);
+  border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--hanko);
+  font-family:var(--font-display); font-size:1.4rem; transform:rotate(-6deg); opacity:.85;
+}
+
+/* tables */
+table{width:100%; border-collapse:collapse; margin:14px 0; font-size:.93rem;}
+th,td{border:1px solid var(--line); padding:8px 12px; text-align:left;}
+th{background:var(--washi-2); color:var(--ai); font-family:var(--font-display);}
+tr:nth-child(even) td{background:var(--washi);}
+
+/* note boxes */
+.box{
+  border-radius:var(--radius); padding:14px 18px; margin:16px 0; border-left:4px solid; font-size:.92rem;
+  transition: box-shadow 0.25s, transform 0.25s;
+}
+.box:hover {
+  transform: translateX(3px);
+  box-shadow: 2px 4px 12px rgba(0,0,0,0.07);
+}
+.box.tip{background:#EAF3EC; border-color:#3F8C5C;}
+.box.warn{background:#FBEAE6; border-color:var(--hanko);}
+.box.note{background:#EAF1F7; border-color:var(--ai);}
+[data-theme="dark"] .box.tip{background:#1E2A20;}
+[data-theme="dark"] .box.warn{background:#2D1B17;}
+[data-theme="dark"] .box.note{background:#17222B;}
+.box b{display:block; margin-bottom:4px; font-family:var(--font-display);}
+
+/* code block */
+.code-wrap{position:relative; margin:14px 0;}
+pre{
+  background:var(--sumi); color:#F4F0E2; padding:16px 18px; border-radius:8px;
+  overflow-x:auto; font-family:var(--font-mono); font-size:.85rem; line-height:1.6;
+}
+[data-theme="dark"] pre{background:#0E0D0B;}
+.copy-btn{
+  position:absolute; top:8px; right:8px; background:rgba(255,255,255,.12); color:#fff;
+  border:none; padding:5px 10px; border-radius:6px; font-size:.72rem; cursor:pointer;
+}
+.copy-btn:hover{background:rgba(255,255,255,.22);}
+
+/* accordion */
+.accordion-item{border:1px solid var(--line); border-radius:8px; margin-bottom:8px; overflow:hidden;}
+.accordion-head{
+  background:var(--washi-2); padding:12px 16px; cursor:pointer; display:flex;
+  justify-content:space-between; align-items:center; font-weight:600; font-family:var(--font-display);
+  transition:all 0.2s ease;
+}
+.accordion-head:hover{color:var(--ai); background:var(--washi); padding-left:20px;}
+.accordion-item.open .accordion-head{
+  background:linear-gradient(90deg,var(--washi),var(--washi-2));
+  border-left:3px solid var(--ai); padding-left:13px;
+  color:var(--ai);
+}
+.accordion-body{max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 16px;}
+.accordion-body.open{padding:14px 16px;}
+.accordion-arrow{transition:transform .3s;}
+.accordion-item.open .accordion-arrow{transform:rotate(180deg);}
+
+/* flashcards */
+.flash-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px; margin:14px 0;}
+.flashcard{
+  perspective:1000px; height:90px; cursor:pointer;
+}
+.flashcard-inner{
+  position:relative; width:100%; height:100%; transition:transform .5s; transform-style:preserve-3d;
+}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+.flashcard-face{
+  position:absolute; inset:0; backface-visibility:hidden; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-weight:600; text-align:center; padding:6px;
+  border:1px solid var(--line);
+}
+.flashcard-front{
+  background:linear-gradient(135deg,var(--ai),var(--ai-deep)); color:#fff;
+  font-family:var(--font-display); font-size:1.4rem;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+}
+.flashcard-back{
+  background:linear-gradient(135deg,var(--kin),#8B6520); color:#fff;
+  transform:rotateY(180deg); font-size:.85rem;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15);
+}
+
+/* quiz */
+.quiz-q{margin-bottom:18px; padding-bottom:14px; border-bottom:1px dashed var(--line);}
+.quiz-q:last-child{border-bottom:none;}
+.quiz-opts label{
+  display:block; padding:8px 12px; margin:5px 0; border:1px solid var(--line); border-radius:6px; cursor:pointer; font-size:.9rem;
+}
+.quiz-opts label:hover{border-color:var(--ai);}
+.quiz-opts input{margin-right:8px;}
+.quiz-feedback{font-size:.85rem; margin-top:6px; font-weight:600; display:none;}
+.quiz-feedback.correct{color:#3F8C5C;}
+.quiz-feedback.wrong{color:var(--hanko);}
+.quiz-result{margin-top:14px; font-weight:700; font-family:var(--font-display); color:var(--ai); font-size:1.05rem;}
+
+/* roadmap table phase tags */
+.tag{display:inline-block; padding:2px 10px; border-radius:20px; font-size:.72rem; font-weight:600; color:#fff;}
+.tag.t1{background:#7C9A8C;} .tag.t2{background:#3F7CA0;} .tag.t3{background:#B6862C;}
+.tag.t4{background:#B33A2E;} .tag.t5{background:#6B4E9C;}
+
+/* back to top */
+#topBtn{
+  position:fixed; bottom:26px; right:26px; background:var(--ai); color:#fff; border:none;
+  width:46px; height:46px; border-radius:50%; font-size:1.2rem; cursor:pointer; box-shadow:var(--shadow);
+  display:none; align-items:center; justify-content:center; z-index:50;
+}
+#topBtn:hover{background:var(--hanko);}
+
+.kana-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:14px 0; text-align:center;}
+.kana-cell{
+  background:var(--washi-2); border:1px solid var(--line); border-radius:8px; padding:14px 4px;
+  transition: all 0.25s ease;
+}
+.kana-cell:hover {
+  transform: translateY(-3px) scale(1.05);
+  border-color: var(--ai);
+  box-shadow: 0 6px 16px rgba(27,74,107,0.12);
+  background: var(--card);
+}
+.kana-cell .ch{font-family:var(--font-display); font-size:1.8rem; color:var(--ai);}
+.kana-cell .rj{font-size:.78rem; color:var(--sumi-soft);}
+
+footer.lesson-nav{
+  display:flex; justify-content:space-between; align-items:center; margin-top:30px; padding-top:18px; border-top:1px solid var(--line);
+}
+.next-hint{font-size:.85rem; color:var(--sumi-soft);}
+
+@media(max-width:780px){
+  .sidebar{position:fixed; left:-280px; z-index:100; transition:left .3s;}
+  .sidebar.open{left:0;}
+  main{padding:20px 16px 80px;}
+  .menu-toggle{display:inline-block !important;}
+}
+.menu-toggle{display:none; background:var(--ai); color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer;}
+</style>
+<style>
+@keyframes slideBg {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.chapter-header{
+  background:linear-gradient(135deg, var(--ai-deep), var(--ai), #2A4A60);
+  background-size: 200% 200%;
+  animation: slideBg 12s ease infinite;
+  color:var(--washi); padding:32px 40px 28px; margin-bottom:28px;
+  border-radius:0 0 20px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-bottom: 2px solid var(--kin);
+}
+.chapter-header h1{color:#fff;font-size:1.8rem;margin:0 0 6px; text-shadow: 0 2px 8px rgba(0,0,0,0.2);}
+.chapter-header p{color:rgba(255,255,255,0.9);margin:0;font-size:.95rem}
+.chapter-nav{
+  display:flex;gap:10px;padding:16px 40px;
+  background:var(--card);border-bottom:1px solid var(--line);
+  flex-wrap:wrap;align-items:center;
+}
+.chapter-nav a{
+  padding:6px 14px;border-radius:20px;font-size:.8rem;
+  border:1.5px solid var(--line);color:var(--sumi);text-decoration:none;
+  transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.chapter-nav a:hover{background:var(--ai);color:#fff;border-color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.chapter-nav a.active{background:var(--ai);color:#fff;border-color:var(--ai); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.back-home{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 18px;border-radius:20px;
+  background:rgba(255,255,255,.12);color:#fff;
+  text-decoration:none;font-size:.85rem;margin-bottom:14px;
+  border:1px solid rgba(255,255,255,.25);
+  transition:all 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+.back-home:hover{background:rgba(255,255,255,.25); transform:translateX(-3px);}
+.ch-progress{
+  height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:14px;
+}
+.ch-progress-bar{
+  height:100%;background:var(--kin);border-radius:2px;
+  width:16%;
+}
+/* ===== MỤC LỤC NHANH (TOC) ===== */
+.toc-btn{
+  position:fixed; bottom:84px; right:26px; background:var(--kin); color:#fff; border:none;
+  width:46px; height:46px; border-radius:50%; font-size:1.15rem; cursor:pointer; box-shadow:var(--shadow);
+  display:flex; align-items:center; justify-content:center; z-index:60; transition:.15s;
+}
+.toc-btn:hover{background:var(--hanko); transform:scale(1.06);}
+.toc-overlay{
+  position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:99; opacity:0; pointer-events:none; transition:.25s;
+}
+.toc-overlay.open{opacity:1; pointer-events:auto;}
+.toc-panel{
+  position:fixed; top:0; right:-360px; width:340px; max-width:88vw; height:100%; background:var(--card);
+  box-shadow:-4px 0 30px rgba(0,0,0,.18); z-index:100; transition:right .35s cubic-bezier(0.4,0,0.2,1); display:flex; flex-direction:column;
+}
+.toc-panel.open{right:0;}
+.toc-panel-header{
+  padding:18px 20px; background:var(--ai-deep); color:#fff; display:flex; justify-content:space-between; align-items:center;
+}
+.toc-panel-header h3{margin:0; font-size:1.05rem; font-family:var(--font-display);}
+.toc-close-btn{background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer; line-height:1; padding:2px 6px;}
+.toc-panel-body{flex:1; overflow-y:auto; padding:10px 0;}
+.toc-group-label{
+  padding:10px 20px 6px; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+  color:var(--sumi-soft); background:var(--washi-2); position:sticky; top:0;
+}
+.toc-item{
+  display:block; padding:9px 20px; font-size:.85rem; color:var(--sumi); text-decoration:none;
+  border-bottom:1px solid var(--washi-2); transition:all .2s ease;
+  border-left: 3px solid transparent;
+}
+.toc-item:hover{background:var(--washi-2); color:var(--ai); padding-left:24px; border-left-color:var(--kin);}
+.toc-item .toc-num{color:var(--ai); font-weight:700; margin-right:6px;}
+
+/* ===== NAV GỌN (DROPDOWN) — thay thế chapter-nav dài ===== */
+.nav-main{
+  display:flex; gap:6px; padding:14px 40px; background:var(--card); border-bottom:1px solid var(--line);
+  flex-wrap:wrap; align-items:center; position:relative; z-index:40;
+}
+.nav-main > a{
+  padding:8px 16px; border-radius:20px; font-size:.85rem; border:1.5px solid var(--line);
+  color:var(--sumi); text-decoration:none; transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.nav-main > a:hover, .nav-main > a.active{background:var(--ai); color:#fff; border-color:var(--ai); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.nav-dd{position:relative;}
+.nav-dd-trigger{
+  padding:8px 16px; border-radius:20px; font-size:.85rem; border:1.5px solid var(--line);
+  color:var(--sumi); background:var(--card); cursor:pointer; transition:.15s; font-family:inherit;
+}
+.nav-dd-trigger:hover, .nav-dd-trigger.active, .nav-dd.open .nav-dd-trigger{background:var(--ai); color:#fff; border-color:var(--ai);}
+.nav-dd-menu{
+  position:absolute; top:calc(100% + 8px); left:0; min-width:230px; max-height:70vh; overflow-y:auto;
+  background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow);
+  padding:8px; display:none; flex-direction:column; gap:2px; z-index:41;
+}
+.nav-dd.open .nav-dd-menu{display:flex;}
+.nav-dd-menu a{
+  padding:8px 12px; border-radius:8px; font-size:.83rem; color:var(--sumi); text-decoration:none; transition:.1s;
+}
+.nav-dd-menu a:hover{background:var(--washi-2);}
+.nav-dd-menu a.active{background:var(--ai); color:#fff;}
+.nav-dd-menu .nav-dd-divider{font-size:.68rem; text-transform:uppercase; letter-spacing:.04em; color:var(--sumi-soft);
+  padding:8px 12px 2px; font-weight:700;}
+
+/* ===== THEO DÕI TIẾN ĐỘ HỌC TẬP ===== */
+.lesson-done-toggle{
+  display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:16px;
+  border:1.5px solid var(--line); background:var(--card); color:var(--sumi-soft); cursor:pointer;
+  font-size:.78rem; font-family:var(--font-body); transition:.15s; float:right; margin:2px 0 8px 12px;
+}
+.lesson-done-toggle:hover{border-color:var(--ai); color:var(--ai);}
+.lesson-done-toggle.done{background:#3F8C5C; border-color:#3F8C5C; color:#fff;}
+.section.lesson-completed{border-left:4px solid #3F8C5C; padding-left:16px; margin-left:-16px;}
+.progress-summary{
+  display:flex; align-items:center; gap:10px; margin-top:10px; font-size:.82rem; color:rgba(255,255,255,.9);
+}
+.progress-summary .psum-bar{flex:1; max-width:220px; height:8px; background:rgba(255,255,255,.25); border-radius:4px; overflow:hidden;}
+.progress-summary .psum-fill{height:100%; background:var(--kin); border-radius:4px; transition:width .3s;}
+.toc-item.done-item{color:#3F8C5C;}
+.toc-item .toc-check{margin-right:4px;}
+
+</style>
+<link rel="stylesheet" href="/site-shell.css">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="/app-icon.svg">
+</head>
+<body>
+<div class="chapter-header">
+  <a href="index.html" class="back-home">← Trang chủ</a>
+  <h1>📖 Phần 01 — Hệ Thống Kana & Phát Âm</h1>
+  <p>Hiragana · Katakana · Dakuten · Yōon · Số · Ngày tháng — Bài 1→18 · +18 bài bổ sung</p>
+  <div class="ch-progress"><div class="ch-progress-bar"></div></div>
+  <div class="progress-summary" id="progressSummary"></div>
+</div>
+
+<div class="nav-main">
+  <a href="index.html">🏠 Trang chủ</a>
+  <div class="nav-dd">
+    <button type="button" class="nav-dd-trigger active">📚 Học Bài ▾</button>
+    <div class="nav-dd-menu">
+      <a href="bang-chu-cai.html">📖 Bảng chữ cái</a>
+      <a href="tra-kanji.html">🔍 Tra Kanji trực tuyến</a>
+      <div class="nav-dd-divider">10 Phần Học</div>
+      <a href="phan01.html" class="active">Phần 01 — Kana</a>
+      <a href="phan02.html">Phần 02 — N5</a>
+      <a href="phan03.html">Phần 03 — N4</a>
+      <a href="phan04.html">Phần 04 — N3→N2</a>
+      <a href="phan05.html">Phần 05 — N2</a>
+      <a href="phan06.html">Phần 06 — N2+</a>
+      <a href="phan07.html">Phần 07 — N1-1</a>
+      <a href="phan08.html">Phần 08 — N1-2</a>
+      <a href="phan09.html">Phần 09 — N1-3</a>
+      <a href="phan10.html">Phần 10 — N1-4</a>
+    </div>
+  </div>
+  <div class="nav-dd">
+    <button type="button" class="nav-dd-trigger">📝 Kiểm Tra ▾</button>
+    <div class="nav-dd-menu">
+      <a href="kiem-tra-thang-cap.html">🎯 Test Tổng Hợp (30 câu)</a>
+      <a href="test-n5.html">Test N5 (25 câu)</a>
+      <a href="test-n4.html">Test N4 (25 câu)</a>
+      <a href="test-n3.html">Test N3→N2 (25 câu)</a>
+      <a href="test-n2.html">Test N2 (25 câu)</a>
+      <a href="test-n1.html">Test N1 (25 câu)</a>
+    </div>
+  </div>
+  <a href="tra-kanji.html">🔍 Tra Kanji</a>
+</div>
+
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:24px 20px 80px">
+  
+  <section class="hero" id="hero">
+      <div class="hanko-stamp">N2</div>
+      <div class="eyebrow">AI Gia Sư Tiếng Nhật</div>
+      <h1>Lộ Trình Chinh Phục JLPT N2 Trong 12 Tháng</h1>
+      <p>Xuất phát điểm: <b>mất gốc hoàn toàn</b> · Thời gian học: <b>30 phút/ngày</b> · Ưu tiên: <b>cả 4 kỹ năng</b>.
+      Mỗi lần chỉ học 1 bài — gõ <b>"Tiếp tục"</b> trong khung chat để mình thêm bài tiếp theo vào file này.</p>
+    </section>
+<section class="section" id="danh-gia">
+      <div class="eyebrow">Bước 1</div>
+      <h2>📋 Đánh giá trình độ hiện tại</h2>
+      <p>Bạn đang ở mức <b>0 — chưa biết gì</b>. Với 30 phút/ngày (~182 giờ/năm), trong khi N2 thực tế cần khoảng <b>1.500–2.000 giờ</b> học tích lũy từ số 0.</p>
+      <div class="box warn">
+        <b>⚠️ Cảnh báo thực tế</b>
+        Nếu giữ nguyên 30 phút/ngày suốt 12 tháng, bạn sẽ đạt khoảng N4–N3 yếu chứ chưa đủ chắc N2. Để thực sự thi đậu N2 trong 12 tháng, bạn cần tăng dần lên <b>1–1.5 giờ/ngày</b> kể từ tháng thứ 6 (giai đoạn N3). Lộ trình dưới đây vẫn nhắm tới N2, mình sẽ nhắc bạn mốc tăng tốc khi tới.
+      </div>
+      <div class="box tip">
+        <b>💡 Mẹo</b>
+        30 phút/ngày đều đặn mỗi ngày hiệu quả hơn 3.5 giờ dồn vào 1 ngày cuối tuần — đây chính là nguyên lý Spaced Repetition mà lộ trình này áp dụng xuyên suốt.
+      </div>
+    </section>
+<section class="section" id="lo-trinh">
+      <div class="eyebrow">Bước 2</div>
+      <h2>🗺️ Lộ trình tổng quan 12 tháng</h2>
+      <table>
+        <tr><th>Giai đoạn</th><th>Tháng</th><th>Mục tiêu</th><th>Nội dung chính</th></tr>
+        <tr><td><span class="tag t1">GĐ 0</span></td><td>Tháng 1</td><td>Thông thạo Kana</td><td>Hiragana, Katakana, phát âm, chào hỏi cơ bản</td></tr>
+        <tr><td><span class="tag t2">GĐ 1</span></td><td>Tháng 2–3</td><td>Hoàn thành N5</td><td>~800 từ vựng, 100 Kanji, ngữ pháp sơ cấp 1</td></tr>
+        <tr><td><span class="tag t2">GĐ 2</span></td><td>Tháng 4–5</td><td>Hoàn thành N4</td><td>~1.500 từ vựng, 300 Kanji, ngữ pháp sơ cấp 2</td></tr>
+        <tr><td><span class="tag t3">GĐ 3</span></td><td>Tháng 6–8 ⚡tăng giờ học</td><td>Hoàn thành N3</td><td>~3.700 từ vựng, 650 Kanji, ngữ pháp trung cấp</td></tr>
+        <tr><td><span class="tag t4">GĐ 4</span></td><td>Tháng 9–10</td><td>Tiếp cận N2</td><td>~6.000 từ vựng, 1.000 Kanji, ngữ pháp N2</td></tr>
+        <tr><td><span class="tag t5">GĐ 5</span></td><td>Tháng 11–12</td><td>Sẵn sàng thi N2</td><td>Ôn tổng hợp, thi thử, luyện tốc độ làm bài</td></tr>
+      </table>
+      <div class="box note">
+        <b>📌 Cấu trúc tuần</b>
+        5 ngày học bài mới + 1 ngày ôn tập SRS (Spaced Repetition: ôn lại bài của 1 ngày, 3 ngày, 7 ngày, 14 ngày, 30 ngày trước) + 1 ngày nghỉ/ôn tự do. Cuối mỗi tháng có bài kiểm tra chương; cuối mỗi giai đoạn có đề thi thử JLPT.
+      </div>
+    </section>
+<section class="section" id="bai1">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 1 · Ngày 1</div>
+      <h2>第1課 — Bài 1: Hiragana nhóm あ行 (a, i, u, e, o)</h2>
+
+      <h3>🔊 Phát âm</h3>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">あ</div><div class="rj">a</div></div>
+        <div class="kana-cell"><div class="ch">い</div><div class="rj">i</div></div>
+        <div class="kana-cell"><div class="ch">う</div><div class="rj">u</div></div>
+        <div class="kana-cell"><div class="ch">え</div><div class="rj">e</div></div>
+        <div class="kana-cell"><div class="ch">お</div><div class="rj">o</div></div>
+      </div>
+      <table>
+        <tr><th>Kana</th><th>Cách đọc</th><th>So sánh tiếng Việt</th></tr>
+        <tr><td>あ</td><td>Mở miệng rộng</td><td>giống "a" trong "ba"</td></tr>
+        <tr><td>い</td><td>Miệng hơi cười</td><td>giống "i" trong "đi"</td></tr>
+        <tr><td>う</td><td>Môi hơi tròn nhẹ, KHÔNG tròn nhiều</td><td>giữa "ư" và "u"</td></tr>
+        <tr><td>え</td><td>Giống "e" trong "mẹ"</td><td>giống "e"</td></tr>
+        <tr><td>お</td><td>Tròn môi ít</td><td>giống "o" trong "to"</td></tr>
+      </table>
+      <div class="box warn">
+        <b>⚠️ Lỗi thường gặp của người Việt</b>
+        Phát âm "う" tròn môi như "u" tiếng Việt → nghe rất "Tây". Đúng ra môi gần như giữ thẳng, chỉ hơi hé nhẹ.
+      </div>
+
+      <h3>✍️ Luyện viết</h3>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">あ — 3 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Nét ngang → nét móc → nét cong. Viết tay 10 lần/ngày trên giấy ô vuông để quen tay.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">い — 2 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Hai nét ngắn gần như song song, hơi xiên vào nhau ở phần dưới.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">う — 2 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Có móc nhỏ phía trên, nét chính cong nhẹ xuống dưới.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">え — 2 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Nét cuối uốn cong rõ, dễ nhầm với "へ" nếu viết ẩu.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">お — 3 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Có nét móc nhỏ riêng biệt ở bên phải, không nối liền với thân chữ.</div>
+      </div>
+
+      <h3>📝 Từ vựng áp dụng</h3>
+      <table>
+        <tr><th>Từ (Kana)</th><th>Romaji</th><th>Nghĩa</th></tr>
+        <tr><td>あい</td><td>ai</td><td>tình yêu</td></tr>
+        <tr><td>いえ</td><td>ie</td><td>nhà</td></tr>
+        <tr><td>うえ</td><td>ue</td><td>ở trên</td></tr>
+        <tr><td>え</td><td>e</td><td>bức tranh</td></tr>
+        <tr><td>あお</td><td>ao</td><td>màu xanh dương</td></tr>
+      </table>
+
+      <h3>🈂️ Kanji</h3>
+      <div class="box note"><b>📌 Lưu ý</b> Giai đoạn này chưa học Kanji — cần thông thạo Hiragana/Katakana trước (dự kiến 2 tuần đầu tháng 1).</div>
+
+      <h3>📐 Ngữ pháp</h3>
+      <div class="box note"><b>📌 Lưu ý</b> Chưa vào ngữ pháp ở bài này — ngữ pháp đầu tiên (câu giới thiệu bản thân 〜は〜です) sẽ xuất hiện ở Bài 6 khi đã thuộc hết Hiragana.</div>
+
+      <h3>💬 Hội thoại mini</h3>
+      <div class="code-wrap">
+<pre><code>A: あ！ (A!)
+B: え？ (E? — "Hả?")</code></pre>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <p style="font-size:.85rem;color:var(--sumi-soft)">Hội thoại còn rất đơn giản vì vốn từ chưa đủ — hội thoại thật sẽ bắt đầu từ Bài 6.</p>
+
+      <h3>🎧 Luyện nghe</h3>
+      <p>Đọc to từng âm <b>あ・い・う・え・お</b> nhiều lần, ghi âm giọng mình và so sánh với phát âm chuẩn (tra "Hiragana pronunciation あいうえお" trên YouTube/Forvo để nghe người bản xứ).</p>
+
+      <h3>📖 Luyện đọc</h3>
+      <p>Đọc to theo thứ tự: <b>あい → いえ → うえ → あお</b></p>
+
+      <h3>🃏 Flashcard <span style="font-size:.75rem;color:var(--sumi-soft);font-weight:400">(bấm vào thẻ để lật)</span></h3>
+      <div class="flash-grid" id="flashGrid"></div>
+
+      <h3>📑 Ví dụ minh họa</h3>
+      <div class="box tip">
+        <b>💡 Ví dụ thực tế</b>
+        Khi nhìn biển hiệu quán ăn ghi "いえ" bạn đã biết đó liên quan đến "nhà" — nhiều quán cà phê Nhật dùng chữ này trong tên thương hiệu (ví dụ: いえカフェ — "nhà cà phê").
+      </div>
+    </section>
+<section class="section" id="bai2">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 1 · Ngày 2</div>
+      <h2>第2課 — Bài 2: Hiragana nhóm か行 (ka, ki, ku, ke, ko)</h2>
+
+      <h3>🔊 Phát âm</h3>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">か</div><div class="rj">ka</div></div>
+        <div class="kana-cell"><div class="ch">き</div><div class="rj">ki</div></div>
+        <div class="kana-cell"><div class="ch">く</div><div class="rj">ku</div></div>
+        <div class="kana-cell"><div class="ch">け</div><div class="rj">ke</div></div>
+        <div class="kana-cell"><div class="ch">こ</div><div class="rj">ko</div></div>
+      </div>
+      <table>
+        <tr><th>Kana</th><th>Romaji</th><th>Cách đọc</th><th>So sánh tiếng Việt</th></tr>
+        <tr><td>か</td><td>ka</td><td>Bật hơi nhẹ ở đầu lưỡi, giống "ca" nhưng không bật mạnh</td><td>gần giống "ca"</td></tr>
+        <tr><td>き</td><td>ki</td><td>Môi hơi cười, phụ âm k nhẹ</td><td>gần giống "ki"</td></tr>
+        <tr><td>く</td><td>ku</td><td>Môi KHÔNG tròn như "cu" tiếng Việt</td><td>giữa "kư" và "ku"</td></tr>
+        <tr><td>け</td><td>ke</td><td>Mở miệng vừa phải</td><td>gần giống "ke"</td></tr>
+        <tr><td>こ</td><td>ko</td><td>Tròn môi nhẹ</td><td>gần giống "co"</td></tr>
+      </table>
+      <div class="box warn">
+        <b>⚠️ Lỗi thường gặp của người Việt #1</b>
+        Tiếng Việt có âm "k" bật mạnh hơi (aspiration), ví dụ "ca, cô". Tiếng Nhật phụ âm か行 phát âm nhẹ hơn nhiều — không có tiếng bật hơi mạnh phía sau "k". Hãy giữ hơi thở đều khi nói.
+      </div>
+      <div class="box warn">
+        <b>⚠️ Lỗi thường gặp của người Việt #2</b>
+        Người Việt hay đọc「く」thành "ku" tròn môi — đúng ra phải đọc gần giống "kư" với môi gần như thẳng, tương tự lỗi với「う」ở Bài 1.
+      </div>
+
+      <h3>✍️ Luyện viết</h3>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">か — 3 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Nét dọc thẳng → nét ngang qua → nét cong móc phía dưới. Nhớ nét cong cuối quan trọng — bỏ sẽ thành chữ khác.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">き — 4 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">2 nét ngang → 1 nét dọc cắt qua → 1 nét cong phía dưới bên phải. Chú ý nét cong cuối không nối với nét dọc (viết rời).</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">く — 1 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Chỉ 1 nét: bắt đầu từ trên xuống, cong sang phải rồi lên nhẹ. Đây là chữ đơn giản nhất trong か行.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">け — 3 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Nét dọc → nét ngang ngắn phía trên → nét cong phía dưới. Dễ nhầm với「は」— chú ý nét cong け không kín như は.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">こ — 2 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Nét cong trên → nét cong dưới, hai nét song song. Chữ đơn giản, dễ học. Mẹo nhớ: hình 2 con sóng = "kooool".</div>
+      </div>
+
+      <h3>📝 Từ vựng áp dụng</h3>
+      <table>
+        <tr><th>Từ (Kana)</th><th>Romaji</th><th>Nghĩa</th><th>Ví dụ thực tế</th></tr>
+        <tr><td>かお (顔)</td><td>kao</td><td>khuôn mặt</td><td>Quảng cáo mỹ phẩm hay dùng từ này</td></tr>
+        <tr><td>いか (烏賊)</td><td>ika</td><td>con mực</td><td>Món ăn phổ biến ở Nhật</td></tr>
+        <tr><td>かい (貝)</td><td>kai</td><td>con sò / vỏ sò</td><td>かいわれ = mầm củ cải</td></tr>
+        <tr><td>きく (菊)</td><td>kiku</td><td>hoa cúc</td><td>Biểu tượng hoàng gia Nhật Bản</td></tr>
+        <tr><td>こえ (声)</td><td>koe</td><td>giọng nói</td><td>おおきいこえ = giọng to</td></tr>
+        <tr><td>いけ (池)</td><td>ike</td><td>ao, hồ nhỏ</td><td>Thường thấy trong vườn Nhật</td></tr>
+        <tr><td>えき (駅)</td><td>eki</td><td>nhà ga</td><td>Từ cực kỳ quan trọng khi đi Nhật!</td></tr>
+        <tr><td>おかあさん</td><td>okaasan</td><td>mẹ (trang trọng)</td><td>Dùng khi nói về mẹ người khác</td></tr>
+      </table>
+      <div class="box tip">
+        <b>💡 Mẹo ghi nhớ</b>
+        <b>えき (駅) = nhà ga</b> — Từ này bạn sẽ dùng liên tục khi du lịch Nhật. Hãy nhớ ngay từ bây giờ! Phát âm: "e-ki" (không phải "e-key").
+      </div>
+
+      <h3>🈂️ Kanji bước đầu</h3>
+      <div class="box note"><b>📌 Lưu ý</b> Từ bài này mình bắt đầu giới thiệu Kanji kèm theo từ vựng, nhưng chưa yêu cầu viết — chỉ cần nhận biết. Việc học viết Kanji sẽ bắt đầu từ tháng 2 (giai đoạn N5).</div>
+      <table>
+        <tr><th>Kanji</th><th>Cách đọc</th><th>Nghĩa</th></tr>
+        <tr><td style="font-size:1.4rem;font-family:var(--font-display)">顔</td><td>かお (kao)</td><td>khuôn mặt</td></tr>
+        <tr><td style="font-size:1.4rem;font-family:var(--font-display)">駅</td><td>えき (eki)</td><td>nhà ga</td></tr>
+        <tr><td style="font-size:1.4rem;font-family:var(--font-display)">声</td><td>こえ (koe)</td><td>giọng nói</td></tr>
+      </table>
+
+      <h3>📐 Ngữ pháp</h3>
+      <div class="box note"><b>📌 Lưu ý</b> Ngữ pháp chính thức bắt đầu từ Bài 6. Tuy nhiên, hãy chú ý: tiếng Nhật <b>không có khoảng trắng giữa các từ</b> khi viết. Ví dụ: かおがえき (khuôn mặt ở nhà ga) — không có dấu cách. Điều này khiến việc đọc Kana rất quan trọng.</div>
+
+      <h3>💬 Hội thoại mini</h3>
+      <div class="code-wrap">
+<pre><code>A: えき！ (Eki! — "Nhà ga!")
+B: ここ？ (Koko? — "Ở đây à?")</code></pre>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <div class="box note">
+        <b>📌 Ghi chú</b>
+        「ここ」(koko) nghĩa là "ở đây" — bạn vừa học thêm một từ mới! Đây là từ chỉ vị trí cơ bản, sẽ học chi tiết hơn ở Bài 10 (từ chỉ thị).
+      </div>
+
+      <h3>🎧 Luyện nghe</h3>
+      <p>Đọc to từng âm: <b>か・き・く・け・こ</b></p>
+      <p>Sau đó đọc kết hợp với bài 1: <b>あか (aka=đỏ) → いけ (ike=ao) → うえ (ue=trên) → えき (eki=nhà ga) → おかあさん (okaasan=mẹ)</b></p>
+      <p>Gợi ý YouTube: tìm <em>"Hiragana かきくけこ song"</em> để nghe người bản xứ phát âm kết hợp với nhạc — dễ nhớ hơn nhiều.</p>
+
+      <h3>📖 Luyện đọc</h3>
+      <p>Đọc to và dịch nghĩa các từ sau:</p>
+      <div class="code-wrap">
+<pre><code>1. かお  →  ?
+2. えき  →  ?
+3. こえ  →  ?
+4. いか  →  ?
+5. おかあさん  →  ?</code></pre>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">📖 Đáp án luyện đọc <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">
+          1. かお → khuôn mặt<br>
+          2. えき → nhà ga<br>
+          3. こえ → giọng nói<br>
+          4. いか → con mực<br>
+          5. おかあさん → mẹ (trang trọng)
+        </div>
+      </div>
+
+      <h3>🃏 Flashcard Bài 2 <span style="font-size:.75rem;color:var(--sumi-soft);font-weight:400">(bấm để lật)</span></h3>
+      <div class="flash-grid" id="flashGrid2"></div>
+
+      <h3>📑 Ví dụ minh họa tổng hợp</h3>
+      <div class="box tip">
+        <b>💡 Ví dụ thực tế — Kết hợp Bài 1 + Bài 2</b>
+        Khi đến Nhật, bạn thấy biển hiệu「えき」→ bạn biết ngay là nhà ga. Biển hiệu「おかいもの」(okaimono = mua sắm) → bạn nhận ra chữ「お」từ bài 1 và「か」từ bài 2. Đây chính là cách học Kana tích lũy!
+      </div>
+    </section>
+<section class="section" id="bai3">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 1 · Ngày 3</div>
+      <h2>第3課 — Bài 3: Hiragana nhóm さ行 (sa, si/shi, su, se, so)</h2>
+
+      <div class="box warn">
+        <b>⚠️ Chú ý đặc biệt ngay từ đầu!</b>
+        「し」KHÔNG đọc là "si" mà đọc là <b>"shi"</b> — đây là ngoại lệ đầu tiên trong bảng Hiragana.
+        Người Việt hay đọc nhầm thành "xi" hoặc "si" — cả hai đều sai. Phải đọc là <b>"shi"</b> (môi hơi chu ra, đẩy hơi nhẹ).
+      </div>
+
+      <h3>🔊 Phát âm</h3>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">さ</div><div class="rj">sa</div></div>
+        <div class="kana-cell"><div class="ch">し</div><div class="rj">shi ⚠️</div></div>
+        <div class="kana-cell"><div class="ch">す</div><div class="rj">su</div></div>
+        <div class="kana-cell"><div class="ch">せ</div><div class="rj">se</div></div>
+        <div class="kana-cell"><div class="ch">そ</div><div class="rj">so</div></div>
+      </div>
+
+      <table>
+        <tr><th>Kana</th><th>Romaji</th><th>Cách đọc chi tiết</th><th>So sánh tiếng Việt</th></tr>
+        <tr><td>さ</td><td>sa</td><td>Phụ âm "s" nhẹ + "a". Lưỡi chạm răng dưới</td><td>gần giống "xa" — nhưng "s" không rít mạnh</td></tr>
+        <tr><td>し</td><td><b>shi</b></td><td>Môi chu nhẹ, đẩy hơi qua khe hẹp — giống "sh" tiếng Anh</td><td>gần giống "xi" nhưng nhẹ hơn, không rít</td></tr>
+        <tr><td>す</td><td>su</td><td>Môi gần thẳng (không tròn!), phụ âm "s"</td><td>giữa "xư" và "xu"</td></tr>
+        <tr><td>せ</td><td>se</td><td>Phụ âm "s" + "e" mở vừa phải</td><td>gần giống "xe"</td></tr>
+        <tr><td>そ</td><td>so</td><td>Phụ âm "s" + "o" tròn nhẹ</td><td>gần giống "xo"</td></tr>
+      </table>
+
+      <div class="box warn">
+        <b>⚠️ 3 Lỗi thường gặp của người Việt trong さ行</b>
+        <br>① <b>し → đọc "xi" hoặc "si"</b>: Sai hoàn toàn. Phải đọc "shi" như trong "she" tiếng Anh.
+        <br>② <b>す → tròn môi thành "xu"</b>: Giống lỗi「う」— môi phải gần như thẳng.
+        <br>③ <b>さ → rít quá mạnh thành "xá"</b>: Phụ âm "s" tiếng Nhật nhẹ hơn "x" tiếng Việt rất nhiều — đừng đẩy hơi quá mạnh.
+      </div>
+
+      <h3>✍️ Luyện viết</h3>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">さ — 3 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Nét ngang trên → nét ngang dưới (dài hơn) → nét cong sang phải rồi vòng xuống. Dễ nhầm với「き」— chú ý さ chỉ có 2 nét ngang, ki có 2 nét ngang + 1 nét dọc dài.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">し — 1 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Chỉ 1 nét: kéo xuống thẳng rồi cong sang phải ở cuối (hình móc câu). Rất đơn giản nhưng hay bị viết ngược chiều — phải bắt đầu từ trên xuống.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">す — 2 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Nét ngang + nét cong dài. Phần cong giống hình xoáy ốc nhỏ ở cuối. Dễ nhầm với「む」ở trình độ cao hơn — giờ cứ nhớ す có vòng xoắn nhỏ.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">せ — 3 nét <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Nét dọc → nét ngang dài qua giữa → nét cong phía dưới sang phải. Trông gần giống chữ "せ" có nhánh — viết chậm, đảm bảo đủ 3 phần.</div>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">そ — 1 nét (hoặc 2 tùy font) <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">Theo kiểu viết tay truyền thống: 2 nét. Theo font in: có thể thấy 1 nét liền. Khi viết tay, hãy viết nét trên riêng, rồi nét dưới cong lớn sang phải. Mẹo nhớ: trông như số "3" bị ngược.</div>
+      </div>
+
+      <h3>📝 Từ vựng áp dụng</h3>
+      <table>
+        <tr><th>Từ (Kana)</th><th>Romaji</th><th>Nghĩa</th><th>Ví dụ / Ghi chú</th></tr>
+        <tr><td>さかな (魚)</td><td>sakana</td><td>con cá</td><td>Rất phổ biến trong ẩm thực Nhật</td></tr>
+        <tr><td>しお (塩)</td><td>shio</td><td>muối</td><td>しおラーメン = ramen muối</td></tr>
+        <tr><td>すし (寿司)</td><td>sushi</td><td>sushi</td><td>Bạn đã biết từ này rồi — giờ biết cách viết!</td></tr>
+        <tr><td>せかい (世界)</td><td>sekai</td><td>thế giới</td><td>せかいいち = số 1 thế giới</td></tr>
+        <tr><td>そら (空)</td><td>sora</td><td>bầu trời</td><td>あおいそら = bầu trời xanh</td></tr>
+        <tr><td>さいふ (財布)</td><td>saifu</td><td>ví tiền</td><td>Từ quan trọng khi đi du lịch Nhật!</td></tr>
+        <tr><td>しごと (仕事)</td><td>shigoto</td><td>công việc</td><td>しごとをする = đi làm</td></tr>
+        <tr><td>すき (好き)</td><td>suki</td><td>thích</td><td>すきです = Tôi thích (cái đó)</td></tr>
+        <tr><td>せんせい (先生)</td><td>sensei</td><td>giáo viên / thầy cô</td><td>⭐ Từ quan trọng, dùng rất nhiều</td></tr>
+        <tr><td>そうじ (掃除)</td><td>souji</td><td>dọn dẹp</td><td>そうじをする = dọn nhà</td></tr>
+      </table>
+
+      <div class="box tip">
+        <b>💡 Mẹo ghi nhớ "Bộ tam đặc biệt" đầu tiên cần nhớ ngay</b>
+        <b>すし</b> (sushi) · <b>せんせい</b> (sensei=thầy giáo) · <b>さかな</b> (sakana=cá)
+        Ba từ này xuất hiện cực kỳ nhiều trong sách giáo khoa và đời thực — học thuộc lòng ngay hôm nay!
+      </div>
+
+      <h3>🈂️ Kanji bài 3</h3>
+      <table>
+        <tr><th>Kanji</th><th>Cách đọc</th><th>Nghĩa</th><th>Số nét</th></tr>
+        <tr>
+          <td style="font-size:1.6rem;font-family:var(--font-display)">魚</td>
+          <td>さかな (sakana) · さかな・うお</td><td>con cá</td><td>11 nét</td>
+        </tr>
+        <tr>
+          <td style="font-size:1.6rem;font-family:var(--font-display)">空</td>
+          <td>そら (sora) · くう</td><td>bầu trời / rỗng</td><td>8 nét</td>
+        </tr>
+        <tr>
+          <td style="font-size:1.6rem;font-family:var(--font-display)">先生</td>
+          <td>せんせい (sensei)</td><td>giáo viên, thầy cô</td><td>6+5 nét</td>
+        </tr>
+      </table>
+      <div class="box note">
+        <b>📌 Lưu ý</b> Giai đoạn này chỉ cần <b>nhận biết</b> Kanji, chưa cần viết. Hãy chú ý: một Kanji có thể đọc nhiều cách khác nhau (音読み on'yomi và 訓読み kun'yomi). Ví dụ「空」đọc là "sora" khi nói riêng lẻ, nhưng đọc là "kuu" trong từ ghép như「空港」(kuukou = sân bay).
+      </div>
+
+      <h3>📐 Ngữ pháp — Sơ lược lần đầu: Trợ từ「は」(wa)</h3>
+      <div class="box note">
+        <b>📌 Ghi chú</b> Từ bài 3 mình bắt đầu hé lộ ngữ pháp <em>sơ lược</em> — chỉ giới thiệu nhận biết, chưa yêu cầu vận dụng ngay. Ngữ pháp chính thức có bài tập đầy đủ sẽ bắt đầu từ Bài 6.
+      </div>
+      <table>
+        <tr><th>Cấu trúc</th><th>Ý nghĩa</th><th>Ví dụ</th></tr>
+        <tr>
+          <td><b>〜は〜です</b><br><small>(〜wa〜desu)</small></td>
+          <td>"〜 là 〜" — câu khẳng định cơ bản nhất tiếng Nhật</td>
+          <td>これはすしです。<br><small>(Kore wa sushi desu — Đây là sushi.)</small></td>
+        </tr>
+      </table>
+      <div class="box tip">
+        <b>💡 Chú ý thú vị</b>
+        Chữ「は」bình thường đọc là "ha" — nhưng khi dùng làm <b>trợ từ chủ ngữ</b> thì đọc là <b>"wa"</b>. Đây là ngoại lệ lịch sử của tiếng Nhật. Sẽ giải thích kỹ ở Bài 6.
+      </div>
+
+      <h3>💬 Hội thoại mini</h3>
+      <div class="code-wrap">
+<pre><code>A: これはすしですか？
+   (Kore wa sushi desu ka?  — "Đây có phải sushi không?")
+
+B: そうです。すしです。
+   (Sou desu. Sushi desu.  — "Vâng đúng rồi. Đây là sushi.")</code></pre>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <div class="box note">
+        <b>📌 Từ mới trong hội thoại</b>
+        ・<b>これ</b> (kore) = cái này / đây<br>
+        ・<b>〜ですか</b> (desu ka) = dấu hỏi lịch sự, biến câu khẳng định thành câu hỏi<br>
+        ・<b>そうです</b> (sou desu) = vâng, đúng vậy
+      </div>
+
+      <h3>🎧 Luyện nghe</h3>
+      <p>Đọc to theo thứ tự, chú ý phát âm "shi" cho「し」:</p>
+      <div class="code-wrap">
+<pre><code>さ → し → す → せ → そ
+さかな → すし → せんせい → そら → しごと</code></pre>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <p>Ghi âm giọng mình đọc「すし」rồi so sánh: bạn có nói "su-shi" với「す」không tròn môi không? Nếu đúng — xuất sắc! Nếu chưa — thử lại 5 lần.</p>
+
+      <h3>📖 Luyện đọc — Câu đơn giản đầu tiên!</h3>
+      <p>Hãy đọc to và dịch sang tiếng Việt:</p>
+      <div class="code-wrap">
+<pre><code>1. これはすしです。
+2. せんせいのこえはおおきいです。
+3. そらはあおいです。</code></pre>
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+      </div>
+      <div class="accordion-item">
+        <div class="accordion-head" onclick="toggleAccordion(this)">📖 Đáp án + giải thích <span class="accordion-arrow">▾</span></div>
+        <div class="accordion-body">
+          1. <b>これはすしです。</b> → "Đây là sushi." (kore wa sushi desu)<br>
+          2. <b>せんせいのこえはおおきいです。</b> → "Giọng của thầy giáo rất to." (sensei no koe wa ookii desu)<br>
+          &nbsp;&nbsp;&nbsp;・「の」(no) = từ sở hữu, giống "'s" trong tiếng Anh — sẽ học kỹ ở Bài 7<br>
+          &nbsp;&nbsp;&nbsp;・「おおきい」(ookii) = to, lớn<br>
+          3. <b>そらはあおいです。</b> → "Bầu trời thì xanh." (sora wa aoi desu)<br>
+          &nbsp;&nbsp;&nbsp;・「あおい」(aoi) = xanh dương (tính từ) — từ「あお」bài 1 thêm đuôi「い」
+        </div>
+      </div>
+
+      <h3>🃏 Flashcard Bài 3 <span style="font-size:.75rem;color:var(--sumi-soft);font-weight:400">(bấm để lật)</span></h3>
+      <div class="flash-grid" id="flashGrid3"></div>
+
+      <h3>📑 Ví dụ minh họa tổng hợp Bài 1+2+3</h3>
+      <div class="box tip">
+        <b>💡 Đoạn văn tích lũy — bạn đọc được không?</b>
+        <br><br>
+        <span style="font-family:var(--font-display);font-size:1.1rem">せんせいのいえはえきのそばです。いえにさかながいます。</span>
+        <br><br>
+        <em>Romaji: Sensei no ie wa eki no soba desu. Ie ni sakana ga imasu.</em>
+        <br><em>Nghĩa: "Nhà của thầy giáo ở gần nhà ga. Trong nhà có cá."</em>
+        <br><br>
+        Bạn vừa đọc được câu tiếng Nhật hoàn chỉnh đầu tiên — chỉ dùng chữ đã học từ 3 bài! 🎉
+      </div>
+    </section>
+<section class="section" id="bai4">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 1 · Ngày 4</div>
+      <h2>第4課 — Bài 4: Hiragana た行 (ta, chi, tsu, te, to)</h2>
+      <div class="box warn"><b>⚠️ 2 Ngoại lệ cùng lúc!</b><br>・「ち」= <b>chi</b> (KHÔNG phải "ti")<br>・「つ」= <b>tsu</b> (KHÔNG phải "tu" hay "xu")</div>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">た</div><div class="rj">ta</div></div>
+        <div class="kana-cell"><div class="ch">ち</div><div class="rj">chi ⚠️</div></div>
+        <div class="kana-cell"><div class="ch">つ</div><div class="rj">tsu ⚠️</div></div>
+        <div class="kana-cell"><div class="ch">て</div><div class="rj">te</div></div>
+        <div class="kana-cell"><div class="ch">と</div><div class="rj">to</div></div>
+      </div>
+      <table>
+        <tr><th>Kana</th><th>Romaji</th><th>Cách đọc & Mẹo</th></tr>
+        <tr><td>た</td><td>ta</td><td>Phụ âm t nhẹ, không bật hơi mạnh như tiếng Việt</td></tr>
+        <tr><td>ち</td><td><b>chi</b></td><td>Giống "ch" tiếng Anh (chair) + i — luyện: "chị" bỏ thanh</td></tr>
+        <tr><td>つ</td><td><b>tsu</b></td><td>Âm "ts" nhanh rồi thêm "u" không tròn môi — luyện: "ts-ts-ts-u"</td></tr>
+        <tr><td>て</td><td>te</td><td>t nhẹ + e, giống "te" trong "telephone"</td></tr>
+        <tr><td>と</td><td>to</td><td>t nhẹ + o tròn nhẹ</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Lỗi người Việt</b><br>①「ち」→ đọc "ti" (sai): Tiếng Việt không có "chi" thuần nên hay bị nhầm.<br>②「つ」→ đọc "tu/xu" (sai): Âm "ts" không tồn tại trong tiếng Việt — phải tập riêng.</div>
+      <h3>✍️ Luyện viết</h3>
+      <div class="accordion-item"><div class="accordion-head" onclick="toggleAccordion(this)">た — 4 nét <span class="accordion-arrow">▾</span></div><div class="accordion-body">Ngang → dọc → ngang ngắn xuyên qua → cong phải. Viết theo thứ tự ngang trước, dọc sau.</div></div>
+      <div class="accordion-item"><div class="accordion-head" onclick="toggleAccordion(this)">ち — 2 nét <span class="accordion-arrow">▾</span></div><div class="accordion-body">Cong trên (vòng cung) → cong dưới lớn vòng phải vào trong. Trông như số "5" cách điệu.</div></div>
+      <div class="accordion-item"><div class="accordion-head" onclick="toggleAccordion(this)">つ — 1 nét <span class="accordion-arrow">▾</span></div><div class="accordion-body">1 nét cong trái → phải như móng tay nằm ngang. Lớn hơn「っ」(tsu nhỏ — dấu phụ âm đôi).</div></div>
+      <div class="accordion-item"><div class="accordion-head" onclick="toggleAccordion(this)">て — 2 nét <span class="accordion-arrow">▾</span></div><div class="accordion-body">Ngang dài → cong xuống rồi vòng phải. Hình ảnh: bàn tay vẫy.</div></div>
+      <div class="accordion-item"><div class="accordion-head" onclick="toggleAccordion(this)">と — 2 nét <span class="accordion-arrow">▾</span></div><div class="accordion-body">Dọc có móc → nét nhỏ bên phải như dấu phẩy. Dễ nhầm「ど」(do) — ど có dấu ゛trên phải.</div></div>
+      <h3>📝 Từ vựng</h3>
+      <table>
+        <tr><th>Từ</th><th>Romaji</th><th>Nghĩa</th><th>Ghi chú</th></tr>
+        <tr><td>ともだち (友達)</td><td>tomodachi</td><td>bạn bè</td><td>⭐ Từ quan trọng hằng ngày!</td></tr>
+        <tr><td>ちかてつ (地下鉄)</td><td>chikatetsu</td><td>tàu điện ngầm</td><td>Luyện ち+か+て+つ cùng lúc!</td></tr>
+        <tr><td>たべる (食べる)</td><td>taberu</td><td>ăn</td><td>Động từ cơ bản nhất</td></tr>
+        <tr><td>てんき (天気)</td><td>tenki</td><td>thời tiết</td><td>てんきがいい = thời tiết đẹp</td></tr>
+        <tr><td>つくえ (机)</td><td>tsukue</td><td>cái bàn</td><td>Từ hay gặp trong trường học</td></tr>
+        <tr><td>たかい (高い)</td><td>takai</td><td>cao / đắt tiền</td><td>2 nghĩa — ngữ cảnh phân biệt</td></tr>
+        <tr><td>てがみ (手紙)</td><td>tegami</td><td>bức thư</td><td>て=tay, がみ=giấy</td></tr>
+        <tr><td>ちず (地図)</td><td>chizu</td><td>bản đồ</td><td>Hữu ích khi du lịch Nhật</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Từ "ma thuật" luyện た行</b> — <b>ちかてつ</b> (chikatetsu) chứa ち+か+て+つ: luyện 4 âm trong 1 từ!</div>
+      <h3>💬 Hội thoại</h3>
+      <div class="code-wrap"><pre><code>A: ともだちですか？ (Tomodachi desu ka? — Bạn bè à?)
+B: そうです。ちかてつでいきます。(Sou desu. Chikatetsu de ikimasu. — Vâng. Tôi đi bằng tàu điện ngầm.)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <div class="box note"><b>📌 Từ mới</b>:「で」(de) = bằng (phương tiện) ·「いきます」(ikimasu) = đi</div>
+      <h3>🃏 Flashcard <span style="font-size:.75rem;color:var(--sumi-soft);font-weight:400">(bấm để lật)</span></h3>
+      <div class="flash-grid" id="fg4"></div>
+    </section>
+<section class="section" id="bai5">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 1 · Ngày 5</div>
+      <h2>第5課 — Bài 5: Hiragana な行 (na, ni, nu, ne, no)</h2>
+      <div class="box tip"><b>💡 Tin vui!</b> な行 KHÔNG có ngoại lệ — đọc thẳng theo romaji!</div>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">な</div><div class="rj">na</div></div>
+        <div class="kana-cell"><div class="ch">に</div><div class="rj">ni</div></div>
+        <div class="kana-cell"><div class="ch">ぬ</div><div class="rj">nu</div></div>
+        <div class="kana-cell"><div class="ch">ね</div><div class="rj">ne</div></div>
+        <div class="kana-cell"><div class="ch">の</div><div class="rj">no</div></div>
+      </div>
+      <table>
+        <tr><th>Kana</th><th>Mẹo nhớ hình dạng</th></tr>
+        <tr><td>な</td><td>Trông giống Kanji 奈 — đọc "na"</td></tr>
+        <tr><td>に</td><td>2 nét ngang + cong — như cái ghế đẩu</td></tr>
+        <tr><td>ぬ</td><td>Dễ nhầm「め」— ぬ có vòng nhỏ cuối, め không có</td></tr>
+        <tr><td>ね</td><td>Trông như con mèo cuộn — ne = neko = mèo → mẹo nhớ!</td></tr>
+        <tr><td>の</td><td>1 nét xoắn — cũng là TRỢ TỪ SỞ HỮU quan trọng nhất!</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Dễ nhầm: ぬ và め</b> — ぬ (nu) có <b>vòng tròn nhỏ</b> + nét cong ra ngoài cuối; め (me) đóng kín hơn. Sẽ so sánh lại khi học め ở Bài 7.</div>
+      <h3>📝 Từ vựng</h3>
+      <table>
+        <tr><th>Từ</th><th>Romaji</th><th>Nghĩa</th><th>Ghi chú</th></tr>
+        <tr><td>なまえ (名前)</td><td>namae</td><td>tên</td><td>⭐ Đầu tiên khi tự giới thiệu!</td></tr>
+        <tr><td>にほん (日本)</td><td>nihon</td><td>Nhật Bản</td><td>⭐⭐ Bắt buộc phải biết!</td></tr>
+        <tr><td>ねこ (猫)</td><td>neko</td><td>con mèo</td><td>Từ phổ biến nhất mạng XH Nhật 😄</td></tr>
+        <tr><td>のみもの (飲み物)</td><td>nomimono</td><td>đồ uống</td><td>のむ=uống + もの=đồ vật</td></tr>
+        <tr><td>にく (肉)</td><td>niku</td><td>thịt</td><td>ぶたにく=thịt lợn, ぎゅうにく=thịt bò</td></tr>
+        <tr><td>ながい (長い)</td><td>nagai</td><td>dài</td><td>Tính từ cơ bản</td></tr>
+        <tr><td>にわ (庭)</td><td>niwa</td><td>sân vườn</td><td>Thường gặp trong văn học Nhật</td></tr>
+      </table>
+      <h3>📐 Ngữ pháp — Trợ từ「の」= sở hữu</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>A の B</b></td><td>"B của A" (giống 's tiếng Anh)</td><td>せんせい<b>の</b>なまえ = tên của thầy<br>にほん<b>の</b>さかな = cá Nhật Bản</td></tr>
+      </table>
+      <div class="box tip"><b>💡 の xuất hiện trong ~70% câu thông thường</b> — gặp の giữa 2 danh từ → đọc ngay là "của". VD: ともだちのねこ = con mèo của bạn tôi.</div>
+      <h3>💬 Hội thoại</h3>
+      <div class="code-wrap"><pre><code>A: なまえはなんですか？ (Namae wa nan desu ka? — Tên bạn là gì?)
+B: わたしのなまえは〔tên〕です。 (Watashi no namae wa [tên] desu.)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <div class="box note"><b>📌 Từ mới</b>:「なん」(nan)=gì ·「わたし」(watashi)=tôi</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg5"></div>
+    </section>
+<section class="section" id="bai6">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 2 · Ngày 1</div>
+      <h2>第6課 — Bài 6: Hiragana は行 (ha, hi, fu, he, ho)</h2>
+      <div class="box warn"><b>⚠️ Ngoại lệ:「ふ」= fu</b> — thổi hơi qua kẽ môi khép, KHÔNG cắn môi như "f" tiếng Anh. Không tồn tại trong tiếng Việt, phải tập riêng!</div>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">は</div><div class="rj">ha/wa</div></div>
+        <div class="kana-cell"><div class="ch">ひ</div><div class="rj">hi</div></div>
+        <div class="kana-cell"><div class="ch">ふ</div><div class="rj">fu ⚠️</div></div>
+        <div class="kana-cell"><div class="ch">へ</div><div class="rj">he/e</div></div>
+        <div class="kana-cell"><div class="ch">ほ</div><div class="rj">ho</div></div>
+      </div>
+      <table>
+        <tr><th>Kana</th><th>Romaji</th><th>Lưu ý</th></tr>
+        <tr><td>は</td><td>ha / <b>wa</b></td><td>Bình thường = "ha"; làm trợ từ chủ ngữ = "wa"</td></tr>
+        <tr><td>ひ</td><td>hi</td><td>Thổi hơi nhẹ + i</td></tr>
+        <tr><td>ふ</td><td><b>fu</b></td><td>Thổi hơi qua kẽ môi — không có trong tiếng Việt!</td></tr>
+        <tr><td>へ</td><td>he / <b>e</b></td><td>Bình thường = "he"; làm trợ từ chỉ hướng = "e"</td></tr>
+        <tr><td>ほ</td><td>ho</td><td>Thổi hơi nhẹ + o</td></tr>
+      </table>
+      <div class="box note"><b>📌 3 ngoại lệ trợ từ viết = chữ Kana</b><br>・は (ha) → làm trợ từ chủ ngữ đọc <b>wa</b><br>・へ (he) → làm trợ từ hướng đi đọc <b>e</b><br>・を (wo) → làm trợ từ tân ngữ đọc <b>o</b> (học ở Bài 9)</div>
+      <h3>📝 Từ vựng</h3>
+      <table>
+        <tr><th>Từ</th><th>Romaji</th><th>Nghĩa</th><th>Ghi chú</th></tr>
+        <tr><td>はじめまして</td><td>hajimemashite</td><td>Xin chào (lần đầu gặp)</td><td>⭐⭐ Câu chào quan trọng nhất!</td></tr>
+        <tr><td>ほん (本)</td><td>hon</td><td>sách</td><td>⭐ Kanji 本 cũng có trong にほん!</td></tr>
+        <tr><td>ひと (人)</td><td>hito</td><td>người</td><td>Kanji 人 = người</td></tr>
+        <tr><td>へや (部屋)</td><td>heya</td><td>phòng</td><td>わたしのへや = phòng của tôi</td></tr>
+        <tr><td>はな (花)</td><td>hana</td><td>hoa / mũi</td><td>2 nghĩa — ngữ cảnh phân biệt</td></tr>
+        <tr><td>ひるごはん (昼ごはん)</td><td>hirugohan</td><td>bữa trưa</td><td>ひる=trưa, ごはん=cơm</td></tr>
+        <tr><td>ふじさん (富士山)</td><td>fujisan</td><td>núi Phú Sĩ</td><td>Biểu tượng nước Nhật, chứa ふ</td></tr>
+      </table>
+      <h3>📐 Ngữ pháp — Tự giới thiệu bản thân (bài đầy đủ đầu tiên!)</h3>
+      <table>
+        <tr><th>Câu</th><th>Romaji</th><th>Nghĩa</th></tr>
+        <tr><td>はじめまして。</td><td>Hajimemashite.</td><td>Xin chào (lần đầu).</td></tr>
+        <tr><td>わたしは〔tên〕です。</td><td>Watashi wa [tên] desu.</td><td>Tôi là [tên].</td></tr>
+        <tr><td>どうぞよろしく。</td><td>Douzo yoroshiku.</td><td>Rất vui được làm quen.</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Bài tập thực hành</b> — Thay tên bạn vào và đọc to 5 lần. Đây là bài giới thiệu tiếng Nhật đầu tiên của bạn!</div>
+      <h3>💬 Hội thoại đầy đủ đầu tiên!</h3>
+      <div class="code-wrap"><pre><code>A: はじめまして！わたしはさくらです。どうぞよろしく。
+   (Hajimemashite! Watashi wa Sakura desu. Douzo yoroshiku.
+    — Xin chào! Tôi là Sakura. Rất vui được làm quen.)
+
+B: はじめまして！わたしはナムです。こちらこそよろしくおねがいします。
+   (Hajimemashite! Watashi wa Namu desu. Kochira koso yoroshiku onegaishimasu.
+    — Xin chào! Tôi là Nam. Tôi cũng rất vui!)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg6"></div>
+    </section>
+<section class="section" id="bai7">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 2 · Ngày 2</div>
+      <h2>第7課 — Bài 7: Hiragana ま行 (ma, mi, mu, me, mo)</h2>
+      <div class="box tip"><b>💡 Tin vui!</b> ま行 không có ngoại lệ phát âm!</div>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">ま</div><div class="rj">ma</div></div>
+        <div class="kana-cell"><div class="ch">み</div><div class="rj">mi</div></div>
+        <div class="kana-cell"><div class="ch">む</div><div class="rj">mu</div></div>
+        <div class="kana-cell"><div class="ch">め</div><div class="rj">me</div></div>
+        <div class="kana-cell"><div class="ch">も</div><div class="rj">mo</div></div>
+      </div>
+      <table>
+        <tr><th>Kana</th><th>Romaji</th><th>Mẹo nhớ</th></tr>
+        <tr><td>ま</td><td>ma</td><td>Trông như cái móc câu — "mA-móc"</td></tr>
+        <tr><td>み</td><td>mi</td><td>2 nét cong như sóng nước</td></tr>
+        <tr><td>む</td><td>mu</td><td>Trông như con bò nhìn nghiêng — có "sừng" nhỏ trên. Dễ nhầm ぬ (nu): む có sừng, ぬ không có</td></tr>
+        <tr><td>め</td><td>me</td><td>め = mắt (目) — cũng là Kanji 目! Trông như con mắt vẽ nghệ thuật</td></tr>
+        <tr><td>も</td><td>mo</td><td>3 nét ngang + 2 móc — cũng là TRỢ TỪ "cũng"!</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Nhầm む và ぬ</b> — む có nét "sừng" nhỏ nhô lên đỉnh trái; ぬ có vòng tròn nhỏ cuối nét. Nhớ: む = bò (có sừng), ぬ = vòng.</div>
+      <h3>📝 Từ vựng</h3>
+      <table>
+        <tr><th>Từ</th><th>Romaji</th><th>Nghĩa</th><th>Ghi chú</th></tr>
+        <tr><td>みず (水)</td><td>mizu</td><td>nước</td><td>⭐ Một trong 5 từ quan trọng nhất!</td></tr>
+        <tr><td>まいにち (毎日)</td><td>mainichi</td><td>mỗi ngày</td><td>⭐ Quan trọng cho lịch học!</td></tr>
+        <tr><td>め (目)</td><td>me</td><td>mắt</td><td>めがね = kính mắt</td></tr>
+        <tr><td>まち (町)</td><td>machi</td><td>thị trấn, khu phố</td><td>Hay xuất hiện trong địa danh</td></tr>
+        <tr><td>むし (虫)</td><td>mushi</td><td>côn trùng</td><td>むしあつい = oi bức</td></tr>
+        <tr><td>もり (森)</td><td>mori</td><td>rừng</td><td>Kanji 森 = 3 cây = rừng!</td></tr>
+        <tr><td>みせ (店)</td><td>mise</td><td>cửa hàng</td><td>よく行くみせ = cửa hàng hay lui tới</td></tr>
+        <tr><td>もちろん</td><td>mochiron</td><td>tất nhiên</td><td>Từ hay dùng trong hội thoại</td></tr>
+      </table>
+      <h3>📐 Ngữ pháp — Trợ từ「も」= cũng</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>N も〜です</b></td><td>"N cũng là…" — thay は bằng も</td><td>わたし<b>も</b>にほんじんです = Tôi cũng là người Nhật<br>ねこ<b>も</b>いぬ<b>も</b>すきです = Tôi thích cả mèo lẫn chó</td></tr>
+      </table>
+      <h3>💬 Hội thoại</h3>
+      <div class="code-wrap"><pre><code>A: まいにちにほんごをべんきょうしますか？
+   (Mainichi Nihongo wo benkyou shimasu ka? — Bạn học tiếng Nhật mỗi ngày không?)
+B: はい、まいにちべんきょうします！もちろん！
+   (Hai, mainichi benkyou shimasu! Mochiron! — Vâng, tôi học mỗi ngày! Tất nhiên rồi!)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <div class="box note"><b>📌 Từ mới</b>:「はい」(hai) = vâng ·「べんきょう」(benkyou) = học bài</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg7"></div>
+    </section>
+<section class="section" id="bai8">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 2 · Ngày 3</div>
+      <h2>第8課 — Bài 8: Hiragana や行 (ya, yu, yo) + ら行 (ra~ro)</h2>
+      <div class="box note"><b>📌 Gộp 2 nhóm</b> — や行 chỉ có 3 âm nên học chung với ら行 cho hiệu quả.</div>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">や</div><div class="rj">ya</div></div>
+        <div class="kana-cell"><div class="ch" style="opacity:.3">ー</div><div class="rj" style="opacity:.3">yi</div></div>
+        <div class="kana-cell"><div class="ch">ゆ</div><div class="rj">yu</div></div>
+        <div class="kana-cell"><div class="ch" style="opacity:.3">ー</div><div class="rj" style="opacity:.3">ye</div></div>
+        <div class="kana-cell"><div class="ch">よ</div><div class="rj">yo</div></div>
+      </div>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">ら</div><div class="rj">ra</div></div>
+        <div class="kana-cell"><div class="ch">り</div><div class="rj">ri</div></div>
+        <div class="kana-cell"><div class="ch">る</div><div class="rj">ru</div></div>
+        <div class="kana-cell"><div class="ch">れ</div><div class="rj">re</div></div>
+        <div class="kana-cell"><div class="ch">ろ</div><div class="rj">ro</div></div>
+      </div>
+      <div class="box warn"><b>⚠️ Âm "r" Nhật ≠ "r" Việt!</b><br>ら行 — âm "r" tiếng Nhật là trung gian giữa r/l/d. Lưỡi chạm nhẹ vào vòm miệng rồi bật xuống ngay — <b>không rung</b> như "r" tiếng Việt, <b>không kéo dài</b> như "l". Đây là âm khó nhất cho người Việt!</div>
+      <table>
+        <tr><th>Nhóm</th><th>Mẹo phát âm</th></tr>
+        <tr><td>や、ゆ、よ</td><td>Giống "ya/yu/yo" tiếng Anh — không ngoại lệ. yi và ye không tồn tại trong Hiragana chuẩn.</td></tr>
+        <tr><td>ら～ろ</td><td>Lưỡi bật vào vòm 1 cái rồi buông — nghe giống "da" của người Anh hơn "ra" của người Việt.</td></tr>
+      </table>
+      <h3>📝 Từ vựng</h3>
+      <table>
+        <tr><th>Từ</th><th>Romaji</th><th>Nghĩa</th><th>Ghi chú</th></tr>
+        <tr><td>やすみ (休み)</td><td>yasumi</td><td>ngày nghỉ</td><td>⭐ おやすみなさい = chúc ngủ ngon</td></tr>
+        <tr><td>ゆき (雪)</td><td>yuki</td><td>tuyết</td><td>Thường gặp trong thơ và anime</td></tr>
+        <tr><td>よる (夜)</td><td>yoru</td><td>ban đêm</td><td>よるごはん = bữa tối</td></tr>
+        <tr><td>よむ (読む)</td><td>yomu</td><td>đọc</td><td>ほんをよむ = đọc sách</td></tr>
+        <tr><td>りんご</td><td>ringo</td><td>quả táo</td><td>Từ kinh điển khi học Kana!</td></tr>
+        <tr><td>らいしゅう (来週)</td><td>raishuu</td><td>tuần tới</td><td>らいねん=năm tới, らいげつ=tháng tới</td></tr>
+        <tr><td>れきし (歴史)</td><td>rekishi</td><td>lịch sử</td><td>Hay gặp ở N4-N3</td></tr>
+        <tr><td>やさしい</td><td>yasashii</td><td>dễ / hiền lành</td><td>2 nghĩa — ngữ cảnh phân biệt</td></tr>
+      </table>
+      <h3>💬 Hội thoại</h3>
+      <div class="code-wrap"><pre><code>A: やすみにどこへいきますか？ (Yasumi ni doko e ikimasu ka? — Ngày nghỉ bạn đi đâu?)
+B: りんごのもりへいきます！よるはほんをよみます。
+   (Ringo no mori e ikimasu! Yoru wa hon wo yomimasu.
+    — Tôi đi đến rừng táo! Buổi tối thì đọc sách.)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <div class="box note"><b>📌 Từ mới</b>:「どこ」(doko)=ở đâu ·「へ」(e)=đến (hướng) ·「を」(o)=trợ từ tân ngữ</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg8"></div>
+    </section>
+<section class="section" id="bai9">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 2 · Ngày 4 — Bài CUỐI Hiragana! 🎉</div>
+      <h2>第9課 — Bài 9: Hiragana わ行 + ん + Tổng kết</h2>
+      <div class="box tip"><b>🎉 Bài cuối của bảng Hiragana cơ bản (46 chữ)!</b> Sau bài này bạn có thể đọc mọi từ tiếng Nhật được viết bằng Hiragana!</div>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch">わ</div><div class="rj">wa</div></div>
+        <div class="kana-cell"><div class="ch" style="opacity:.3">ー</div><div class="rj" style="opacity:.3">wi</div></div>
+        <div class="kana-cell"><div class="ch" style="opacity:.3">ー</div><div class="rj" style="opacity:.3">wu</div></div>
+        <div class="kana-cell"><div class="ch" style="opacity:.3">ー</div><div class="rj" style="opacity:.3">we</div></div>
+        <div class="kana-cell"><div class="ch">を</div><div class="rj">wo→o</div></div>
+      </div>
+      <div class="kana-grid" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="kana-cell"><div class="ch">ん</div><div class="rj">n/m/ng</div></div>
+        <div class="kana-cell" style="opacity:.2"><div class="ch">—</div><div class="rj"></div></div>
+        <div class="kana-cell" style="opacity:.2"><div class="ch">—</div><div class="rj"></div></div>
+      </div>
+      <table>
+        <tr><th>Kana</th><th>Romaji thực tế</th><th>Đặc điểm quan trọng</th></tr>
+        <tr><td>わ</td><td>wa</td><td>Phát âm bình thường — không ngoại lệ</td></tr>
+        <tr><td>を</td><td><b>o</b> (viết wo)</td><td>CHỈ dùng làm trợ từ tân ngữ, không bao giờ dùng độc lập</td></tr>
+        <tr><td>ん</td><td>n / m / ng</td><td>Phụ âm duy nhất đứng cuối âm tiết — biến đổi theo âm tiếp theo</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️「ん」— Phụ âm đặc biệt nhất Hiragana</b><br>・Trước b/p/m → đọc <b>m</b>: さんぽ → "sam-po"<br>・Trước k/g → đọc <b>ng</b>: にほんご → "nihon-go"<br>・Các trường hợp còn lại → đọc <b>n</b>: にほん → "nihon"</div>
+      <div class="box warn"><b>⚠️ Trợ từ「を」chỉ đọc "o"!</b><br>Romaji ghi "wo" để phân biệt với「お」nhưng người Nhật thực tế đọc "o".<br>Dùng sau danh từ đánh dấu tân ngữ: ほん<b>を</b>よむ = đọc sách · みず<b>を</b>のむ = uống nước</div>
+      <h3>📝 Từ vựng bài 9</h3>
+      <table>
+        <tr><th>Từ</th><th>Romaji</th><th>Nghĩa</th></tr>
+        <tr><td>わたし (私)</td><td>watashi</td><td>Tôi (lịch sự)</td></tr>
+        <tr><td>わかる (分かる)</td><td>wakaru</td><td>hiểu / biết</td></tr>
+        <tr><td>わるい (悪い)</td><td>warui</td><td>xấu / tệ</td></tr>
+        <tr><td>にほんご (日本語)</td><td>nihongo</td><td>tiếng Nhật</td></tr>
+        <tr><td>さんぽ (散歩)</td><td>sanpo</td><td>đi dạo</td></tr>
+        <tr><td>おんがく (音楽)</td><td>ongaku</td><td>âm nhạc</td></tr>
+      </table>
+      <h3>📐 Ngữ pháp — Trợ từ「を」= tân ngữ</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td><b>N を V</b></td><td>Làm V với N</td><td>みず<b>を</b>のむ = uống nước<br>ほん<b>を</b>よむ = đọc sách<br>にほんご<b>を</b>べんきょうする = học tiếng Nhật</td></tr>
+      </table>
+      <h3>🗺️ Bảng Hiragana 46 chữ hoàn chỉnh</h3>
+      <div style="overflow-x:auto;">
+        <table style="text-align:center;">
+          <tr><th></th><th>a</th><th>i</th><th>u</th><th>e</th><th>o</th></tr>
+          <tr><th>—</th><td>あ</td><td>い</td><td>う</td><td>え</td><td>お</td></tr>
+          <tr><th>k</th><td>か</td><td>き</td><td>く</td><td>け</td><td>こ</td></tr>
+          <tr><th>s</th><td>さ</td><td><b style="color:var(--hanko)">し</b>shi</td><td>す</td><td>せ</td><td>そ</td></tr>
+          <tr><th>t</th><td>た</td><td><b style="color:var(--hanko)">ち</b>chi</td><td><b style="color:var(--hanko)">つ</b>tsu</td><td>て</td><td>と</td></tr>
+          <tr><th>n</th><td>な</td><td>に</td><td>ぬ</td><td>ね</td><td>の</td></tr>
+          <tr><th>h</th><td>は</td><td>ひ</td><td><b style="color:var(--hanko)">ふ</b>fu</td><td>へ</td><td>ほ</td></tr>
+          <tr><th>m</th><td>ま</td><td>み</td><td>む</td><td>め</td><td>も</td></tr>
+          <tr><th>y</th><td>や</td><td style="opacity:.3">—</td><td>ゆ</td><td style="opacity:.3">—</td><td>よ</td></tr>
+          <tr><th>r</th><td>ら</td><td>り</td><td>る</td><td>れ</td><td>ろ</td></tr>
+          <tr><th>w</th><td>わ</td><td style="opacity:.3">—</td><td style="opacity:.3">—</td><td style="opacity:.3">—</td><td>を</td></tr>
+          <tr><th>n</th><td colspan="5" style="font-size:1.3rem;font-family:var(--font-display)">ん</td></tr>
+        </table>
+      </div>
+      <div class="box warn" style="margin-top:14px"><b>⚠️ 5 ngoại lệ phát âm bắt buộc nhớ</b><br>し=shi · つ=tsu · ち=chi · ふ=fu · ん=n/m/ng (theo ngữ cảnh)</div>
+      <h3>💬 Hội thoại tổng hợp — toàn bộ Hiragana đã học</h3>
+      <div class="code-wrap"><pre><code>A: はじめまして！わたしはナムです。にほんごをべんきょうしています。
+   (Hajimemashite! Watashi wa Namu desu. Nihongo wo benkyou shite imasu.
+    — Xin chào! Tôi là Nam. Tôi đang học tiếng Nhật.)
+B: そうですか！わたしもにほんごがすきです。まいにちべんきょうしていますか？
+   (Sou desu ka! Watashi mo Nihongo ga suki desu. Mainichi benkyou shite imasu ka?
+    — Vậy à! Tôi cũng thích tiếng Nhật. Bạn học mỗi ngày không?)
+A: はい！まいにちさんじゅっぷんべんきょうします！
+   (Hai! Mainichi sanjuppun benkyou shimasu! — Vâng! Tôi học 30 phút mỗi ngày!)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg9"></div>
+    </section>
+<section class="section" id="bai10">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 2 · Ngày 5 — Bắt đầu Katakana!</div>
+      <h2>第10課 — Nhập môn Katakana: ア行 (a, i, u, e, o)</h2>
+      <div class="box note">
+        <b>📌 Katakana là gì và tại sao phải học?</b><br>
+        Tiếng Nhật có <b>3 hệ chữ</b>: Hiragana (từ thuần Nhật) · <b>Katakana</b> (từ nước ngoài, tên riêng ngoại quốc, onomatopoeia) · Kanji (chữ Hán). Katakana có cùng âm đọc với Hiragana nhưng hình dạng khác — góc cạnh hơn, thẳng hơn.<br>
+        Ví dụ: アイスクリーム (aisukuriimu) = ice cream · テレビ (terebi) = TV · コーヒー (koohii) = cà phê.
+      </div>
+      <div class="box tip">
+        <b>💡 Tin vui: Katakana không có ngoại lệ phát âm mới!</b><br>
+        Các ngoại lệ bạn đã học (shi, tsu, chi, fu) giữ nguyên. Chỉ cần học hình dạng mới — âm đọc y hệt Hiragana tương ứng.
+      </div>
+      <h3>🔊 So sánh Hiragana ↔ Katakana</h3>
+      <table>
+        <tr><th>Âm</th><th>Hiragana</th><th>Katakana</th><th>Mẹo nhớ Katakana</th><th>Ví dụ từ ngoại lai</th></tr>
+        <tr><td><b>a</b></td><td style="font-size:1.4rem">あ</td><td style="font-size:1.4rem;color:var(--hanko)">ア</td><td>Trông như chữ "A" nghiêng — 3 nét góc cạnh</td><td>アジア (Ajia) = châu Á</td></tr>
+        <tr><td><b>i</b></td><td style="font-size:1.4rem">い</td><td style="font-size:1.4rem;color:var(--hanko)">イ</td><td>Như chữ "I" có 2 nét chéo — đơn giản</td><td>イタリア (Itaria) = Italy</td></tr>
+        <tr><td><b>u</b></td><td style="font-size:1.4rem">う</td><td style="font-size:1.4rem;color:var(--hanko)">ウ</td><td>Như cái mũ (hat) — 3 nét ngang và góc</td><td>ウイルス (uirusu) = virus</td></tr>
+        <tr><td><b>e</b></td><td style="font-size:1.4rem">え</td><td style="font-size:1.4rem;color:var(--hanko)">エ</td><td>Giống chữ "エ" công trình — 3 nét ngang-dọc-ngang</td><td>エジプト (Ejiputo) = Ai Cập</td></tr>
+        <tr><td><b>o</b></td><td style="font-size:1.4rem">お</td><td style="font-size:1.4rem;color:var(--hanko)">オ</td><td>Như chữ số "才" — nét dọc + ngang + chéo</td><td>オーストラリア (Oosutoraria) = Úc</td></tr>
+      </table>
+      <div class="kana-grid">
+        <div class="kana-cell"><div class="ch" style="color:var(--hanko)">ア</div><div class="rj">a</div></div>
+        <div class="kana-cell"><div class="ch" style="color:var(--hanko)">イ</div><div class="rj">i</div></div>
+        <div class="kana-cell"><div class="ch" style="color:var(--hanko)">ウ</div><div class="rj">u</div></div>
+        <div class="kana-cell"><div class="ch" style="color:var(--hanko)">エ</div><div class="rj">e</div></div>
+        <div class="kana-cell"><div class="ch" style="color:var(--hanko)">オ</div><div class="rj">o</div></div>
+      </div>
+      <div class="box warn">
+        <b>⚠️ Dấu kéo dài「ー」(bōsen) — chỉ có trong Katakana!</b><br>
+        Katakana có ký hiệu đặc biệt「ー」để kéo dài nguyên âm. Ví dụ:<br>
+        コーヒー (koohii) = cà phê · バター (bataa) = bơ · ケーキ (keeki) = bánh kem<br>
+        Trong Hiragana không dùng「ー」— thay bằng cách viết thêm nguyên âm (uu, ii, oo, ee).
+      </div>
+      <h3>📝 Từ vựng ngoại lai ア行</h3>
+      <table>
+        <tr><th>Katakana</th><th>Romaji</th><th>Nghĩa gốc</th><th>Từ gốc (tiếng Anh)</th></tr>
+        <tr><td>アイスクリーム</td><td>aisukuriimu</td><td>kem lạnh</td><td>ice cream</td></tr>
+        <tr><td>アニメ</td><td>anime</td><td>hoạt hình Nhật</td><td>animation</td></tr>
+        <tr><td>エアコン</td><td>eakon</td><td>điều hòa không khí</td><td>air conditioner</td></tr>
+        <tr><td>インターネット</td><td>intaanetto</td><td>Internet</td><td>Internet</td></tr>
+        <tr><td>アパート</td><td>apaato</td><td>căn hộ</td><td>apartment</td></tr>
+        <tr><td>オフィス</td><td>ofisu</td><td>văn phòng</td><td>office</td></tr>
+        <tr><td>ウイルス</td><td>uirusu</td><td>virus</td><td>virus</td></tr>
+        <tr><td>エレベーター</td><td>erebeetaa</td><td>thang máy</td><td>elevator</td></tr>
+      </table>
+      <div class="box tip">
+        <b>💡 Chiến lược học Katakana siêu tốc</b><br>
+        Vì Katakana chủ yếu là từ tiếng Anh phiên âm, một khi bạn thuộc bảng chữ, bạn có thể "đoán" nghĩa hàng nghìn từ! Ví dụ: テレビジョン (terebijon) = television, マクドナルド (Makudonarudo) = McDonald's.
+      </div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg10"></div>
+    </section>
+<section class="section" id="bai11">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 2 · Ngày 6</div>
+      <h2>第11課 — Katakana カ行〜タ行 (ka→to)</h2>
+      <table>
+        <tr><th>Âm</th><th>Hiragana</th><th>Katakana</th><th>Mẹo nhớ</th></tr>
+        <tr><td>ka</td><td>か</td><td style="font-size:1.3rem;color:var(--hanko)">カ</td><td>Như chữ "カ" — nét sổ + móc phải. Giống か nhưng thẳng hơn</td></tr>
+        <tr><td>ki</td><td>き</td><td style="font-size:1.3rem;color:var(--hanko)">キ</td><td>3 nét ngang + 1 dọc — như thập tự có thêm nét</td></tr>
+        <tr><td>ku</td><td>く</td><td style="font-size:1.3rem;color:var(--hanko)">ク</td><td>Như dấu ">" — 2 nét góc nhọn</td></tr>
+        <tr><td>ke</td><td>け</td><td style="font-size:1.3rem;color:var(--hanko)">ケ</td><td>Như chữ "ケ" — 3 nét, trông như cây thông nhỏ</td></tr>
+        <tr><td>ko</td><td>こ</td><td style="font-size:1.3rem;color:var(--hanko)">コ</td><td>Như chữ "コ" hình vuông thiếu 1 cạnh trái</td></tr>
+        <tr><td>sa</td><td>さ</td><td style="font-size:1.3rem;color:var(--hanko)">サ</td><td>3 nét — ngang, ngang, thẳng đứng. Như chữ "サ" công trình</td></tr>
+        <tr><td><b>shi</b></td><td>し</td><td style="font-size:1.3rem;color:var(--hanko)">シ</td><td>3 nét nhỏ + 1 cong — khó nhầm với ツ (tsu): シ nằm ngang, ツ nằm đứng hơn</td></tr>
+        <tr><td>su</td><td>す</td><td style="font-size:1.3rem;color:var(--hanko)">ス</td><td>Như chữ "ス" — 2 nét: ngang + chéo xuống</td></tr>
+        <tr><td>se</td><td>せ</td><td style="font-size:1.3rem;color:var(--hanko)">セ</td><td>Giống chữ "セ" — trông như chữ F ngược</td></tr>
+        <tr><td>so</td><td>そ</td><td style="font-size:1.3rem;color:var(--hanko)">ソ</td><td>1-2 nét — khó nhầm với ン (n): ソ nghiêng trái, ン nghiêng phải hơn</td></tr>
+        <tr><td>ta</td><td>た</td><td style="font-size:1.3rem;color:var(--hanko)">タ</td><td>3 nét — như ngôi sao nhỏ hay dấu hiệu</td></tr>
+        <tr><td><b>chi</b></td><td>ち</td><td style="font-size:1.3rem;color:var(--hanko)">チ</td><td>3 nét — ngang, ngang, chéo xuống. Trông như chữ "チ"</td></tr>
+        <tr><td><b>tsu</b></td><td>つ</td><td style="font-size:1.3rem;color:var(--hanko)">ツ</td><td>3 nét nhỏ + cong — khó nhầm với シ (shi): ツ đứng hơn, to hơn</td></tr>
+        <tr><td>te</td><td>て</td><td style="font-size:1.3rem;color:var(--hanko)">テ</td><td>3 nét — như chữ "テ" hình chữ T biến thể</td></tr>
+        <tr><td>to</td><td>と</td><td style="font-size:1.3rem;color:var(--hanko)">ト</td><td>2 nét — như cái đinh đóng tường! Đơn giản nhất nhóm này</td></tr>
+      </table>
+      <div class="box warn">
+        <b>⚠️ Cặp dễ nhầm nhất Katakana: シ (shi) vs ツ (tsu)</b><br>
+        ・シ: 2 nét ngắn bên trái nằm <b>ngang</b>, nét cong hướng <b>lên</b><br>
+        ・ツ: 2 nét ngắn bên trái nằm <b>đứng</b>, nét cong hướng <b>xuống-phải</b><br>
+        Mẹo: <b>シ</b>mỉm cười (nét cong lên = nụ cười) · <b>ツ</b> buồn (nét xuống = buồn)
+      </div>
+      <div class="box warn">
+        <b>⚠️ Cặp dễ nhầm: ソ (so) vs ン (n)</b><br>
+        ・ソ: nét đầu <b>từ trên xuống</b>, nét hai chéo <b>sang phải-lên</b><br>
+        ・ン: nét đầu <b>từ phải sang trái</b>, nét hai chéo <b>xuống-phải</b><br>
+        Học kỹ khi gặp ン ở Bài 13!
+      </div>
+      <h3>📝 Từ vựng ngoại lai カ行〜タ行</h3>
+      <table>
+        <tr><th>Katakana</th><th>Romaji</th><th>Nghĩa</th><th>Gốc</th></tr>
+        <tr><td>カフェ</td><td>kafe</td><td>quán cà phê</td><td>café (Pháp)</td></tr>
+        <tr><td>キッチン</td><td>kicchin</td><td>nhà bếp</td><td>kitchen</td></tr>
+        <tr><td>クラス</td><td>kurasu</td><td>lớp học</td><td>class</td></tr>
+        <tr><td>ケーキ</td><td>keeki</td><td>bánh kem</td><td>cake</td></tr>
+        <tr><td>コーヒー</td><td>koohii</td><td>cà phê</td><td>coffee</td></tr>
+        <tr><td>サッカー</td><td>sakkaa</td><td>bóng đá</td><td>soccer</td></tr>
+        <tr><td>スーパー</td><td>suupaa</td><td>siêu thị</td><td>supermarket</td></tr>
+        <tr><td>テスト</td><td>tesuto</td><td>bài kiểm tra</td><td>test</td></tr>
+        <tr><td>チョコレート</td><td>chokoreeto</td><td>sô-cô-la</td><td>chocolate</td></tr>
+        <tr><td>タクシー</td><td>takushii</td><td>taxi</td><td>taxi</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg11"></div>
+    </section>
+<section class="section" id="bai12">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 3 · Ngày 1</div>
+      <h2>第12課 — Katakana ナ行〜ハ行 (na→ho)</h2>
+      <table>
+        <tr><th>Âm</th><th>Katakana</th><th>Mẹo nhớ</th></tr>
+        <tr><td>na</td><td style="font-size:1.3rem;color:var(--hanko)">ナ</td><td>2 nét — ngang + chéo xuống. Như chữ "ナ" (nét cắt ngang)</td></tr>
+        <tr><td>ni</td><td style="font-size:1.3rem;color:var(--hanko)">ニ</td><td>2 nét ngang — đơn giản như số "二" (hai). Mẹo: Ni = 2 nét = number 2!</td></tr>
+        <tr><td>nu</td><td style="font-size:1.3rem;color:var(--hanko)">ヌ</td><td>2 nét — ngang + chéo xuống-trái. Trông như chữ "ヌ"</td></tr>
+        <tr><td>ne</td><td style="font-size:1.3rem;color:var(--hanko)">ネ</td><td>4 nét — phức tạp hơn nhóm này. Trông như cây nến</td></tr>
+        <tr><td>no</td><td style="font-size:1.3rem;color:var(--hanko)">ノ</td><td>1 nét chéo — đơn giản nhất bảng Katakana! Như dấu gạch chéo "/"</td></tr>
+        <tr><td>ha</td><td style="font-size:1.3rem;color:var(--hanko)">ハ</td><td>2 nét chéo — như chữ "八" (tám). Mẹo: Ha = 八 (hachi=8 tiếng Nhật)</td></tr>
+        <tr><td>hi</td><td style="font-size:1.3rem;color:var(--hanko)">ヒ</td><td>2 nét — nét ngang dài + nét thẳng phải. Như chữ "ヒ"</td></tr>
+        <tr><td><b>fu</b></td><td style="font-size:1.3rem;color:var(--hanko)">フ</td><td>1-2 nét — như cái móc câu đảo ngược. Đơn giản!</td></tr>
+        <tr><td>he</td><td style="font-size:1.3rem;color:var(--hanko)">ヘ</td><td>1 nét — y hệt Hiragana「へ」! Đây là cặp Hiragana-Katakana giống nhau nhất.</td></tr>
+        <tr><td>ho</td><td style="font-size:1.3rem;color:var(--hanko)">ホ</td><td>4 nét — như chữ "木" (mộc) + thêm nét. Trông như cây cột điện</td></tr>
+      </table>
+      <div class="box tip">
+        <b>💡 Cặp Hiragana = Katakana (ít nhất trông giống!)</b><br>
+        へ ≈ ヘ (he) · カ ≈ か (ka hơi giống) · ロ ≈ □ (ro)<br>
+        Đặc biệt:「ヘ」là chữ Katakana duy nhất trông y hệt Hiragana tương ứng「へ」— chỉ học 1 lần!
+      </div>
+      <h3>📝 Từ vựng</h3>
+      <table>
+        <tr><th>Katakana</th><th>Romaji</th><th>Nghĩa</th><th>Gốc</th></tr>
+        <tr><td>ナイフ</td><td>naifu</td><td>dao</td><td>knife</td></tr>
+        <tr><td>ニュース</td><td>nyuusu</td><td>tin tức</td><td>news</td></tr>
+        <tr><td>ネット</td><td>netto</td><td>mạng lưới / internet</td><td>net</td></tr>
+        <tr><td>ノート</td><td>nooto</td><td>vở / ghi chú</td><td>note</td></tr>
+        <tr><td>ハンバーガー</td><td>hanbaagaa</td><td>hamburger</td><td>hamburger</td></tr>
+        <tr><td>ヒント</td><td>hinto</td><td>gợi ý</td><td>hint</td></tr>
+        <tr><td>フランス</td><td>Furansu</td><td>nước Pháp</td><td>France</td></tr>
+        <tr><td>ホテル</td><td>hoteru</td><td>khách sạn</td><td>hotel</td></tr>
+        <tr><td>ヘルメット</td><td>herumetto</td><td>mũ bảo hiểm</td><td>helmet</td></tr>
+        <tr><td>ノートパソコン</td><td>nooто pasokon</td><td>máy tính xách tay</td><td>notebook personal computer</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg12"></div>
+    </section>
+<section class="section" id="bai13">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 3 · Ngày 2</div>
+      <h2>第13課 — Katakana マ行〜ワ行・ン (ma→n) — Hoàn thành Katakana!</h2>
+      <div class="box tip"><b>🎉 Đây là bài cuối của bảng Katakana cơ bản!</b></div>
+      <table>
+        <tr><th>Âm</th><th>Katakana</th><th>Mẹo nhớ</th></tr>
+        <tr><td>ma</td><td style="font-size:1.3rem;color:var(--hanko)">マ</td><td>3 nét — như chữ "マ" = con dao nhỏ</td></tr>
+        <tr><td>mi</td><td style="font-size:1.3rem;color:var(--hanko)">ミ</td><td>3 nét ngang ngắn — như số "三" (ba). Mẹo: Mi = 3 nét = 三!</td></tr>
+        <tr><td>mu</td><td style="font-size:1.3rem;color:var(--hanko)">ム</td><td>2 nét — như chữ "ム" hình tam giác nhỏ</td></tr>
+        <tr><td>me</td><td style="font-size:1.3rem;color:var(--hanko)">メ</td><td>2 nét chéo — như dấu "X" hay nhân. Mẹo: Me = X marks the spot!</td></tr>
+        <tr><td>mo</td><td style="font-size:1.3rem;color:var(--hanko)">モ</td><td>3 nét — như chữ "E" nằm ngược. 3 nét ngang + 1 dọc</td></tr>
+        <tr><td>ya</td><td style="font-size:1.3rem;color:var(--hanko)">ヤ</td><td>3 nét — như chữ "ヤ" chĩa xuống</td></tr>
+        <tr><td>yu</td><td style="font-size:1.3rem;color:var(--hanko)">ユ</td><td>3 nét — như chữ "U" có thêm nét ngang</td></tr>
+        <tr><td>yo</td><td style="font-size:1.3rem;color:var(--hanko)">ヨ</td><td>3 nét — như chữ "E" quay phải. Mẹo: Yo = Yogi Bear = E shape!</td></tr>
+        <tr><td>ra</td><td style="font-size:1.3rem;color:var(--hanko)">ラ</td><td>2 nét — ngang + cong phải. Trông như chữ "ラ"</td></tr>
+        <tr><td>ri</td><td style="font-size:1.3rem;color:var(--hanko)">リ</td><td>2 nét dọc — như số "11" có móc. Đơn giản!</td></tr>
+        <tr><td>ru</td><td style="font-size:1.3rem;color:var(--hanko)">ル</td><td>2 nét — ngang + cong. Như chữ "ル"</td></tr>
+        <tr><td>re</td><td style="font-size:1.3rem;color:var(--hanko)">レ</td><td>1-2 nét — như chữ "L" đứng thẳng. Mẹo: Re = L shape!</td></tr>
+        <tr><td>ro</td><td style="font-size:1.3rem;color:var(--hanko)">ロ</td><td>3 nét — hình chữ nhật đơn giản □. Mẹo: Ro = room = hình phòng!</td></tr>
+        <tr><td>wa</td><td style="font-size:1.3rem;color:var(--hanko)">ワ</td><td>2 nét — như chữ "ワ" = cái gáo</td></tr>
+        <tr><td>wo→o</td><td style="font-size:1.3rem;color:var(--hanko)">ヲ</td><td>Hiếm dùng trong Katakana. Trông như ウ có thêm nét ngang</td></tr>
+        <tr><td><b>n</b></td><td style="font-size:1.3rem;color:var(--hanko)">ン</td><td>2 nét — dễ nhầm ソ (so): ン có nét đầu từ phải sang trái, nghiêng xuống hơn</td></tr>
+      </table>
+      <div class="box warn">
+        <b>⚠️ 4 cặp Katakana dễ nhầm nhất — phải thuộc lòng:</b><br>
+        ① シ (shi) vs ツ (tsu) — xem Bài 11<br>
+        ② ソ (so) vs ン (n) — ソ cong lên, ン cong xuống hơn<br>
+        ③ ウ (u) vs ヲ (wo) — ヲ có thêm nét ngang giữa<br>
+        ④ ナ (na) vs メ (me) — ナ có nét ngang rõ ràng, メ là chéo X
+      </div>
+      <h3>📝 Từ vựng tổng hợp — Các từ Katakana quan trọng nhất</h3>
+      <table>
+        <tr><th>Katakana</th><th>Romaji</th><th>Nghĩa</th><th>Gốc</th></tr>
+        <tr><td>マンション</td><td>manshon</td><td>căn hộ chung cư</td><td>mansion</td></tr>
+        <tr><td>レストラン</td><td>resutoran</td><td>nhà hàng</td><td>restaurant (Pháp)</td></tr>
+        <tr><td>ラーメン</td><td>raamen</td><td>ramen (mì Nhật)</td><td>拉麺 (Trung Quốc)</td></tr>
+        <tr><td>メニュー</td><td>menyuu</td><td>thực đơn</td><td>menu (Pháp)</td></tr>
+        <tr><td>ワイン</td><td>wain</td><td>rượu vang</td><td>wine</td></tr>
+        <tr><td>ロボット</td><td>robotto</td><td>người máy</td><td>robot</td></tr>
+        <tr><td>ミュージック</td><td>myuujikku</td><td>âm nhạc</td><td>music</td></tr>
+        <tr><td>リモコン</td><td>rimokon</td><td>điều khiển từ xa</td><td>remote control</td></tr>
+        <tr><td>ランチ</td><td>ranchi</td><td>bữa trưa</td><td>lunch</td></tr>
+        <tr><td>モール</td><td>mooru</td><td>trung tâm thương mại</td><td>mall</td></tr>
+      </table>
+      <h3>🗺️ Bảng Katakana đầy đủ 46 chữ</h3>
+      <div style="overflow-x:auto;">
+        <table style="text-align:center;">
+          <tr><th></th><th>a</th><th>i</th><th>u</th><th>e</th><th>o</th></tr>
+          <tr><th>—</th><td>ア</td><td>イ</td><td>ウ</td><td>エ</td><td>オ</td></tr>
+          <tr><th>k</th><td>カ</td><td>キ</td><td>ク</td><td>ケ</td><td>コ</td></tr>
+          <tr><th>s</th><td>サ</td><td><b style="color:var(--hanko)">シ</b>shi</td><td>ス</td><td>セ</td><td>ソ</td></tr>
+          <tr><th>t</th><td>タ</td><td><b style="color:var(--hanko)">チ</b>chi</td><td><b style="color:var(--hanko)">ツ</b>tsu</td><td>テ</td><td>ト</td></tr>
+          <tr><th>n</th><td>ナ</td><td>ニ</td><td>ヌ</td><td>ネ</td><td>ノ</td></tr>
+          <tr><th>h</th><td>ハ</td><td>ヒ</td><td><b style="color:var(--hanko)">フ</b>fu</td><td>ヘ</td><td>ホ</td></tr>
+          <tr><th>m</th><td>マ</td><td>ミ</td><td>ム</td><td>メ</td><td>モ</td></tr>
+          <tr><th>y</th><td>ヤ</td><td style="opacity:.3">—</td><td>ユ</td><td style="opacity:.3">—</td><td>ヨ</td></tr>
+          <tr><th>r</th><td>ラ</td><td>リ</td><td>ル</td><td>レ</td><td>ロ</td></tr>
+          <tr><th>w</th><td>ワ</td><td style="opacity:.3">—</td><td style="opacity:.3">—</td><td style="opacity:.3">—</td><td>ヲ</td></tr>
+          <tr><th>n</th><td colspan="5" style="font-size:1.3rem;font-family:var(--font-display)">ン</td></tr>
+        </table>
+      </div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg13"></div>
+    </section>
+<section class="section" id="bai14">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 3 · Ngày 3 — Kana Nâng cao</div>
+      <h2>第14課 — 濁音・半濁音: Âm Đục & Âm Bán Đục (が・ざ・だ・ば・ぱ行)</h2>
+      <div class="box note">
+        <b>📌 Hệ thống dấu phụ tiếng Nhật</b><br>
+        ・<b>濁点 dakuten「゛」</b> (2 nét nhỏ trên phải): biến phụ âm vô thanh → hữu thanh (k→g, s→z, t→d, h→b)<br>
+        ・<b>半濁点 handakuten「゜」</b> (vòng tròn nhỏ): chỉ dùng cho は行 → ぱ行 (h→p)<br>
+        Áp dụng y hệt cho Katakana (ガ、ザ、ダ、バ、パ行).
+      </div>
+      <h3>🔊 Bảng Dakuten đầy đủ</h3>
+      <table>
+        <tr><th>Gốc</th><th>+ 濁点「゛」</th><th>Âm mới</th><th>Ví dụ quan trọng</th></tr>
+        <tr><td>か行 (k)</td><td><b style="font-size:1.2rem">が ぎ ぐ げ ご</b></td><td>ga gi gu ge go</td><td>にほんご (nihon<b>go</b>) = tiếng Nhật · がくせい = học sinh</td></tr>
+        <tr><td>さ行 (s)</td><td><b style="font-size:1.2rem">ざ じ ず ぜ ぞ</b></td><td>za <b>ji</b> zu ze zo</td><td>じかん (jikan) = thời gian · ざっし = tạp chí</td></tr>
+        <tr><td>た行 (t)</td><td><b style="font-size:1.2rem">だ ぢ づ で ど</b></td><td>da <b>ji</b> <b>zu</b> de do</td><td>でんしゃ (densha) = tàu điện · どこ (doko) = ở đâu</td></tr>
+        <tr><td>は行 (h)</td><td><b style="font-size:1.2rem">ば び ぶ べ ぼ</b></td><td>ba bi bu be bo</td><td>バス (basu) = xe bus · べんきょう = học bài</td></tr>
+      </table>
+      <table style="margin-top:14px">
+        <tr><th>Gốc</th><th>+ 半濁点「゜」</th><th>Âm mới</th><th>Ví dụ</th></tr>
+        <tr><td>は行 (h)</td><td><b style="font-size:1.2rem">ぱ ぴ ぷ ぺ ぽ</b></td><td>pa pi pu pe po</td><td>ぱーてぃ (paatii) = bữa tiệc · ぺん (pen) = bút</td></tr>
+      </table>
+      <div class="box warn">
+        <b>⚠️ Ngoại lệ trong hàng ざ và だ</b><br>
+        ・「じ」(ji từ さ行) và「ぢ」(ji từ た行): cùng đọc "ji" nhưng viết khác. Thực tế「じ」được dùng nhiều hơn.<br>
+        ・「ず」(zu từ さ行) và「づ」(zu từ た行): cùng đọc "zu". Thực tế「ず」được dùng nhiều hơn.
+      </div>
+      <h3>📝 Từ vựng Dakuten quan trọng</h3>
+      <table>
+        <tr><th>Từ (Kana)</th><th>Romaji</th><th>Nghĩa</th></tr>
+        <tr><td>がくせい (学生)</td><td>gakusei</td><td>học sinh / sinh viên ⭐</td></tr>
+        <tr><td>ごはん (ご飯)</td><td>gohan</td><td>cơm / bữa ăn ⭐</td></tr>
+        <tr><td>じかん (時間)</td><td>jikan</td><td>thời gian ⭐</td></tr>
+        <tr><td>でんしゃ (電車)</td><td>densha</td><td>tàu điện ⭐</td></tr>
+        <tr><td>どうぞ</td><td>douzo</td><td>mời / xin cứ tự nhiên ⭐</td></tr>
+        <tr><td>べんきょう (勉強)</td><td>benkyou</td><td>học bài ⭐</td></tr>
+        <tr><td>ざっし (雑誌)</td><td>zasshi</td><td>tạp chí</td></tr>
+        <tr><td>ぼうし (帽子)</td><td>boushi</td><td>mũ nón</td></tr>
+        <tr><td>ぺん (ペン)</td><td>pen</td><td>bút (từ tiếng Anh)</td></tr>
+        <tr><td>だいがく (大学)</td><td>daigaku</td><td>trường đại học ⭐</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg14"></div>
+    </section>
+<section class="section" id="bai15">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 3 · Ngày 4</div>
+      <h2>第15課 — 拗音 Yōon: Âm Ghép (きゃ, しゃ, ちゃ…)</h2>
+      <div class="box note">
+        <b>📌 Âm ghép là gì?</b><br>
+        Khi một chữ い-row (き, し, ち, に, ひ, み, り, ぎ, じ, び, ぴ) kết hợp với「や・ゆ・よ」nhỏ (ゃ・ゅ・ょ), tạo thành âm đơn mới. Chữ「や・ゆ・よ」<b>viết nhỏ</b> để phân biệt với âm riêng lẻ.
+      </div>
+      <h3>🔊 Bảng âm ghép cơ bản</h3>
+      <table>
+        <tr><th>Gốc + や/ゆ/よ nhỏ</th><th>Romaji</th><th>Ví dụ từ quan trọng</th></tr>
+        <tr><td><b>きゃ・きゅ・きょ</b></td><td>kya · kyu · kyo</td><td>きょう (kyou) = hôm nay ⭐ · きゅうきゅう = cấp cứu</td></tr>
+        <tr><td><b>しゃ・しゅ・しょ</b></td><td>sha · shu · sho</td><td>しゃしん (shashin) = ảnh chụp · しょうがっこう = tiểu học</td></tr>
+        <tr><td><b>ちゃ・ちゅ・ちょ</b></td><td>cha · chu · cho</td><td>おちゃ (ocha) = trà ⭐ · ちょっと = một chút ⭐</td></tr>
+        <tr><td><b>にゃ・にゅ・にょ</b></td><td>nya · nyu · nyo</td><td>にゅうがく (nyuugaku) = nhập học</td></tr>
+        <tr><td><b>ひゃ・ひゅ・ひょ</b></td><td>hya · hyu · hyo</td><td>ひゃく (hyaku) = 100 ⭐</td></tr>
+        <tr><td><b>みゃ・みゅ・みょ</b></td><td>mya · myu · myo</td><td>Ít gặp trong từ thông thường</td></tr>
+        <tr><td><b>りゃ・りゅ・りょ</b></td><td>rya · ryu · ryo</td><td>りょこう (ryokou) = du lịch ⭐ · りゅう = rồng</td></tr>
+        <tr><td><b>ぎゃ・ぎゅ・ぎょ</b></td><td>gya · gyu · gyo</td><td>ぎゅうにゅう (gyuunyuu) = sữa bò ⭐</td></tr>
+        <tr><td><b>じゃ・じゅ・じょ</b></td><td>ja · ju · jo</td><td>じゃ (ja) = vậy thì ⭐ · じゅぎょう = tiết học</td></tr>
+        <tr><td><b>びゃ・びゅ・びょ</b></td><td>bya · byu · byo</td><td>びょういん (byouin) = bệnh viện ⭐</td></tr>
+        <tr><td><b>ぴゃ・ぴゅ・ぴょ</b></td><td>pya · pyu · pyo</td><td>Ít gặp trong từ thông thường</td></tr>
+      </table>
+      <div class="box warn">
+        <b>⚠️ Lỗi thường gặp: viết ゃゅょ sai kích thước</b><br>
+        ・「きや」(ki-ya = 2 âm riêng biệt) ≠「きゃ」(kya = 1 âm ghép)<br>
+        ・Chữ nhỏ phải được viết/đánh bằng "lya/xya" trên bàn phím Nhật, hoặc "kya" trực tiếp.<br>
+        ・Trên điện thoại: gõ "kya" → tự ghép đúng. Trên máy tính romaji: gõ "kya" = きゃ.
+      </div>
+      <h3>📝 Từ vựng âm ghép quan trọng nhất</h3>
+      <table>
+        <tr><th>Từ</th><th>Romaji</th><th>Nghĩa</th><th>Tần suất</th></tr>
+        <tr><td>きょう (今日)</td><td>kyou</td><td>hôm nay</td><td>⭐⭐⭐ Dùng mỗi ngày!</td></tr>
+        <tr><td>ちょっと</td><td>chotto</td><td>một chút / thông cảm</td><td>⭐⭐⭐ Cực hay dùng!</td></tr>
+        <tr><td>りょこう (旅行)</td><td>ryokou</td><td>du lịch</td><td>⭐⭐</td></tr>
+        <tr><td>びょういん (病院)</td><td>byouin</td><td>bệnh viện</td><td>⭐⭐</td></tr>
+        <tr><td>おちゃ (お茶)</td><td>ocha</td><td>trà</td><td>⭐⭐</td></tr>
+        <tr><td>ぎゅうにゅう (牛乳)</td><td>gyuunyuu</td><td>sữa bò</td><td>⭐⭐</td></tr>
+        <tr><td>しゃしん (写真)</td><td>shashin</td><td>ảnh chụp</td><td>⭐⭐</td></tr>
+        <tr><td>じゃあ</td><td>jaa</td><td>vậy thì / thôi nhé (kết thúc câu)</td><td>⭐⭐⭐</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg15"></div>
+    </section>
+<section class="section" id="bai16">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 3 · Ngày 5</div>
+      <h2>第16課 — Đặc Biệt: Trường Âm · Phụ Âm Đôi · Âm Đặc Biệt Katakana</h2>
+      <h3>1️⃣ 長音 Chōon — Kéo dài nguyên âm</h3>
+      <table>
+        <tr><th>Hệ chữ</th><th>Cách kéo dài</th><th>Ví dụ</th></tr>
+        <tr><td>Hiragana</td><td>Thêm nguyên âm tương ứng vào sau: aa→ああ, ii→いい, uu→うう, ei→えい (hoặc ええ), ou→おう (hoặc おお)</td><td>おかあさん (okaasan) = mẹ · おにいさん (oniisan) = anh trai · こうこう (koukou) = trung học</td></tr>
+        <tr><td>Katakana</td><td>Dùng「ー」cho tất cả nguyên âm dài</td><td>コーヒー (koohii) = cà phê · ケーキ (keeki) = bánh kem · スーパー (suupaa) = siêu thị</td></tr>
+      </table>
+      <div class="box warn">
+        <b>⚠️ Lỗi phổ biến: đọc thiếu trường âm</b><br>
+        おばさん (obasan) = bà (người phụ nữ trung niên) ≠ おばあさん (obaasan) = bà nội/ngoại<br>
+        おじさん (ojisan) = chú/bác ≠ おじいさん (ojiisan) = ông nội/ngoại<br>
+        Sai 1 âm → nghĩa hoàn toàn khác!
+      </div>
+      <h3>2️⃣ 促音 Sokuon「っ/ッ」— Phụ Âm Đôi</h3>
+      <div class="box note">
+        <b>📌「っ」nhỏ (tsu nhỏ)</b> = dừng 1 nhịp trước phụ âm tiếp theo. Không phát ra tiếng nhưng có độ dài bằng 1 âm tiết.<br>
+        Ví dụ: きって (kitte) = tem thư — dừng 1 nhịp ở giữa trước "te"<br>
+        きて (kite) = hãy đến — không dừng<br>
+        Mẹo: Hình dung như bạn đang "nín thở" 1 nhịp rồi mới nói âm tiếp theo.
+      </div>
+      <table>
+        <tr><th>Từ</th><th>Romaji</th><th>Nghĩa</th><th>Lưu ý</th></tr>
+        <tr><td>きって (切手)</td><td>kitte</td><td>tem thư</td><td>きて (kite=đến) ≠ きって (kitte=tem)</td></tr>
+        <tr><td>ざっし (雑誌)</td><td>zasshi</td><td>tạp chí</td><td>「っし」= dừng rồi "shi"</td></tr>
+        <tr><td>いっぽん (一本)</td><td>ippon</td><td>1 cái (đồ dài)</td><td>っ→p trước は行</td></tr>
+        <tr><td>ざっと</td><td>zatto</td><td>sơ qua, đại khái</td><td>Từ phổ biến trong hội thoại</td></tr>
+      </table>
+      <h3>3️⃣ Âm Đặc Biệt Katakana (dùng cho từ nước ngoài)</h3>
+      <table>
+        <tr><th>Âm</th><th>Katakana</th><th>Ví dụ</th></tr>
+        <tr><td>fa / fi / fe / fo</td><td>ファ・フィ・フェ・フォ</td><td>ファン (fan) · フィリピン (Philippines) · フォーク (fork)</td></tr>
+        <tr><td>va / vi / ve / vo</td><td>ヴァ・ヴィ・ヴェ・ヴォ</td><td>ヴァイオリン (violin) · ヴィーナス (Venus)</td></tr>
+        <tr><td>ti / di / tu / du</td><td>ティ・ディ・トゥ・ドゥ</td><td>ティッシュ (tissue) · ディスコ (disco)</td></tr>
+        <tr><td>tsa / tsi / tse / tso</td><td>ツァ・ツィ・ツェ・ツォ</td><td>モーツァルト (Mozart)</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Không cần thuộc hết ngay!</b> Các âm đặc biệt này gặp khi đọc tên nước ngoài. Gặp đâu tra đó — não tự nhớ theo thời gian.</div>
+      <h3>🃏 Flashcard Bài 16</h3><div class="flash-grid" id="fg16"></div>
+    </section>
+<section class="section" id="bai17">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 4 · Ngày 1</div>
+      <h2>第17課 — Số Đếm 1–10,000 + Ngày Tháng + Giờ Giấc</h2>
+      <h3>🔢 Số đếm cơ bản</h3>
+      <table>
+        <tr><th>Số</th><th>Kanji</th><th>Hiragana</th><th>Romaji</th></tr>
+        <tr><td>0</td><td>零</td><td>ぜろ/れい</td><td>zero / rei</td></tr>
+        <tr><td>1</td><td>一</td><td>いち</td><td>ichi</td></tr>
+        <tr><td>2</td><td>二</td><td>に</td><td>ni</td></tr>
+        <tr><td>3</td><td>三</td><td>さん</td><td>san</td></tr>
+        <tr><td>4</td><td>四</td><td>し/よん</td><td>shi / yon</td></tr>
+        <tr><td>5</td><td>五</td><td>ご</td><td>go</td></tr>
+        <tr><td>6</td><td>六</td><td>ろく</td><td>roku</td></tr>
+        <tr><td>7</td><td>七</td><td>しち/なな</td><td>shichi / nana</td></tr>
+        <tr><td>8</td><td>八</td><td>はち</td><td>hachi</td></tr>
+        <tr><td>9</td><td>九</td><td>く/きゅう</td><td>ku / kyuu</td></tr>
+        <tr><td>10</td><td>十</td><td>じゅう</td><td>juu</td></tr>
+        <tr><td>100</td><td>百</td><td>ひゃく</td><td>hyaku</td></tr>
+        <tr><td>1,000</td><td>千</td><td>せん</td><td>sen</td></tr>
+        <tr><td>10,000</td><td>万</td><td>まん</td><td>man</td></tr>
+      </table>
+      <div class="box warn">
+        <b>⚠️ 4 và 9 có 2 cách đọc — PHẢI nhớ ngữ cảnh:</b><br>
+        ・4: し (shi) → tránh dùng vì đồng âm「死」(chết) → dùng <b>よん (yon)</b> thay thế khi đếm đồ vật<br>
+        ・9: く (ku) → tránh vì đồng âm「苦」(khổ) → dùng <b>きゅう (kyuu)</b> thay thế<br>
+        ・7: しち (shichi) khi đọc giờ, <b>なな (nana)</b> khi đếm đồ vật
+      </div>
+      <h3>📅 Ngày tháng</h3>
+      <table>
+        <tr><th>Tháng (月 tsuki)</th><th>Ngày trong tuần (曜日 youbi)</th></tr>
+        <tr>
+          <td>1月 いちがつ (ichigatsu)<br>2月 にがつ (nigatsu)<br>3月 さんがつ (sangatsu)<br>4月 しがつ (shigatsu)<br>5月 ごがつ (gogatsu)<br>6月 ろくがつ (rokugatsu)<br>7月 しちがつ (shichigatsu)<br>8月 はちがつ (hachigatsu)<br>9月 くがつ (kugatsu)<br>10月 じゅうがつ (juugatsu)<br>11月 じゅういちがつ (juuichigatsu)<br>12月 じゅうにがつ (juunigatsu)</td>
+          <td>月曜日 げつようび = thứ Hai<br>火曜日 かようび = thứ Ba<br>水曜日 すいようび = thứ Tư<br>木曜日 もくようび = thứ Năm<br>金曜日 きんようび = thứ Sáu<br>土曜日 どようび = thứ Bảy<br>日曜日 にちようび = Chủ Nhật<br><br><small>Mẹo nhớ: 月火水木金土日 = Mặt Trăng, Lửa, Nước, Gỗ, Vàng, Đất, Mặt Trời</small></td>
+        </tr>
+      </table>
+      <h3>🕐 Giờ giấc</h3>
+      <table>
+        <tr><th>Cấu trúc</th><th>Ví dụ</th><th>Nghĩa</th></tr>
+        <tr><td>〜じ (〜時) = giờ</td><td>いちじ = 1 giờ · さんじ = 3 giờ</td><td>〜時 = đồng hồ chỉ giờ</td></tr>
+        <tr><td>〜ふん/ぷん (〜分) = phút</td><td>じゅうごふん = 15 phút · さんじっぷん = 30 phút</td><td>〜分 = phút</td></tr>
+        <tr><td>ごぜん = buổi sáng (AM)<br>ごご = buổi chiều (PM)</td><td>ごぜんはちじ = 8 giờ sáng<br>ごごさんじ = 3 giờ chiều</td><td>前=trước, 後=sau</td></tr>
+      </table>
+      <div class="box tip">
+        <b>💡 Hội thoại hỏi giờ</b>
+        <div style="margin-top:8px">
+        A: いまなんじですか？ (Ima nanji desu ka? — Bây giờ mấy giờ?)<br>
+        B: ごごにじはんです。 (Gogo niji han desu. — 2 giờ rưỡi chiều.)
+        </div>
+      </div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg17"></div>
+    </section>
+<section class="section" id="bai18">
+      <div class="eyebrow">Giai đoạn 0 · Tuần 4 · Ngày 4–5 — Ôn tập & Kiểm tra</div>
+      <h2>第18課 — Ôn Tập Kana + SRS Tuần 3–4 + Kiểm Tra Chương 1</h2>
+      <h3>🔁 Kế hoạch SRS Tuần 3–4</h3>
+      <table>
+        <tr><th>Ngày</th><th>Nội dung ôn</th><th>Thời gian</th></tr>
+        <tr><td>Ngày ôn 1</td><td>Toàn bộ Hiragana 46 chữ + từ vựng Bài 1–9</td><td>30 phút</td></tr>
+        <tr><td>Ngày ôn 2</td><td>Toàn bộ Katakana 46 chữ + từ vựng Bài 10–13</td><td>30 phút</td></tr>
+        <tr><td>Ngày ôn 3</td><td>Dakuten + Âm ghép + Đặc biệt (Bài 14–16)</td><td>30 phút</td></tr>
+        <tr><td>Ngày ôn 4</td><td>Số đếm, ngày tháng, giờ giấc (Bài 17)</td><td>30 phút</td></tr>
+      </table>
+      <div class="box note" id="srs2">
+        <b>📌 SRS Tuần 3–4: Lịch ôn tập chuẩn</b><br>
+        Bài 10–17 cần ôn theo chu kỳ: Học → +1 ngày → +3 ngày → +7 ngày → +14 ngày → +30 ngày.<br>
+        Dùng Anki: tạo deck riêng "Katakana + Dakuten + Yōon" và thêm tất cả flashcard từ Bài 10–17 vào.
+      </div>
+    </section>
+<section class="section" id="bai205">
+      <div class="eyebrow">📘 Bài bổ sung · Kana Nâng Cao</div>
+      <h2>第205課 — Bổ Sung: Những Lỗi Phát Âm Người Việt Hay Mắc Phải</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Sau khi hoàn thành Bài 1–18, đây là các lỗi phát âm phổ biến nhất của người Việt khi học tiếng Nhật — sửa sớm để tránh thành thói quen khó bỏ.</p>
+      <table>
+        <tr><th>Lỗi thường gặp</th><th>Đúng phải là</th><th>Giải thích</th></tr>
+        <tr><td>つ đọc thành "tsu"</td><td>[tsɯ] — âm xát</td><td>Đầu lưỡi chạm răng rồi bật hơi xát, không phải "t" đơn thuần như tiếng Việt.</td></tr>
+        <tr><td>ふ đọc thành "fu" kiểu tiếng Anh</td><td>[ɸɯ] — âm môi-môi</td><td>Hai môi khép nhẹ thổi hơi ra, khác hoàn toàn với "f" cắn môi dưới của tiếng Anh.</td></tr>
+        <tr><td>Trường âm bị đọc ngắn (おかあさん → おかさん)</td><td>Giữ đủ 2 nhịp (mora)</td><td>Trường âm sai có thể đổi hẳn nghĩa từ: おばさん (cô/dì) vs おばあさん (bà).</td></tr>
+        <tr><td>ん cuối từ bị nuốt mất</td><td>Giữ đủ 1 nhịp mũi</td><td>ほん (sách) đọc thiếu ん sẽ nghe như ほ, gây hiểu nhầm.</td></tr>
+        <tr><td>Phụ âm đôi っ bị bỏ qua (きって → きて)</td><td>Ngưng hơi 1 nhịp trước phụ âm sau</td><td>きって (tem) khác hoàn toàn きて (hãy đến) nếu bỏ qua っ.</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Cách luyện</b> Ghi âm giọng mình đọc rồi so sánh với audio chuẩn (Forvo, NHK). Đặc biệt chú ý trường âm và phụ âm đôi vì đây là 2 lỗi gây hiểu nhầm nghĩa nhiều nhất.</div>
+      <h3>🃏 Flashcard: Cặp từ dễ nhầm</h3><div class="flash-grid" id="fg205"></div>
+    </section>
+<section class="section" id="bai206">
+      <div class="eyebrow">📘 Bài bổ sung · Katakana Nâng Cao</div>
+      <h2>第206課 — Bổ Sung: Từ Mượn Katakana Thường Gặp Trong Đời Sống</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">150+ từ mượn Katakana xuất hiện hàng ngày nhưng không được dạy có hệ thống — học nhóm 16 từ cốt lõi dưới đây trước.</p>
+      <table>
+        <tr><th>Katakana</th><th>Đọc</th><th>Nghĩa (gốc)</th></tr>
+        <tr><td>コンビニ</td><td>konbini</td><td>cửa hàng tiện lợi (convenience store)</td></tr>
+        <tr><td>アルバイト</td><td>arubaito</td><td>làm thêm (từ tiếng Đức "Arbeit")</td></tr>
+        <tr><td>パソコン</td><td>pasokon</td><td>máy tính cá nhân (personal computer)</td></tr>
+        <tr><td>マンション</td><td>manshon</td><td>chung cư cao cấp (mansion, nghĩa đã đổi khác tiếng Anh)</td></tr>
+        <tr><td>サラリーマン</td><td>sararīman</td><td>nhân viên văn phòng (salary + man, từ Nhật tự chế)</td></tr>
+        <tr><td>コスパ</td><td>kosupa</td><td>hiệu quả/giá (cost performance, viết tắt)</td></tr>
+        <tr><td>シェア</td><td>shea</td><td>chia sẻ (share)</td></tr>
+        <tr><td>テンション</td><td>tenshon</td><td>tinh thần/khí thế (tension, nghĩa đã đổi khác)</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Cẩn thận "Wasei-eigo"</b> Nhiều từ Katakana trông giống tiếng Anh nhưng nghĩa đã bị Nhật hóa hoàn toàn khác (テンション không phải "sự căng thẳng" mà là "khí thế/tâm trạng phấn khích"). Đừng suy luận nghĩa chỉ dựa vào gốc tiếng Anh.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg206"></div>
+    </section>
+<section class="section" id="bai221">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 2 · Kana</div>
+      <h2>第221課 — Bổ Sung: Số Đếm & Đơn Vị Đo Lường Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Số đếm tiếng Nhật có 2 hệ (Hán số và số đếm vật) cùng đơn vị đo lường đổi âm phức tạp — bảng tổng hợp giúp tránh nhầm lẫn.</p>
+      <table>
+        <tr><th>Số</th><th>Đọc (Hán số)</th><th>~つ (số đếm chung)</th></tr>
+        <tr><td>1</td><td>いち</td><td>ひとつ</td></tr>
+        <tr><td>2</td><td>に</td><td>ふたつ</td></tr>
+        <tr><td>3</td><td>さん</td><td>みっつ</td></tr>
+        <tr><td>4</td><td>し / よん</td><td>よっつ</td></tr>
+        <tr><td>7</td><td>しち / なな</td><td>ななつ</td></tr>
+        <tr><td>9</td><td>きゅう / く</td><td>ここのつ</td></tr>
+        <tr><td>10</td><td>じゅう</td><td>とお</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Đơn vị đếm hay đổi âm (biến âm)</b> 一本(いっぽん)・三本(さんぼん)・六本(ろっぽん)・八本(はっぽん) — cùng là 本 nhưng đọc khác nhau tùy số đứng trước, cần học thuộc từng cụm chứ không suy luận máy móc.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg221"></div>
+    </section>
+<section class="section" id="bai222">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 2 · Giao Tiếp Cơ Bản</div>
+      <h2>第222課 — Bổ Sung: Câu Chào Hỏi & Giao Tiếp Hàng Ngày</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">10 câu giao tiếp cơ bản nhất cần thuộc lòng ngay từ tuần đầu học tiếng Nhật.</p>
+      <table>
+        <tr><th>Câu</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>おはようございます</td><td>ohayou gozaimasu</td><td>Chào buổi sáng (lịch sự)</td></tr>
+        <tr><td>お疲れ様です</td><td>otsukaresama desu</td><td>Anh/chị đã vất vả rồi (chào khi tan làm/gặp đồng nghiệp)</td></tr>
+        <tr><td>お先に失礼します</td><td>osaki ni shitsurei shimasu</td><td>Xin phép về trước (khi rời công ty trước người khác)</td></tr>
+        <tr><td>よろしくお願いします</td><td>yoroshiku onegaishimasu</td><td>Mong được giúp đỡ/hợp tác (dùng rất nhiều tình huống)</td></tr>
+        <tr><td>お邪魔します</td><td>ojama shimasu</td><td>Xin phép làm phiền (khi vào nhà người khác)</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Ghi nhớ</b> よろしくお願いします là câu "vạn năng" nhất tiếng Nhật — dùng khi mới gặp, khi nhờ vả, khi kết thúc email công việc. Học thuộc câu này trước tiên!</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg222"></div>
+    </section>
+<section class="section" id="bai241">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 3 · Kana</div>
+      <h2>第241課 — Bổ Sung: Cách Đọc Ngày Tháng & Giờ Giấc</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Ngày trong tháng có cách đọc bất quy tắc cho 1-10 và 14,20,24 — bảng ghi nhớ bắt buộc.</p>
+      <table>
+        <tr><th>Ngày</th><th>Đọc</th></tr>
+        <tr><td>1日</td><td>ついたち</td></tr>
+        <tr><td>2日</td><td>ふつか</td></tr>
+        <tr><td>3日</td><td>みっか</td></tr>
+        <tr><td>10日</td><td>とおか</td></tr>
+        <tr><td>14日</td><td>じゅうよっか</td></tr>
+        <tr><td>20日</td><td>はつか</td></tr>
+        <tr><td>24日</td><td>にじゅうよっか</td></tr>
+      </table>
+      <div class="box warn"><b>⚠️ Đặc biệt</b> Từ 1-10 (trừ số ghép với じゅう) đọc theo âm thuần Nhật bất quy tắc, phải học thuộc riêng — không suy luận theo quy tắc số đếm thông thường.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg241"></div>
+    </section>
+<section class="section" id="bai242">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 3 · Giao Tiếp</div>
+      <h2>第242課 — Bổ Sung: Đại Từ Nhân Xưng & Cách Xưng Hô</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Tiếng Nhật có nhiều đại từ "tôi/bạn" khác nhau tùy giới tính, độ tuổi, mức độ trang trọng.</p>
+      <table>
+        <tr><th>Từ</th><th>Đọc</th><th>Dùng khi nào</th></tr>
+        <tr><td>私</td><td>わたし</td><td>Trung tính, lịch sự, dùng được mọi tình huống</td></tr>
+        <tr><td>僕</td><td>ぼく</td><td>Nam giới dùng, thân mật nhưng vẫn lịch sự</td></tr>
+        <tr><td>俺</td><td>おれ</td><td>Nam giới, rất thân mật, không dùng nơi trang trọng</td></tr>
+        <tr><td>あなた</td><td>anata</td><td>"Bạn" — hạn chế dùng trực tiếp, người Nhật thường gọi tên + さん</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Lưu ý quan trọng</b> Người Nhật hiếm khi dùng あなた khi nói chuyện trực tiếp — thường gọi tên người đó + さん/くん thay vì "bạn". Dùng あなた nhiều nghe khá xa cách hoặc kỳ lạ.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg242"></div>
+    </section>
+<section class="section" id="bai261">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 4 · Kỹ Năng Viết</div>
+      <h2>第261課 — Bổ Sung: Cấu Trúc Thư Tay Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Cấu trúc mở đầu/kết thúc thư tay tiếng Nhật cơ bản — dùng được cho thiệp chúc mừng, thư cảm ơn đơn giản.</p>
+      <table>
+        <tr><th>Phần</th><th>Mẫu câu</th><th>Nghĩa</th></tr>
+        <tr><td>Mở đầu (mùa)</td><td>桜の季節になりました。</td><td>Đã vào mùa hoa anh đào rồi.</td></tr>
+        <tr><td>Hỏi thăm</td><td>お元気でお過ごしでしょうか。</td><td>Dạo này bạn có khỏe không?</td></tr>
+        <tr><td>Kết thúc</td><td>季節の変わり目ですので、お体にお気をつけください。</td><td>Đang lúc giao mùa, mong bạn giữ gìn sức khỏe.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg261"></div>
+    </section>
+<section class="section" id="bai262">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 4 · Từ Tượng Thanh</div>
+      <h2>第262課 — Bổ Sung: Từ Tượng Thanh Tượng Hình Cơ Bản (擬音語・擬態語)</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Nhóm từ mô phỏng âm thanh/trạng thái rất đặc trưng của tiếng Nhật, khó dịch sang ngôn ngữ khác nhưng cực kỳ phổ biến trong hội thoại.</p>
+      <table>
+        <tr><th>Từ</th><th>Đọc</th><th>Nghĩa/Cảm giác</th></tr>
+        <tr><td>わくわく</td><td>waku waku</td><td>hồi hộp háo hức (chờ đợi điều vui)</td></tr>
+        <tr><td>どきどき</td><td>doki doki</td><td>hồi hộp lo lắng (tim đập nhanh)</td></tr>
+        <tr><td>いらいら</td><td>ira ira</td><td>bực bội, khó chịu</td></tr>
+        <tr><td>にこにこ</td><td>niko niko</td><td>cười tươi, luôn mỉm cười</td></tr>
+        <tr><td>ぐっすり</td><td>gussuri</td><td>ngủ say</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg262"></div>
+    </section>
+<section class="section" id="bai281">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 5 · Kana</div>
+      <h2>第281課 — Bổ Sung: Cách Đọc Họ Tên Người Nhật Phổ Biến</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Kanji trong tên người Nhật thường có cách đọc riêng, khác với đọc thông thường — bảng họ phổ biến nhất.</p>
+      <table>
+        <tr><th>Họ (Kanji)</th><th>Đọc</th></tr>
+        <tr><td>佐藤</td><td>さとう</td></tr>
+        <tr><td>鈴木</td><td>すずき</td></tr>
+        <tr><td>高橋</td><td>たかはし</td></tr>
+        <tr><td>田中</td><td>たなか</td></tr>
+        <tr><td>渡辺</td><td>わたなべ</td></tr>
+      </table>
+      <div class="box tip"><b>💡 Ghi chú</b> 5 họ này chiếm phần lớn dân số Nhật Bản — nhận biết được giúp bạn tự tin hơn khi đọc danh thiếp hoặc giới thiệu bản thân trong môi trường công sở.</div>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg281"></div>
+    </section>
+<section class="section" id="bai282">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 5 · Ôn Tập Câu Hỏi</div>
+      <h2>第282課 — Ôn Tập: Từ Để Hỏi Cơ Bản 何・どこ・いつ・だれ</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Tổng hợp lại 4 từ để hỏi nền tảng nhất — đảm bảo phản xạ tự nhiên trước khi học các mẫu câu phức tạp hơn.</p>
+      <table>
+        <tr><th>Từ hỏi</th><th>Ý nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>何</td><td>cái gì (nan/nani tùy từ theo sau)</td><td>これは<b>何</b>ですか。= Đây là cái gì?</td></tr>
+        <tr><td>どこ</td><td>ở đâu</td><td>トイレは<b>どこ</b>ですか。= Nhà vệ sinh ở đâu?</td></tr>
+        <tr><td>いつ</td><td>khi nào</td><td><b>いつ</b>日本に来ましたか。= Bạn đến Nhật khi nào?</td></tr>
+        <tr><td>だれ</td><td>ai</td><td>あの人は<b>だれ</b>ですか。= Người đó là ai?</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg282"></div>
+    </section>
+<section class="section" id="bai301">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 6 · Kana</div>
+      <h2>第301課 — Bổ Sung: Phân Biệt Trợ Từ は・も・こそ Trong Câu Đơn Giản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">3 trợ từ cơ bản dùng để nhấn mạnh chủ đề — nền tảng trước khi học は/が nâng cao.</p>
+      <table>
+        <tr><th>Trợ từ</th><th>Ý nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>は</td><td>Chủ đề chính của câu</td><td>私<b>は</b>学生です。</td></tr>
+        <tr><td>も</td><td>Cũng, tương tự (thêm vào)</td><td>私<b>も</b>学生です。= Tôi cũng là học sinh.</td></tr>
+        <tr><td>こそ</td><td>Chính là, nhấn mạnh mạnh nhất</td><td>これ<b>こそ</b>私が欲しかったものだ。= Đây chính là thứ tôi muốn.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg301"></div>
+    </section>
+<section class="section" id="bai302">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 6 · Từ Vựng</div>
+      <h2>第302課 — Bổ Sung: Từ Vựng Trường Học Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng thiết yếu trong môi trường học đường — nền tảng giao tiếp hàng ngày.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>教室</td><td>きょうしつ</td><td>lớp học</td></tr>
+        <tr><td>宿題</td><td>しゅくだい</td><td>bài tập về nhà</td></tr>
+        <tr><td>試験</td><td>しけん</td><td>kỳ thi</td></tr>
+        <tr><td>休み時間</td><td>やすみじかん</td><td>giờ ra chơi</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg302"></div>
+    </section>
+<section class="section" id="bai321">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 7 · Kana</div>
+      <h2>第321課 — Bổ Sung: Trợ Từ を・で Trong Câu Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Hai trợ từ chỉ tân ngữ và phương tiện/địa điểm hành động — nền tảng cấu trúc câu đơn giản.</p>
+      <table>
+        <tr><th>Trợ từ</th><th>Ý nghĩa</th><th>Ví dụ</th></tr>
+        <tr><td>を</td><td>Tân ngữ trực tiếp của động từ</td><td>ご飯<b>を</b>食べます。= Ăn cơm.</td></tr>
+        <tr><td>で</td><td>Phương tiện/địa điểm diễn ra hành động</td><td>バス<b>で</b>行きます。= Đi bằng xe buýt.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg321"></div>
+    </section>
+<section class="section" id="bai322">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 7 · Từ Vựng</div>
+      <h2>第322課 — Bổ Sung: Từ Vựng Màu Sắc Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng màu sắc — cần thiết khi miêu tả đồ vật hàng ngày.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>赤い</td><td>あかい</td><td>màu đỏ</td></tr>
+        <tr><td>青い</td><td>あおい</td><td>màu xanh dương</td></tr>
+        <tr><td>黄色い</td><td>きいろい</td><td>màu vàng</td></tr>
+        <tr><td>黒い/白い</td><td>くろい/しろい</td><td>màu đen/màu trắng</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg322"></div>
+    </section>
+<section class="section" id="bai341">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 8 · Kana</div>
+      <h2>第341課 — Bổ Sung: Câu Mệnh Lệnh Đơn Giản 〜て/〜ないで</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Cách yêu cầu/ra lệnh cơ bản nhất bằng thể て — dùng phổ biến trong giao tiếp thân mật.</p>
+      <table>
+        <tr><th>Mẫu câu</th><th>Nghĩa</th></tr>
+        <tr><td>ちょっと待っ<b>て</b>。</td><td>Đợi một chút.</td></tr>
+        <tr><td>心配し<b>ないで</b>。</td><td>Đừng lo lắng.</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg341"></div>
+    </section>
+<section class="section" id="bai342">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 8 · Từ Vựng</div>
+      <h2>第342課 — Bổ Sung: Từ Vựng Động Vật Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Tên các con vật quen thuộc — dùng nhiều trong bài học sơ cấp.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>犬</td><td>いぬ</td><td>chó</td></tr>
+        <tr><td>猫</td><td>ねこ</td><td>mèo</td></tr>
+        <tr><td>鳥</td><td>とり</td><td>chim</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg342"></div>
+    </section>
+<section class="section" id="bai361">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 9 · Kana</div>
+      <h2>第361課 — Bổ Sung: Tính Từ い vs な Cách Chia Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Hai loại tính từ tiếng Nhật có cách chia hoàn toàn khác nhau — nền tảng bắt buộc phải nắm chắc.</p>
+      <table>
+        <tr><th>Loại</th><th>Ví dụ</th><th>Phủ định</th></tr>
+        <tr><td>い-tính từ</td><td>高い (cao/đắt)</td><td>高く<b>ない</b></td></tr>
+        <tr><td>な-tính từ</td><td>きれい(な) (đẹp)</td><td>きれいで<b>はない</b></td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg361"></div>
+    </section>
+<section class="section" id="bai362">
+      <div class="eyebrow">📘 Bài bổ sung Vòng 9 · Từ Vựng</div>
+      <h2>第362課 — Bổ Sung: Từ Vựng Trái Cây & Rau Củ Cơ Bản</h2>
+      <p style="font-size:.9rem;color:var(--sumi-soft)">Từ vựng thực phẩm cơ bản — dùng nhiều khi đi chợ/siêu thị.</p>
+      <table>
+        <tr><th>Từ vựng</th><th>Đọc</th><th>Nghĩa</th></tr>
+        <tr><td>りんご</td><td>ringo</td><td>táo</td></tr>
+        <tr><td>野菜</td><td>やさい</td><td>rau củ</td></tr>
+        <tr><td>果物</td><td>くだもの</td><td>trái cây</td></tr>
+      </table>
+      <h3>🃏 Flashcard</h3><div class="flash-grid" id="fg362"></div>
+    </section>
+</div>
+
+<script>
+
+/* ============ SIDEBAR ACTIVE LINK + MOBILE TOGGLE ============ */
+const sidebar = document.getElementById('sidebar');
+ 
+document.querySelectorAll('.sidebar nav a').forEach(link=>{
+  link.addEventListener('click', ()=> sidebar.classList.remove('open'));
+});
+
+/* ============ ACCORDION ============ */
+function toggleAccordion(headEl){
+  const item = headEl.parentElement;
+  const body = headEl.nextElementSibling;
+  const isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+  body.style.maxHeight = !isOpen ? body.scrollHeight + 'px' : 0;
+}
+
+/* ============ COPY CODE ============ */
+function copyCode(btn){
+  const code = btn.previousElementSibling.innerText;
+  navigator.clipboard.writeText(code).then(()=>{
+    const old = btn.textContent;
+    btn.textContent = 'Đã copy ✓';
+    setTimeout(()=> btn.textContent = old, 1500);
+  });
+}
+
+/* ============ FLASHCARDS (generated from data) ============ */
+const flashData = [
+  {front:'あ', back:'a'}, {front:'い', back:'i'}, {front:'う', back:'u'},
+  {front:'え', back:'e'}, {front:'お', back:'o'}
+];
+const flashGrid = document.getElementById('flashGrid');
+flashData.forEach(item=>{
+  const card = document.createElement('div');
+  card.className = 'flashcard';
+  card.innerHTML = `
+    <div class="flashcard-inner">
+      <div class="flashcard-face flashcard-front">${item.front}</div>
+      <div class="flashcard-face flashcard-back">${item.back}</div>
+    </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+  flashGrid.appendChild(card);
+});
+
+ 
+ 
+
+/* ============ FLASHCARDS BÀI 3 ============ */
+const flashData3 = [
+  {front:'さ', back:'sa'}, {front:'し', back:'shi ⚠️'}, {front:'す', back:'su'},
+  {front:'せ', back:'se'}, {front:'そ', back:'so'},
+  {front:'すし', back:'sushi'}, {front:'せんせい', back:'thầy giáo'},
+  {front:'さかな', back:'con cá'}, {front:'そら', back:'bầu trời'}
+];
+const flashGrid3 = document.getElementById('flashGrid3');
+flashData3.forEach(item=>{
+  const card = document.createElement('div');
+  card.className = 'flashcard';
+  card.innerHTML = `<div class="flashcard-inner">
+    <div class="flashcard-face flashcard-front">${item.front}</div>
+    <div class="flashcard-face flashcard-back">${item.back}</div>
+  </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+  flashGrid3.appendChild(card);
+});
+
+/* ============ FLASHCARDS BÀI 2 ============ */
+const flashData2 = [
+  {front:'か', back:'ka'}, {front:'き', back:'ki'}, {front:'く', back:'ku'},
+  {front:'け', back:'ke'}, {front:'こ', back:'ko'},
+  {front:'えき', back:'nhà ga'}, {front:'かお', back:'khuôn mặt'}
+];
+const flashGrid2 = document.getElementById('flashGrid2');
+flashData2.forEach(item=>{
+  const card = document.createElement('div');
+  card.className = 'flashcard';
+  card.innerHTML = `<div class="flashcard-inner">
+    <div class="flashcard-face flashcard-front">${item.front}</div>
+    <div class="flashcard-face flashcard-back">${item.back}</div>
+  </div>`;
+  card.addEventListener('click', ()=> card.classList.toggle('flipped'));
+  flashGrid2.appendChild(card);
+});
+
+/* ============ FLASHCARD GENERATOR ============ */
+function makeFlashcards(gridId, data){
+  const g=document.getElementById(gridId);
+  if(!g)return;
+  data.forEach(item=>{
+    const c=document.createElement('div');c.className='flashcard';
+    c.innerHTML=`<div class="flashcard-inner"><div class="flashcard-face flashcard-front">${item.f}</div><div class="flashcard-face flashcard-back">${item.b}</div></div>`;
+    c.addEventListener('click',()=>c.classList.toggle('flipped'));
+    g.appendChild(c);
+  });
+}
+makeFlashcards('fg4',[{f:'た',b:'ta'},{f:'ち',b:'chi⚠️'},{f:'つ',b:'tsu⚠️'},{f:'て',b:'te'},{f:'と',b:'to'},{f:'ともだち',b:'bạn bè'},{f:'ちかてつ',b:'tàu điện ngầm'}]);
+makeFlashcards('fg5',[{f:'な',b:'na'},{f:'に',b:'ni'},{f:'ぬ',b:'nu'},{f:'ね',b:'ne'},{f:'の',b:'no'},{f:'なまえ',b:'tên'},{f:'にほん',b:'Nhật Bản'},{f:'ねこ',b:'mèo'}]);
+makeFlashcards('fg6',[{f:'は',b:'ha/wa'},{f:'ひ',b:'hi'},{f:'ふ',b:'fu⚠️'},{f:'へ',b:'he/e'},{f:'ほ',b:'ho'},{f:'はじめまして',b:'Xin chào lần đầu'},{f:'ほん',b:'sách'}]);
+makeFlashcards('fg7',[{f:'ま',b:'ma'},{f:'み',b:'mi'},{f:'む',b:'mu'},{f:'め',b:'me'},{f:'も',b:'mo'},{f:'みず',b:'nước'},{f:'まいにち',b:'mỗi ngày'},{f:'も',b:'trợ từ "cũng"'}]);
+makeFlashcards('fg8',[{f:'や',b:'ya'},{f:'ゆ',b:'yu'},{f:'よ',b:'yo'},{f:'ら',b:'ra'},{f:'り',b:'ri'},{f:'る',b:'ru'},{f:'れ',b:'re'},{f:'ろ',b:'ro'},{f:'りんご',b:'táo'},{f:'やすみ',b:'ngày nghỉ'}]);
+makeFlashcards('fg9',[{f:'わ',b:'wa'},{f:'を',b:'o (tân ngữ)'},{f:'ん',b:'n/m/ng'},{f:'わたし',b:'tôi'},{f:'にほんご',b:'tiếng Nhật'},{f:'さんぽ',b:'đi dạo'},{f:'わかる',b:'hiểu'}]);
+makeFlashcards('fg10',[{f:'ア',b:'a'},{f:'イ',b:'i'},{f:'ウ',b:'u'},{f:'エ',b:'e'},{f:'オ',b:'o'},{f:'アニメ',b:'anime'},{f:'エアコン',b:'điều hòa'},{f:'ー',b:'kéo dài nguyên âm'}]);
+makeFlashcards('fg11',[{f:'カ',b:'ka'},{f:'キ',b:'ki'},{f:'ク',b:'ku'},{f:'シ',b:'shi⚠️'},{f:'ツ',b:'tsu⚠️'},{f:'コーヒー',b:'cà phê'},{f:'ケーキ',b:'bánh kem'},{f:'タクシー',b:'taxi'},{f:'テスト',b:'kiểm tra'}]);
+makeFlashcards('fg12',[{f:'ナ',b:'na'},{f:'ニ',b:'ni'},{f:'ノ',b:'no'},{f:'ハ',b:'ha'},{f:'フ',b:'fu'},{f:'ヘ',b:'he (=へ)'},{f:'ホテル',b:'khách sạn'},{f:'ニュース',b:'tin tức'},{f:'ノート',b:'vở ghi'}]);
+makeFlashcards('fg13',[{f:'マ',b:'ma'},{f:'ミ',b:'mi'},{f:'メ',b:'me'},{f:'ロ',b:'ro'},{f:'リ',b:'ri'},{f:'ン',b:'n'},{f:'レストラン',b:'nhà hàng'},{f:'ラーメン',b:'ramen'},{f:'ロボット',b:'robot'}]);
+makeFlashcards('fg14',[{f:'が',b:'ga'},{f:'ざ',b:'za'},{f:'だ',b:'da'},{f:'ば',b:'ba'},{f:'ぱ',b:'pa'},{f:'がくせい',b:'học sinh'},{f:'でんしゃ',b:'tàu điện'},{f:'べんきょう',b:'học bài'},{f:'ごはん',b:'cơm/bữa ăn'}]);
+makeFlashcards('fg15',[{f:'きょう',b:'hôm nay'},{f:'ちょっと',b:'một chút'},{f:'りょこう',b:'du lịch'},{f:'びょういん',b:'bệnh viện'},{f:'おちゃ',b:'trà'},{f:'じゃあ',b:'vậy thì'},{f:'しゃしん',b:'ảnh chụp'},{f:'ぎゅうにゅう',b:'sữa bò'}]);
+makeFlashcards('fg16',[{f:'っ',b:'phụ âm đôi (dừng 1 nhịp)'},{f:'ー',b:'kéo dài (Katakana)'},{f:'きって',b:'tem thư'},{f:'ざっし',b:'tạp chí'},{f:'おばあさん',b:'bà nội/ngoại'},{f:'おじいさん',b:'ông nội/ngoại'},{f:'ファン',b:'fan'}]);
+makeFlashcards('fg17',[{f:'いち',b:'1'},{f:'に',b:'2'},{f:'さん',b:'3'},{f:'よん/し',b:'4'},{f:'ご',b:'5'},{f:'ろく',b:'6'},{f:'なな/しち',b:'7'},{f:'はち',b:'8'},{f:'きゅう/く',b:'9'},{f:'じゅう',b:'10'},{f:'もくようび',b:'thứ Năm'},{f:'なんじですか',b:'Mấy giờ rồi?'}]);
+
+/* ===== BẢNG CHỮ CÁI JS ===== */
+
+// Kanji data N5
+
+// Kanji N4 data
+
+/* ===== MEGA QUIZ (30 câu) ===== */
+
+window.addEventListener('scroll',()=>{document.getElementById('topBtn').style.display=window.scrollY>400?'flex':'none';});
+
+/* ===== BÀI BỔ SUNG 205-206 ===== */
+makeFlashcards('fg205',[
+  {f:'つ vs す',b:'つ=[tsɯ] âm xát đầu lưỡi · す=[sɯ] âm xát răng, khác nhau vị trí lưỡi'},
+  {f:'おばさん vs おばあさん',b:'おばさん=cô/dì (ngắn) · おばあさん=bà (dài) — trường âm đổi nghĩa'},
+  {f:'ほん vs ほ',b:'ほん=sách (có ん) · ほ=lá cờ/mũi thuyền (không ん)'},
+  {f:'きって vs きて',b:'きって=tem (có っ) · きて=hãy đến (không っ)'},
+  {f:'ふ [ɸɯ]',b:'hai môi khép nhẹ thổi hơi, KHÔNG cắn môi dưới như "f" tiếng Anh'}
+]);
+makeFlashcards('fg206',[
+  {f:'コンビニ',b:'konbini — cửa hàng tiện lợi'},
+  {f:'アルバイト',b:'arubaito — làm thêm (từ tiếng Đức)'},
+  {f:'パソコン',b:'pasokon — máy tính cá nhân'},
+  {f:'マンション',b:'manshon — chung cư cao cấp'},
+  {f:'サラリーマン',b:'sararīman — nhân viên văn phòng'},
+  {f:'コスパ',b:'kosupa — hiệu quả/giá (viết tắt cost performance)'},
+  {f:'シェア',b:'shea — chia sẻ'},
+  {f:'テンション',b:'tenshon — khí thế/tâm trạng phấn khích (KHÔNG phải "căng thẳng")'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 2: 221-222 ===== */
+makeFlashcards('fg221',[
+  {f:'一本/三本/六本/八本',b:'いっぽん/さんぼん/ろっぽん/はっぽん — biến âm đơn vị 本'},
+  {f:'ひとつ・ふたつ・みっつ',b:'1 cái · 2 cái · 3 cái (số đếm chung わ行)'},
+  {f:'よっつ・ななつ・ここのつ',b:'4 cái · 7 cái · 9 cái'},
+  {f:'とお',b:'10 cái (đặc biệt, không theo quy luật ~つ)'}
+]);
+makeFlashcards('fg222',[
+  {f:'おはようございます',b:'ohayou gozaimasu — chào buổi sáng lịch sự'},
+  {f:'お疲れ様です',b:'otsukaresama desu — chào khi tan làm/gặp đồng nghiệp'},
+  {f:'お先に失礼します',b:'osaki ni shitsurei shimasu — xin phép về trước'},
+  {f:'よろしくお願いします',b:'yoroshiku onegaishimasu — mong được giúp đỡ/hợp tác'},
+  {f:'お邪魔します',b:'ojama shimasu — xin phép làm phiền (vào nhà người khác)'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 3: 241-242 ===== */
+makeFlashcards('fg241',[
+  {f:'1日・2日・3日',b:'ついたち・ふつか・みっか'},
+  {f:'10日',b:'とおか'},
+  {f:'14日・24日',b:'じゅうよっか・にじゅうよっか'},
+  {f:'20日',b:'はつか (đặc biệt nhất)'}
+]);
+makeFlashcards('fg242',[
+  {f:'私',b:'わたし — trung tính, lịch sự, mọi tình huống'},
+  {f:'僕',b:'ぼく — nam giới, thân mật nhưng lịch sự'},
+  {f:'俺',b:'おれ — nam giới, rất thân mật'},
+  {f:'あなた',b:'"bạn" — hạn chế dùng trực tiếp, nên gọi tên+さん'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 4: 261-262 ===== */
+makeFlashcards('fg261',[
+  {f:'桜の季節になりました',b:'đã vào mùa hoa anh đào (mở đầu thư mùa xuân)'},
+  {f:'お元気でお過ごしでしょうか',b:'dạo này bạn có khỏe không (hỏi thăm)'},
+  {f:'お体にお気をつけください',b:'mong bạn giữ gìn sức khỏe (kết thúc thư)'}
+]);
+makeFlashcards('fg262',[
+  {f:'わくわく',b:'hồi hộp háo hức (chờ điều vui)'},
+  {f:'どきどき',b:'hồi hộp lo lắng (tim đập nhanh)'},
+  {f:'いらいら',b:'bực bội, khó chịu'},
+  {f:'にこにこ',b:'cười tươi, luôn mỉm cười'},
+  {f:'ぐっすり',b:'ngủ say'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 5: 281-282 ===== */
+makeFlashcards('fg281',[
+  {f:'佐藤',b:'さとう'},
+  {f:'鈴木',b:'すずき'},
+  {f:'高橋',b:'たかはし'},
+  {f:'田中',b:'たなか'},
+  {f:'渡辺',b:'わたなべ'}
+]);
+makeFlashcards('fg282',[
+  {f:'何',b:'なに/なん — cái gì'},
+  {f:'どこ',b:'ở đâu'},
+  {f:'いつ',b:'khi nào'},
+  {f:'だれ',b:'ai'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 6: 301-302 ===== */
+makeFlashcards('fg301',[
+  {f:'は',b:'chủ đề chính của câu'},
+  {f:'も',b:'cũng, tương tự (thêm vào)'},
+  {f:'こそ',b:'chính là, nhấn mạnh mạnh nhất'}
+]);
+makeFlashcards('fg302',[
+  {f:'教室',b:'きょうしつ — lớp học'},
+  {f:'宿題',b:'しゅくだい — bài tập về nhà'},
+  {f:'試験',b:'しけん — kỳ thi'},
+  {f:'休み時間',b:'やすみじかん — giờ ra chơi'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 7: 321-322 ===== */
+makeFlashcards('fg321',[
+  {f:'を',b:'tân ngữ trực tiếp của động từ'},
+  {f:'で',b:'phương tiện/địa điểm diễn ra hành động'}
+]);
+makeFlashcards('fg322',[
+  {f:'赤い',b:'あかい — màu đỏ'},
+  {f:'青い',b:'あおい — màu xanh dương'},
+  {f:'黄色い',b:'きいろい — màu vàng'},
+  {f:'黒い/白い',b:'くろい/しろい — màu đen/trắng'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 8: 341-342 ===== */
+makeFlashcards('fg341',[
+  {f:'ちょっと待って',b:'đợi một chút'},
+  {f:'心配しないで',b:'đừng lo lắng'}
+]);
+makeFlashcards('fg342',[
+  {f:'犬',b:'いぬ — chó'},
+  {f:'猫',b:'ねこ — mèo'},
+  {f:'鳥',b:'とり — chim'}
+]);
+/* ===== BÀI BỔ SUNG VÒNG 9: 361-362 ===== */
+makeFlashcards('fg361',[
+  {f:'い-tính từ (高い)',b:'phủ định: 高くない'},
+  {f:'な-tính từ (きれい)',b:'phủ định: きれいではない'}
+]);
+makeFlashcards('fg362',[
+  {f:'りんご',b:'ringo — táo'},
+  {f:'野菜',b:'やさい — rau củ'},
+  {f:'果物',b:'くだもの — trái cây'}
+]);
+
+function openToc(){
+  document.getElementById('tocPanel').classList.add('open');
+  document.getElementById('tocOverlay').classList.add('open');
+}
+function closeToc(){
+  document.getElementById('tocPanel').classList.remove('open');
+  document.getElementById('tocOverlay').classList.remove('open');
+}
+
+/* ===== NAV DROPDOWN TOGGLE ===== */
+document.querySelectorAll('.nav-dd-trigger').forEach(trigger=>{
+  trigger.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const dd = trigger.closest('.nav-dd');
+    const wasOpen = dd.classList.contains('open');
+    document.querySelectorAll('.nav-dd.open').forEach(d=>d.classList.remove('open'));
+    if(!wasOpen) dd.classList.add('open');
+  });
+});
+document.addEventListener('click', ()=>{
+  document.querySelectorAll('.nav-dd.open').forEach(d=>d.classList.remove('open'));
+});
+
+/* ===== THEO DÕI TIẾN ĐỘ HỌC TẬP ===== */
+function pSafeGet(key){ try{ return localStorage.getItem(key); }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return null; } }
+function pSafeSet(key, val){ try{ localStorage.setItem(key, val); return true; }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return false; } }
+
+function isLessonDone(baiId){ return pSafeGet('done_'+baiId) === '1'; }
+function setLessonDone(baiId, done){ return pSafeSet('done_'+baiId, done ? '1' : '0'); }
+
+function updateProgressSummary(){
+  const sections = document.querySelectorAll('.section[id^="bai"]');
+  let done = 0;
+  sections.forEach(s=>{ if(isLessonDone(s.id)) done++; });
+  const total = sections.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  const summaryEl = document.getElementById('progressSummary');
+  if(summaryEl){
+    summaryEl.innerHTML = `
+      <span>📊 Tiến độ: <b>${done}/${total} bài</b> (${pct}%)</span>
+      <div class="psum-bar"><div class="psum-fill" style="width:${pct}%"></div></div>
+    `;
+  }
+}
+
+function toggleLessonDone(btn, baiId){
+  const nowDone = !isLessonDone(baiId);
+  if (!setLessonDone(baiId, nowDone)) return;
+  btn.classList.toggle('done', nowDone);
+  btn.textContent = nowDone ? '✓ Đã học' : '☐ Đánh dấu đã học';
+  const section = document.getElementById(baiId);
+  if(section) section.classList.toggle('lesson-completed', nowDone);
+  const tocItem = document.querySelector(`.toc-item[href="#${baiId}"]`);
+  if(tocItem){
+    tocItem.classList.toggle('done-item', nowDone);
+    const checkSpan = tocItem.querySelector('.toc-check');
+    if(nowDone && !checkSpan){
+      const span = document.createElement('span');
+      span.className = 'toc-check';
+      span.textContent = '✓';
+      tocItem.insertBefore(span, tocItem.firstChild);
+    } else if(!nowDone && checkSpan){
+      checkSpan.remove();
+    }
+  }
+  updateProgressSummary();
+}
+
+function initProgressTracking(){
+  const sections = document.querySelectorAll('.section[id^="bai"]');
+  sections.forEach(section=>{
+    const baiId = section.id;
+    const done = isLessonDone(baiId);
+    if(done) section.classList.add('lesson-completed');
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'lesson-done-toggle' + (done ? ' done' : '');
+    btn.textContent = done ? '✓ Đã học' : '☐ Đánh dấu đã học';
+    btn.onclick = ()=> toggleLessonDone(btn, baiId);
+
+    const firstChild = section.firstElementChild;
+    if(firstChild) section.insertBefore(btn, firstChild);
+    else section.appendChild(btn);
+
+    if(done){
+      const tocItem = document.querySelector(`.toc-item[href="#${baiId}"]`);
+      if(tocItem){
+        tocItem.classList.add('done-item');
+        const span = document.createElement('span');
+        span.className = 'toc-check';
+        span.textContent = '✓';
+        tocItem.insertBefore(span, tocItem.firstChild);
+      }
+    }
+  });
+  updateProgressSummary();
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initProgressTracking);
+} else {
+  initProgressTracking();
+}
+
+</script>
+
+<button class="toc-btn" onclick="openToc()" title="Mục lục">📑</button>
+<div class="toc-overlay" id="tocOverlay" onclick="closeToc()"></div>
+<div class="toc-panel" id="tocPanel">
+  <div class="toc-panel-header">
+    <h3>📑 Mục Lục (36 bài)</h3>
+    <button class="toc-close-btn" onclick="closeToc()">✕</button>
+  </div>
+  <div class="toc-panel-body">
+<div class="toc-group-label">📖 Bài gốc</div>
+      <a href="#bai1" class="toc-item" onclick="closeToc()"><span class="toc-num">1.</span>Bài 1: Hiragana nhóm あ行 (a, i, u, e, o)</a>
+      <a href="#bai2" class="toc-item" onclick="closeToc()"><span class="toc-num">2.</span>Bài 2: Hiragana nhóm か行 (ka, ki, ku, ke, ko)</a>
+      <a href="#bai3" class="toc-item" onclick="closeToc()"><span class="toc-num">3.</span>Bài 3: Hiragana nhóm さ行 (sa, si/shi, su, se, so)</a>
+      <a href="#bai4" class="toc-item" onclick="closeToc()"><span class="toc-num">4.</span>Bài 4: Hiragana た行 (ta, chi, tsu, te, to)</a>
+      <a href="#bai5" class="toc-item" onclick="closeToc()"><span class="toc-num">5.</span>Bài 5: Hiragana な行 (na, ni, nu, ne, no)</a>
+      <a href="#bai6" class="toc-item" onclick="closeToc()"><span class="toc-num">6.</span>Bài 6: Hiragana は行 (ha, hi, fu, he, ho)</a>
+      <a href="#bai7" class="toc-item" onclick="closeToc()"><span class="toc-num">7.</span>Bài 7: Hiragana ま行 (ma, mi, mu, me, mo)</a>
+      <a href="#bai8" class="toc-item" onclick="closeToc()"><span class="toc-num">8.</span>Bài 8: Hiragana や行 (ya, yu, yo) + ら行 (ra~ro)</a>
+      <a href="#bai9" class="toc-item" onclick="closeToc()"><span class="toc-num">9.</span>Bài 9: Hiragana わ行 + ん + Tổng kết</a>
+      <a href="#bai10" class="toc-item" onclick="closeToc()"><span class="toc-num">10.</span>Nhập môn Katakana: ア行 (a, i, u, e, o)</a>
+      <a href="#bai11" class="toc-item" onclick="closeToc()"><span class="toc-num">11.</span>Katakana カ行〜タ行 (ka→to)</a>
+      <a href="#bai12" class="toc-item" onclick="closeToc()"><span class="toc-num">12.</span>Katakana ナ行〜ハ行 (na→ho)</a>
+      <a href="#bai13" class="toc-item" onclick="closeToc()"><span class="toc-num">13.</span>Katakana マ行〜ワ行・ン (ma→n) — Hoàn thành Katakana!</a>
+      <a href="#bai14" class="toc-item" onclick="closeToc()"><span class="toc-num">14.</span>濁音・半濁音: Âm Đục & Âm Bán Đục (が・ざ・だ・ば・ぱ行)</a>
+      <a href="#bai15" class="toc-item" onclick="closeToc()"><span class="toc-num">15.</span>拗音 Yōon: Âm Ghép (きゃ, しゃ, ちゃ…)</a>
+      <a href="#bai16" class="toc-item" onclick="closeToc()"><span class="toc-num">16.</span>Đặc Biệt: Trường Âm · Phụ Âm Đôi · Âm Đặc Biệt Katakana</a>
+      <a href="#bai17" class="toc-item" onclick="closeToc()"><span class="toc-num">17.</span>Số Đếm 1–10,000 + Ngày Tháng + Giờ Giấc</a>
+      <a href="#bai18" class="toc-item" onclick="closeToc()"><span class="toc-num">18.</span>Ôn Tập Kana + SRS Tuần 3–4 + Kiểm Tra Chương 1</a>
+<div class="toc-group-label">✨ Bài bổ sung</div>
+      <a href="#bai205" class="toc-item" onclick="closeToc()"><span class="toc-num">205.</span>Bổ Sung: Những Lỗi Phát Âm Người Việt Hay Mắc Phải</a>
+      <a href="#bai206" class="toc-item" onclick="closeToc()"><span class="toc-num">206.</span>Bổ Sung: Từ Mượn Katakana Thường Gặp Trong Đời Sống</a>
+      <a href="#bai221" class="toc-item" onclick="closeToc()"><span class="toc-num">221.</span>Bổ Sung: Số Đếm & Đơn Vị Đo Lường Cơ Bản</a>
+      <a href="#bai222" class="toc-item" onclick="closeToc()"><span class="toc-num">222.</span>Bổ Sung: Câu Chào Hỏi & Giao Tiếp Hàng Ngày</a>
+      <a href="#bai241" class="toc-item" onclick="closeToc()"><span class="toc-num">241.</span>Bổ Sung: Cách Đọc Ngày Tháng & Giờ Giấc</a>
+      <a href="#bai242" class="toc-item" onclick="closeToc()"><span class="toc-num">242.</span>Bổ Sung: Đại Từ Nhân Xưng & Cách Xưng Hô</a>
+      <a href="#bai261" class="toc-item" onclick="closeToc()"><span class="toc-num">261.</span>Bổ Sung: Cấu Trúc Thư Tay Cơ Bản</a>
+      <a href="#bai262" class="toc-item" onclick="closeToc()"><span class="toc-num">262.</span>Bổ Sung: Từ Tượng Thanh Tượng Hình Cơ Bản (擬音語・擬態語)</a>
+      <a href="#bai281" class="toc-item" onclick="closeToc()"><span class="toc-num">281.</span>Bổ Sung: Cách Đọc Họ Tên Người Nhật Phổ Biến</a>
+      <a href="#bai282" class="toc-item" onclick="closeToc()"><span class="toc-num">282.</span>Ôn Tập: Từ Để Hỏi Cơ Bản 何・どこ・いつ・だれ</a>
+      <a href="#bai301" class="toc-item" onclick="closeToc()"><span class="toc-num">301.</span>Bổ Sung: Phân Biệt Trợ Từ は・も・こそ Trong Câu Đơn Giản</a>
+      <a href="#bai302" class="toc-item" onclick="closeToc()"><span class="toc-num">302.</span>Bổ Sung: Từ Vựng Trường Học Cơ Bản</a>
+      <a href="#bai321" class="toc-item" onclick="closeToc()"><span class="toc-num">321.</span>Bổ Sung: Trợ Từ を・で Trong Câu Cơ Bản</a>
+      <a href="#bai322" class="toc-item" onclick="closeToc()"><span class="toc-num">322.</span>Bổ Sung: Từ Vựng Màu Sắc Cơ Bản</a>
+      <a href="#bai341" class="toc-item" onclick="closeToc()"><span class="toc-num">341.</span>Bổ Sung: Câu Mệnh Lệnh Đơn Giản 〜て/〜ないで</a>
+      <a href="#bai342" class="toc-item" onclick="closeToc()"><span class="toc-num">342.</span>Bổ Sung: Từ Vựng Động Vật Cơ Bản</a>
+      <a href="#bai361" class="toc-item" onclick="closeToc()"><span class="toc-num">361.</span>Bổ Sung: Tính Từ い vs な Cách Chia Cơ Bản</a>
+      <a href="#bai362" class="toc-item" onclick="closeToc()"><span class="toc-num">362.</span>Bổ Sung: Từ Vựng Trái Cây & Rau Củ Cơ Bản</a>
+  </div>
+</div>
+<div class="app" style="display:block;max-width:900px;margin:0 auto;padding:0 20px 24px">
+  <section class="section" id="ghi-chu-01-1">
+    <div class="eyebrow">Bổ sung phát âm · Kana dùng trong từ thật</div>
+    <h2>Mora, âm mũi và cao độ</h2>
+    <table>
+      <tr><th>Hiện tượng</th><th>Điểm cần nghe</th><th>Ví dụ</th></tr>
+      <tr><td>Mora</td><td>Mỗi kana, っ và mỗi nhịp trường âm chiếm một nhịp đều; đừng đọc dồn theo số chữ Latin.</td><td>がっこう = ga - っ - ko - う (5 mora)</td></tr>
+      <tr><td>ん</td><td>Âm mũi đổi vị trí phát âm theo âm kế tiếp; trước b/m/p thường nghe gần [m], nhưng vẫn viết ん.</td><td>しんぶん、さんぽ</td></tr>
+      <tr><td>Âm cao độ</td><td>Tiếng Nhật dùng đường cao-thấp để phân biệt từ; romaji có dấu trường âm không biểu thị cao độ.</td><td>はし có thể đổi nghĩa theo ngữ cảnh và cao độ.</td></tr>
+    </table>
+    <div class="box tip"><b>Luyện nghe ngắn</b> Đọc từ theo nhịp đều, vỗ tay cho っ và trường âm, sau đó nghe lại bằng giọng Nhật. Mục tiêu là giữ đủ mora, không kéo mọi âm tiết thành tiếng Việt có dấu.</div>
+  </section>
+</div>
+<button id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script src="quiz-bank.js"></script>
+<script src="quiz-engine.js"></script>
+<script src="/site-shell.js"></script>
+</body></html>

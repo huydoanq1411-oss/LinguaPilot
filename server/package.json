@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "prisma generate && prisma migrate deploy",
+    "test": "node --test src/*.test.js",
     "dev": "node --watch --env-file=.env src/index.js",
     "start": "node src/index.js"
   },
