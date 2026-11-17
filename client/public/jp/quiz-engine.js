@@ -27,6 +27,13 @@
     }
 
     const section = node.closest('section.section');
+    const explicit = section?.dataset.quizLevel;
+    if (['kana', 'n5', 'n4', 'n3n2', 'n2', 'n1'].includes(explicit)) return explicit;
+    // Supplemental lesson numbers do not encode JLPT level. Prefer the actual heading.
+    const label = section?.querySelector('.eyebrow')?.textContent || '';
+    const title = section?.querySelector('h2')?.textContent || '';
+    const match = `${label} ${title}`.match(/\bN\s*([1-5])\b/i);
+    if (match) return match[1] === '3' ? 'n3n2' : `n${match[1]}`;
     const lessonMatch = section?.id.match(/^bai(\d+)$/i);
     if (lessonMatch) {
       const lesson = Number(lessonMatch[1]);
@@ -36,14 +43,9 @@
       if (lesson <= 60) return 'n3n2';
       if (lesson <= 100) return 'n2';
       if (lesson <= 120) return 'n2';
-      return 'n1';
+      if (lesson <= 200) return 'n1';
     }
 
-    const label = section?.querySelector('.eyebrow')?.textContent || '';
-    const title = section?.querySelector('h2')?.textContent || '';
-    const heading = `${label} ${title}`;
-    const match = heading.match(/\bN\s*([1-5])\b/i);
-    if (match) return match[1] === '3' ? 'n3n2' : `n${match[1]}`;
     return page;
   }
 

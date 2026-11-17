@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 # Regenerate quiz-bank.js from the lesson and test HTML after editing quiz content.
 $root = if ($PSScriptRoot) { $PSScriptRoot } else { Join-Path (Get-Location).Path 'JP' }
 $levels = @('kana', 'n5', 'n4', 'n3n2', 'n2', 'n1')
@@ -33,10 +33,11 @@ function Get-SectionInfo([string]$html, [int]$position) {
   if ($null -eq $latest) { return @{ id = ''; title = '' } }
   $idMatch = [regex]::Match($latest.Value, '\bid=["'']([^"'']+)["'']', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
   $id = if ($idMatch.Success) { $idMatch.Groups[1].Value } else { '' }
-  $headingStart = $html.LastIndexOf('<h2', $latest.Index, [System.StringComparison]::OrdinalIgnoreCase)
-  $headingEnd = if ($headingStart -ge 0) { $html.IndexOf('</h2>', $headingStart, [System.StringComparison]::OrdinalIgnoreCase) } else { -1 }
-  $title = if ($headingEnd -gt $headingStart -and $headingEnd -lt $position) { Convert-HtmlText $html.Substring($headingStart, $headingEnd + 5 - $headingStart) } else { '' }
-  return @{ id = $id; title = $title }
+  $prefix = $html.Substring($latest.Index, $position - $latest.Index)
+  $heading = [regex]::Match($prefix, '(?is)<h2\b[^>]*>(.*?)</h2>')
+  $eyebrow = [regex]::Match($prefix, '(?is)<div\b[^>]*class=["''][^"'']*\beyebrow\b[^"'']*["''][^>]*>(.*?)</div>')
+  $explicit = [regex]::Match($latest.Value, '\bdata-quiz-level=["'']([^"'']+)["'']')
+  return @{ id = $id; title = (Convert-HtmlText $heading.Groups[1].Value); label = (Convert-HtmlText $eyebrow.Groups[1].Value); level = $explicit.Groups[1].Value }
 }
 
 function Get-QuestionLevel([string]$file, [string]$html, [string]$block, [int]$position) {
@@ -56,6 +57,11 @@ function Get-QuestionLevel([string]$file, [string]$html, [string]$block, [int]$p
   }
 
   $info = Get-SectionInfo $html $position
+  if ($info.level -in $levels) { return $info.level }
+  if ("$($info.label) $($info.title)" -match '\bN\s*([1-5])\b') {
+    if ($Matches[1] -eq '3') { return 'n3n2' }
+    return "n$($Matches[1])"
+  }
   if ($info.id -match '^bai(\d+)$') {
     $lesson = [int]$Matches[1]
     if ($lesson -le 18) { return 'kana' }
@@ -64,11 +70,7 @@ function Get-QuestionLevel([string]$file, [string]$html, [string]$block, [int]$p
     if ($lesson -le 60) { return 'n3n2' }
     if ($lesson -le 100) { return 'n2' }
     if ($lesson -le 120) { return 'n2' }
-    return 'n1'
-  }
-  if ($info.title -match '\bN\s*([1-5])\b') {
-    if ($Matches[1] -eq '3') { return 'n3n2' }
-    return "n$($Matches[1])"
+    if ($lesson -le 200) { return 'n1' }
   }
   return ''
 }

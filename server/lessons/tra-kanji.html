@@ -459,67 +459,80 @@ footer.lesson-nav{
 </div>
 
 <script>
+function showKanjiNotice(kind, message){
+  const box = document.createElement('div');
+  box.className = `box ${kind}`;
+  box.textContent = message;
+  document.getElementById('kanjiResult').replaceChildren(box);
+  return box;
+}
+
 async function fetchKanjiData(kanji){
-  const resultDiv = document.getElementById('kanjiResult');
-  resultDiv.innerHTML = '<div class="box note">⏳ Đang tra cứu...</div>';
+  showKanjiNotice('note', '⏳ Đang tra cứu...');
 
   try {
     const res = await fetch(`https://kanjiapi.dev/v1/kanji/${encodeURIComponent(kanji)}`);
     if(!res.ok){
       if(res.status === 404){
-        resultDiv.innerHTML = `<div class="box warn"><b>⚠️ Không tìm thấy</b> "${kanji}" có thể không phải Kanji hợp lệ, hoặc không có trong cơ sở dữ liệu.</div>`;
+        showKanjiNotice('warn', `⚠️ Không tìm thấy "${kanji}". Chữ này có thể không phải Kanji hợp lệ, hoặc không có trong cơ sở dữ liệu.`);
       } else {
-        resultDiv.innerHTML = `<div class="box warn"><b>⚠️ Lỗi máy chủ</b> (mã ${res.status}). Vui lòng thử lại sau.</div>`;
+        showKanjiNotice('warn', `⚠️ Lỗi máy chủ (mã ${res.status}). Vui lòng thử lại sau.`);
       }
       return;
     }
     const data = await res.json();
     renderKanji(data);
   } catch(err){
-    resultDiv.innerHTML = `
-      <div class="box warn">
-        <b>⚠️ Không thể kết nối tới dịch vụ tra cứu</b>
-        Có thể do: (1) bạn chưa có kết nối Internet, (2) trình duyệt/mạng đang chặn yêu cầu tới kanjiapi.dev, hoặc (3) dịch vụ tạm thời gián đoạn.
-        <div style="margin-top:8px;font-size:.8rem;color:var(--sumi-soft)">Chi tiết lỗi: ${err.message}</div>
-      </div>`;
+    const box = showKanjiNotice('warn', '⚠️ Không thể tải dữ liệu tra cứu. Hãy kiểm tra kết nối và thử lại sau.');
+    const detail = document.createElement('div');
+    detail.style.cssText = 'margin-top:8px;font-size:.8rem;color:var(--sumi-soft)';
+    detail.textContent = `Chi tiết lỗi: ${err.message}`;
+    box.appendChild(detail);
   }
 }
 
 function renderKanji(data){
   const resultDiv = document.getElementById('kanjiResult');
-  const onList = (data.on_readings && data.on_readings.length) ? data.on_readings.join('、') : '—';
-  const kunList = (data.kun_readings && data.kun_readings.length) ? data.kun_readings.join('、') : '—';
-  const meanList = (data.meanings && data.meanings.length) ? data.meanings.join(', ') : '—';
-  const grade = data.grade != null ? data.grade : '—';
-  const jlpt = data.jlpt != null ? data.jlpt : '—';
-  const strokes = data.stroke_count != null ? data.stroke_count : '—';
+  if (!data || typeof data !== 'object' || Array.isArray(data)) throw new Error('Dữ liệu Kanji không hợp lệ.');
+  const list = (value, separator) => Array.isArray(value)
+    ? value.filter(item => typeof item === 'string').join(separator) || '—' : '—';
+  const scalar = value => typeof value === 'string' || typeof value === 'number' ? String(value) : '—';
+  const fields = {
+    kanji: scalar(data.kanji), strokes: scalar(data.stroke_count),
+    grade: scalar(data.grade), jlpt: scalar(data.jlpt),
+    on: list(data.on_readings, '、'), kun: list(data.kun_readings, '、'), meanings: list(data.meanings, ', '),
+  };
 
+  // Only static application markup enters innerHTML; API values are assigned as text below.
   resultDiv.innerHTML = `
     <div class="box note" style="text-align:left">
       <div style="display:flex;align-items:center;gap:20px;margin-bottom:14px">
-        <div style="font-size:3.5rem;font-family:var(--font-display);line-height:1">${data.kanji}</div>
+        <div style="font-size:3.5rem;font-family:var(--font-display);line-height:1" data-kanji-field="kanji"></div>
         <div>
-          <div style="font-size:.85rem;color:var(--sumi-soft)">Số nét: <b style="color:var(--sumi)">${strokes}</b></div>
-          <div style="font-size:.85rem;color:var(--sumi-soft)">Lớp học (Nhật): <b style="color:var(--sumi)">${grade}</b></div>
-          <div style="font-size:.85rem;color:var(--sumi-soft)">Mã JLPT (kanjiapi.dev, chỉ tham khảo): <b style="color:var(--sumi)">${jlpt}</b></div>
+          <div style="font-size:.85rem;color:var(--sumi-soft)">Số nét: <b style="color:var(--sumi)" data-kanji-field="strokes"></b></div>
+          <div style="font-size:.85rem;color:var(--sumi-soft)">Lớp học (Nhật): <b style="color:var(--sumi)" data-kanji-field="grade"></b></div>
+          <div style="font-size:.85rem;color:var(--sumi-soft)">Mã JLPT (kanjiapi.dev, chỉ tham khảo): <b style="color:var(--sumi)" data-kanji-field="jlpt"></b></div>
         </div>
       </div>
       <table>
-        <tr><th>Âm On (音読み)</th><td>${onList}</td></tr>
-        <tr><th>Âm Kun (訓読み)</th><td>${kunList}</td></tr>
-        <tr><th>Nghĩa (tiếng Anh)</th><td>${meanList}</td></tr>
+        <tr><th>Âm On (音読み)</th><td data-kanji-field="on"></td></tr>
+        <tr><th>Âm Kun (訓読み)</th><td data-kanji-field="kun"></td></tr>
+        <tr><th>Nghĩa (tiếng Anh)</th><td data-kanji-field="meanings"></td></tr>
       </table>
     </div>
     <div class="box tip" style="margin-top:12px">
       <b>ℹ️ Lưu ý</b> API miễn phí này chưa cung cấp thông tin bộ thủ (部首) trực tiếp, và mã JLPT có thể theo thang phân loại cũ trước năm 2010 nên không phải lúc nào cũng khớp chính xác với N1-N5 hiện tại — chỉ mang tính tham khảo.
     </div>
   `;
+  resultDiv.querySelectorAll('[data-kanji-field]').forEach(node => {
+    node.textContent = fields[node.dataset.kanjiField];
+  });
 }
 
 function lookupKanji(){
   const input = document.getElementById('kanjiInput').value.trim();
   if(!input){
-    document.getElementById('kanjiResult').innerHTML = '<div class="box warn">⚠️ Vui lòng nhập 1 chữ Kanji.</div>';
+    showKanjiNotice('warn', '⚠️ Vui lòng nhập 1 chữ Kanji.');
     return;
   }
   fetchKanjiData(input);
