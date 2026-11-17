@@ -14,6 +14,7 @@
       const configResponse = await fetch('/app-config.json', { cache: 'no-store', signal: AbortSignal.timeout(15000) });
       if (!configResponse.ok) throw new Error('Không tải được cấu hình ứng dụng.');
       const { apiUrl } = await configResponse.json();
+      status.textContent = 'Đang chuẩn bị nội dung cho bạn…';
       const page = location.pathname.split('/').pop() || 'index.html';
       const response = await fetch(`${apiUrl}/lessons/${encodeURIComponent(page)}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -44,6 +45,8 @@
         }
       });
     } catch {
+      document.querySelector('.lesson-loading')?.setAttribute('data-state', 'error');
+      document.querySelector('.lesson-loading')?.setAttribute('aria-busy', 'false');
       status.textContent = 'Chưa tải được bài học. Hãy kiểm tra kết nối và thử lại.';
       document.getElementById('lesson-retry').hidden = false;
     }

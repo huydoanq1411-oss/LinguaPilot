@@ -6,11 +6,18 @@
 <meta name="theme-color" content="#1d1d1b">
 <link rel="icon" href="/app-icon.svg">
 <link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/lesson-loading.css">
 <title>LinguaPilot · Bài học</title>
-<style>body{margin:0;padding:48px 24px;background:#faf9f6;color:#202521;font:16px/1.6 system-ui,sans-serif}main{max-width:560px;margin:auto}a{color:#345d43}button{font:inherit;padding:10px 18px;cursor:pointer}</style>
 </head>
 <body>
-<main><h1>LinguaPilot</h1><p id="lesson-status" role="status">Đang xác minh phiên và tải bài học…</p><button id="lesson-retry" type="button" hidden>Thử lại</button><p><a href="/#account">Về trang đăng nhập</a></p><noscript>Vui lòng bật JavaScript để đăng nhập và mở bài học.</noscript></main>
+<main class="lesson-loading" aria-busy="true">
+<img class="lesson-loading-logo" src="/app-icon.svg" alt="" width="52" height="52">
+<div><h1>Một chút nữa, vào bài thôi.</h1><p id="lesson-status" role="status">Đang xác minh phiên học của bạn…</p></div>
+<div class="lesson-loading-track" aria-hidden="true"></div>
+<button id="lesson-retry" type="button" hidden>Thử lại</button>
+<a href="/#account">Về trang đăng nhập</a>
+<noscript>Vui lòng bật JavaScript để đăng nhập và mở bài học.</noscript>
+</main>
 <script src="/lesson-auth.js"></script>
 </body>
 </html>

@@ -47,6 +47,25 @@ function App() {
   const [apiStatus, setApiStatus] = useState('checking')
   const [sessionNotice, setSessionNotice] = useState('')
   const sessionVersion = useRef(0)
+  const pendingLesson = useRef(lessonDestination(window.location.search))
+  const authForm = useRef(null)
+  const emailInput = useRef(null)
+
+  function openLesson(event) {
+    const link = event.target.closest('a[href]')
+    const href = link?.getAttribute('href')
+    if (user || !href?.startsWith('/jp/') || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button > 0) return
+    event.preventDefault()
+    pendingLesson.current = lessonDestination(`?next=${encodeURIComponent(href)}`)
+    const url = new URL(window.location.href)
+    url.searchParams.set('next', pendingLesson.current)
+    url.hash = 'account'
+    window.history.replaceState(null, '', url)
+    setAuthMode('login')
+    setError('')
+    authForm.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'center' })
+    emailInput.current?.focus({ preventScroll: true })
+  }
 
   useEffect(() => {
     let active = true
@@ -99,7 +118,7 @@ function App() {
         return
       }
       setUser(result.user)
-      window.location.assign(lessonDestination(window.location.search))
+      window.location.assign(pendingLesson.current)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -120,7 +139,7 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" onClick={openLesson}>
       <header className="topbar">
         <a className="brand" href="#home" aria-label="LinguaPilot trang chủ">
           <img className="brand-app-icon" src="/app-icon.svg" alt="" /><span>lingua<span className="brand-light">pilot</span></span>
@@ -130,7 +149,7 @@ function App() {
           <a href="/jp/cau-truc-jlpt.html">Kỳ thi JLPT</a>
         </nav>
         <button id="installAppButton" className="install-app-button" type="button" aria-label="Thêm LinguaPilot vào màn hình chính" title="Thêm LinguaPilot vào màn hình chính" hidden>＋ Cài app</button>
-        {user ? <div className="account"><span className="avatar">{(user.displayName || user.email).slice(0, 1).toUpperCase()}</span><span className="account-name">{user.displayName || user.email}</span><button className="text-button" onClick={signOut}>Đăng xuất</button></div> : <a className="nav-cta" href="#account">Bắt đầu học <span>↗</span></a>}
+        {user ? <div className="account"><span className="avatar">{(user.displayName || user.email).slice(0, 1).toUpperCase()}</span><span className="account-name">{user.displayName || user.email}</span><button className="text-button" onClick={signOut}>Đăng xuất</button></div> : <a className="nav-cta" href="/jp/index.html">Bắt đầu học <span>↗</span></a>}
       </header>
 
       <main id="home">
@@ -140,7 +159,7 @@ function App() {
             <div className="eyebrow"><span className="eyebrow-dot" /> KHÔNG GIAN HỌC NGOẠI NGỮ CỦA BẠN</div>
             <h1>Học ngôn ngữ,<br /><span>mở lối tương lai.</span></h1>
             <p className="hero-description">Từng bước vững chắc trên hành trình chinh phục tiếng Nhật. Bài học, công cụ tra cứu và luyện thi JLPT luôn ở ngay đây.</p>
-            <div className="hero-actions"><a className="primary-button" href="/jp/index.html">Khám phá bài học <span>→</span></a><a className="secondary-link" href="/jp/kiem-tra-thang-cap.html">Kiểm tra trình độ <span>↗</span></a></div>
+            <div className="hero-actions"><a className="primary-button" href="/jp/index.html">Bắt đầu bài học <span>→</span></a><a className="secondary-link" href="/jp/kiem-tra-thang-cap.html">Kiểm tra trình độ <span>↗</span></a></div>
             <div className="hero-note"><div className="mini-avatars"><span>あ</span><span>日</span><span>語</span></div><span>Học theo nhịp độ của riêng bạn</span></div>
           </div>
           <div className="hero-art" aria-label="Minh họa học tiếng Nhật" role="img">
@@ -161,13 +180,13 @@ function App() {
         </section>
 
         <section className="account-section" id="account"><div className="account-intro"><div className="eyebrow">TÀI KHOẢN LINGUAPILOT</div><h2>{user ? `Chào mừng trở lại${user.displayName ? `, ${user.displayName}` : ''}!` : 'Học theo nhịp độ của bạn.'}</h2><p>Tiến độ hiện lưu trên trình duyệt này, chưa đồng bộ với tài khoản hoặc thiết bị khác.</p><div className={`service-status ${apiStatus}`}><span />{apiStatus === 'up' ? 'Máy chủ đang hoạt động' : apiStatus === 'down' ? 'Máy chủ chưa kết nối' : 'Đang kiểm tra máy chủ'}</div></div>
-          {user ? <div className="signed-in-card"><div className="signed-icon">✓</div><h3>Bạn đã đăng nhập</h3><p>{user.email}</p><span>Hãy chọn một mục học phía trên để tiếp tục.</span></div> : <form className="auth-card" onSubmit={submit}>
-            <div className="auth-tabs"><button type="button" className={authMode === 'login' ? 'active' : ''} onClick={() => { setAuthMode('login'); setError('') }}>Đăng nhập</button><button type="button" className={authMode === 'register' ? 'active' : ''} onClick={() => { setAuthMode('register'); setError('') }}>Tạo tài khoản</button></div>
+          {user ? <div className="signed-in-card"><div className="signed-icon">✓</div><h3>Bạn đã đăng nhập</h3><p>{user.email}</p><span>Hãy chọn một mục học phía trên để tiếp tục.</span></div> : <form className="auth-card" ref={authForm} onSubmit={submit} aria-busy={busy}>
+            <div className="auth-tabs"><button type="button" disabled={busy} className={authMode === 'login' ? 'active' : ''} onClick={() => { setAuthMode('login'); setError('') }}>Đăng nhập</button><button type="button" disabled={busy} className={authMode === 'register' ? 'active' : ''} onClick={() => { setAuthMode('register'); setError('') }}>Tạo tài khoản</button></div>
             {authMode === 'register' && <label>Tên hiển thị<input autoComplete="name" value={form.displayName} onChange={e => setForm({ ...form, displayName: e.target.value })} placeholder="Tên của bạn" maxLength="60" /></label>}
-            <label>Email<input type="email" autoComplete="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="ban@email.com" /></label>
+            <label>Email<input ref={emailInput} type="email" autoComplete="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="ban@email.com" /></label>
             <label>Mật khẩu<input type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} required minLength="8" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="Ít nhất 8 ký tự" /></label>
             {error && <p className="form-error" role="alert">{error}</p>}
-            <button className="primary-button auth-submit" disabled={busy}>{busy ? 'Đang xử lý…' : authMode === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'} <span>→</span></button>
+            <button className="primary-button auth-submit" disabled={busy}>{busy ? <><span className="loading-dots" aria-hidden="true"><i /><i /><i /></span><span role="status">{authMode === 'login' ? 'Đang đăng nhập…' : 'Đang tạo tài khoản…'}</span></> : <>{authMode === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'} <span>→</span></>}</button>
             <p className="privacy-note">Đăng nhập để mở bài học. Tiến độ học vẫn lưu riêng trên trình duyệt này.</p>
           </form>}
         </section>

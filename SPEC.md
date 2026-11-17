@@ -2,6 +2,8 @@
 
 - Mọi trang `/jp/*.html` yêu cầu tài khoản có phiên đăng nhập hợp lệ, trên trình duyệt và app cài từ website.
 - Chưa đăng nhập hoặc phiên không hợp lệ: chuyển về form đăng nhập, giữ đường dẫn bài muốn mở. Đăng nhập/tạo tài khoản thành công: mở bài đó, mặc định thư viện.
+- Khi bấm liên kết bài học từ trang chủ mà chưa đăng nhập: giữ nguyên trang, cuộn đến form và focus email; giữ bài đã chọn để mở sau đăng nhập. Người đã đăng nhập mở bài trực tiếp.
+- Loading dùng thông báo trạng thái cùng dải chuyển động nhẹ theo màu giao diện; ngừng chuyển động khi lỗi, hiện thử lại và tôn trọng reduced motion.
 - API không xác minh được phiên hoặc mất mạng: không tải nội dung bài học; có nút thử lại.
 - Nội dung HTML và ngân hàng câu hỏi nằm trong `server/lessons`, không có trong bản build frontend công khai. `GET /api/lessons/:page` yêu cầu Bearer JWT và kiểm tra tài khoản còn tồn tại; trả `Cache-Control: private, no-store`.
 - Các URL cũ giữ nguyên; trang công khai chỉ là màn hình tải và đăng nhập. Tiến độ tiếp tục dùng localStorage, chưa đồng bộ tài khoản.

@@ -1,0 +1,17 @@
+:root { color-scheme: light dark; --loading-bg: #faf9f6; --loading-fg: #24332b; --loading-muted: #596a5e; --loading-line: #dfe6dc; --loading-accent: #345d43; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--loading-bg); color: var(--loading-fg); font: 16px/1.6 'Segoe UI', system-ui, sans-serif; }
+.lesson-loading { min-height: 100svh; display: grid; align-content: center; justify-items: center; gap: 22px; padding: 32px 24px; text-align: center; }
+.lesson-loading-logo { width: 52px; height: 52px; border-radius: 14px; }
+.lesson-loading h1 { margin: 0; font-size: 25px; font-weight: 650; letter-spacing: -.6px; }
+.lesson-loading p { margin: 6px 0 0; color: var(--loading-muted); max-width: 35ch; }
+.lesson-loading-track { position: relative; width: min(220px, 70vw); height: 3px; overflow: hidden; background: var(--loading-line); border-radius: 2px; }
+.lesson-loading-track::after { content: ''; position: absolute; inset: 0; background: var(--loading-accent); transform: translateX(-100%) scaleX(.4); animation: lesson-loading 1.6s cubic-bezier(.77, 0, .175, 1) infinite; }
+.lesson-loading[data-state="error"] .lesson-loading-track::after { animation: none; opacity: 0; }
+.lesson-loading button { border: 0; border-radius: 6px; padding: 11px 24px; background: var(--loading-accent); color: var(--loading-bg); font: inherit; cursor: pointer; }
+.lesson-loading a { color: var(--loading-muted); font-size: 14px; text-underline-offset: 4px; }
+.lesson-loading :focus-visible { outline: 2px solid var(--loading-accent); outline-offset: 5px; }
+.lesson-loading [hidden] { display: none; }
+@keyframes lesson-loading { to { transform: translateX(100%) scaleX(.4); } }
+@media (prefers-color-scheme: dark) { :root { --loading-bg: #1e1f1c; --loading-fg: #d5e1d8; --loading-muted: #aab4a9; --loading-line: #393e36; --loading-accent: #a9c9ac; } }
+@media (prefers-reduced-motion: reduce) { .lesson-loading-track::after { animation: none; transform: scaleX(.4); opacity: .7; } }
