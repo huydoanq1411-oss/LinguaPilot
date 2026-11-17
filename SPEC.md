@@ -10,5 +10,6 @@
 - Các URL cũ giữ nguyên; trang công khai chỉ là màn hình tải và đăng nhập. Tiến độ tiếp tục dùng localStorage, chưa đồng bộ tài khoản.
 - Client và API tiếp tục là hai dự án Vercel. Client lấy URL API từ `VITE_API_URL`; bản build tạo `/app-config.json` cho trang tải bài học. Server build tạo Prisma Client và áp dụng migration trước khi phục vụ bản mới.
 - Giới hạn đăng nhập giữ nguyên: tối đa 10 lần sai theo email trong cửa sổ 15 phút, lần tiếp theo trả 429; đăng nhập đúng xóa bộ đếm.
+- Mật khẩu đăng ký vẫn cần ít nhất 8 ký tự; cả đăng ký và đăng nhập từ chối mật khẩu vượt 72 byte UTF-8 trước khi gọi bcrypt/DB. Frontend kiểm cùng giới hạn theo byte, không cắt hoặc chuẩn hóa mật khẩu. Hash đang có không thay đổi; mật khẩu cũ vượt giới hạn cần được đặt lại qua quy trình hỗ trợ, không tự cắt ngắn để đăng nhập.
 - Nghiệm thu: mở link trực tiếp khi chưa đăng nhập không nhận nội dung; token giả/hết hạn bị từ chối; đăng nhập hợp lệ mở được bài và quiz; đăng xuất rồi quay lại không mở lại từ bộ nhớ trang; lỗi mạng có thể thử lại.
 - Ngoài phạm vi: đồng bộ tiến độ, thu phí, thay thiết kế, thu hồi token trên mọi thiết bị. Người đã được cấp nội dung vẫn có thể tự lưu bản sao; mã nguồn repo công khai vẫn xem được trên GitHub.

@@ -14,6 +14,8 @@ router.post('/register', async (req, res) => {
   if (!emailOk(email)) return res.status(400).json({ error: 'Email không hợp lệ' });
   if (typeof password !== 'string' || password.length < 8)
     return res.status(400).json({ error: 'Mật khẩu cần có ít nhất 8 ký tự' });
+  if (bcrypt.truncates(password))
+    return res.status(400).json({ error: 'Mật khẩu không được vượt quá 72 byte UTF-8. Chữ có dấu và emoji có thể chiếm nhiều byte.' });
   if (displayName !== undefined && typeof displayName !== 'string')
     return res.status(400).json({ error: 'Tên hiển thị không hợp lệ' });
 
@@ -35,8 +37,12 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body || {};
+  if (typeof password !== 'string')
+    return res.status(400).json({ error: 'Mật khẩu không hợp lệ' });
+  if (bcrypt.truncates(password))
+    return res.status(400).json({ error: 'Mật khẩu không được vượt quá 72 byte UTF-8. Chữ có dấu và emoji có thể chiếm nhiều byte.' });
   const result = await login(prisma, bcrypt, DUMMY_HASH,
-    String(email || '').toLowerCase(), String(password || ''));
+    String(email || '').toLowerCase(), password);
   if (result.retryAfter) {
     res.set('Retry-After', String(result.retryAfter));
     return res.status(429).json({

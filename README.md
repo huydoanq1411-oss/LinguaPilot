@@ -132,7 +132,7 @@ Mở các trang qua địa chỉ Vite thay vì mở file HTML trực tiếp. Bà
 
 ## API xác thực
 
-- `POST /api/auth/register` — đăng ký bằng `email`, `password` (tối thiểu 8 ký tự), và `displayName` tùy chọn.
+- `POST /api/auth/register` — đăng ký bằng `email`, `password` (tối thiểu 8 ký tự, tối đa 72 byte UTF-8), và `displayName` tùy chọn. Đăng nhập cũng từ chối mật khẩu vượt 72 byte; không tự cắt mật khẩu. Tài khoản cũ dùng mật khẩu vượt giới hạn cần đặt lại qua hỗ trợ.
 - `POST /api/auth/login` — đăng nhập và nhận JWT.
 - `GET /api/auth/me` — trả về tài khoản hiện tại; gửi header `Authorization: Bearer <token>`.
 

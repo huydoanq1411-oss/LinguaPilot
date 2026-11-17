@@ -104,6 +104,10 @@ function App() {
   async function submit(event) {
     event.preventDefault()
     setError('')
+    if (new TextEncoder().encode(form.password).length > 72) {
+      setError('Mật khẩu không được vượt quá 72 byte UTF-8. Chữ có dấu và emoji có thể chiếm nhiều byte.')
+      return
+    }
     setBusy(true)
     const version = ++sessionVersion.current
     try {
@@ -188,7 +192,7 @@ function App() {
             <div className="auth-tabs"><button type="button" disabled={busy} className={authMode === 'login' ? 'active' : ''} onClick={() => { setAuthMode('login'); setError('') }}>Đăng nhập</button><button type="button" disabled={busy} className={authMode === 'register' ? 'active' : ''} onClick={() => { setAuthMode('register'); setError('') }}>Tạo tài khoản</button></div>
             {authMode === 'register' && <label>Tên hiển thị<input autoComplete="name" value={form.displayName} onChange={e => setForm({ ...form, displayName: e.target.value })} placeholder="Tên của bạn" maxLength="60" /></label>}
             <label>Email<input ref={emailInput} type="email" autoComplete="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="ban@email.com" /></label>
-            <label>Mật khẩu<input type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} required minLength="8" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="Ít nhất 8 ký tự" /></label>
+            <label>Mật khẩu<input type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} required minLength="8" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="8 ký tự trở lên, tối đa 72 byte" /></label>
             {error && <p className="form-error" role="alert">{error}</p>}
             <button className="primary-button auth-submit" disabled={busy}>{busy ? <><span className="loading-dots" aria-hidden="true"><i /><i /><i /></span><span role="status">{authMode === 'login' ? 'Đang đăng nhập…' : 'Đang tạo tài khoản…'}</span></> : <>{authMode === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'} <span>→</span></>}</button>
             <p className="privacy-note">Đăng nhập để mở bài học. Tiến độ học vẫn lưu riêng trên trình duyệt này.</p>
