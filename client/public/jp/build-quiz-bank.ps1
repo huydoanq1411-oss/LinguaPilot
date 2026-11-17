@@ -73,11 +73,28 @@ function Get-QuestionLevel([string]$file, [string]$html, [string]$block, [int]$p
   return ''
 }
 
-function Get-QuestionContext([string]$html, [int]$start) {
+function Get-QuestionContext([string]$html, [int]$start, [string]$prompt) {
+  # A review question can refer to a reading in an earlier lesson.
+  if ($prompt -match '(?i)bài\s*(\d+)') {
+    $lesson = $Matches[1]
+    $source = [regex]::Match($html, ('(?is)<section\b[^>]*id=["'']bai' + $lesson + '["''][^>]*>(.*?)</section>'))
+    if ($source.Success) {
+      $passages = [regex]::Matches($source.Value, '(?is)<pre\b[^>]*>(.*?)</pre>')
+      if ($passages.Count -gt 0) {
+        return (($passages | ForEach-Object { Convert-HtmlText $_.Groups[1].Value }) -join "`n`n")
+      }
+    }
+    return ''
+  }
   $sectionStart = [Math]::Max(0, $html.LastIndexOf('<section', $start, [System.StringComparison]::OrdinalIgnoreCase))
   $before = $html.Substring($sectionStart, $start - $sectionStart)
   $matches = [regex]::Matches($before, '<pre\b[^>]*>[\s\S]*?</pre>', [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
-  if ($matches.Count -eq 0) { return '' }
+  if ($matches.Count -eq 0) {
+    # Supplemental readings use a styled div instead of pre.
+    $blocks = [regex]::Matches($before, '(?is)<div\b[^>]*style=["''][^"'']*background:var\(--washi-2\)[^"'']*["''][^>]*>(.*?)</div>')
+    if ($blocks.Count -eq 1) { return (Convert-HtmlText $blocks[0].Groups[1].Value) }
+    return ''
+  }
   $context = Convert-HtmlText $matches[$matches.Count - 1].Value
   if ($context.Length -lt 80 -or $context.Length -gt 2400) { return '' }
   return $context
@@ -112,7 +129,9 @@ foreach ($file in Get-ChildItem -Path $root -Filter '*.html') {
     $promptContent = [regex]::Replace($prompt, '^\s*(?:[\w・語彙読解聴解入門総合]+\s*)?\d+[.)]?\s*', '').Trim()
     if ($promptContent.Length -lt 3) { continue }
     $kind = if ($prompt -match '文章|本文|読解|読んで|筆者|bài\s*\d+|theo bài|đoạn văn|đọc hiểu|the article|the passage') { 'reading' } else { 'general' }
-    $context = if ($kind -eq 'reading') { Get-QuestionContext $html $start.Index } else { '' }
+    # A grammar gap containing the word "文章" is not necessarily a reading task.
+    if ($prompt -match '読む_+文章') { $kind = 'general' }
+    $context = if ($kind -eq 'reading') { Get-QuestionContext $html $start.Index $prompt } else { '' }
     if ($kind -eq 'reading' -and -not $context -and $prompt -match '"[^"].+"|「[^」].+」') { $kind = 'general' }
     $bank[$level].Add(@{
       id = "$($file.Name)#$index"
@@ -145,5 +164,7 @@ foreach ($level in $levels) {
   $questions = @($bank[$level])
   $general = @($questions | Where-Object { $_.kind -eq 'general' }).Count
   $reading = @($questions | Where-Object { $_.kind -eq 'reading' }).Count
+  $missing = @($questions | Where-Object { $_.kind -eq 'reading' -and -not $_.context })
+  foreach ($question in $missing) { Write-Warning ("Missing reading context: {0}" -f $question.id) }
   Write-Output ("{0}: {1} (general {2}, reading {3})" -f $level, $questions.Count, $general, $reading)
 }

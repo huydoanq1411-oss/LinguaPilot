@@ -7,7 +7,7 @@ Phần	Công cụ	Dùng để làm gì
 Giao diện	React 19, Vite 8	Trang chủ, form đăng ký/đăng nhập, liên kết tới bài học
 Giao diện	ESLint	Kiểm tra lỗi code (npm run lint)
 Giao diện	Tailwind CSS 4	Có cài trong package.json nhưng chưa được dùng (cấu hình Vite và file CSS không gọi tới)
-Bài học	HTML/CSS/JS thuần (27 file trong client/public/jp)	Thư viện học tiếng Nhật, không cần server
+Bài học	HTML/CSS/JS thuần (22 trang HTML trong client/public/jp)	Thư viện học tiếng Nhật, không cần server
 Bài học	kanjiapi.dev, Google Fonts	Tra cứu Kanji (API ngoài) và font chữ
 API	Node.js, Express 5	Chạy các đường dẫn /api/...
 API	bcryptjs	Mã hóa mật khẩu (cost 12)
@@ -45,8 +45,8 @@ Submission	Bài nộp và phản hồi (kỳ thi JLPT hoặc IELTS)	Có bảng, 
 Hai bảng chưa dùng: schema đã chừa chỗ cho thẻ ôn tập và bài nộp, kể cả ngôn ngữ tiếng Anh và kỳ thi IELTS. Phần code API và giao diện cho chúng chưa có.
 Đăng nhập chỉ để xác nhận phiên: hiện tại tài khoản chưa mở khóa tính năng nào, vì các bài học đều xem được không cần đăng nhập.
 Chưa giới hạn số lần đăng nhập sai: có thể thêm express-rate-limit sau này nếu mở cho nhiều người dùng.
-Còn 1 cảnh báo lint trong public/jp/quiz-engine.js (biến fresh không dùng), không ảnh hưởng chạy.
-Script start của server đòi file .env, nên chạy được ở máy nhưng sẽ lỗi nếu chạy ở nơi chỉ có biến môi trường (Vercel không dùng script này nên không bị ảnh hưởng).
+Đã loại biến không dùng trong `public/jp/quiz-engine.js`; chạy `npm run lint` tại `client` để kiểm tra phiên bản hiện tại.
+Script start chạy `node src/index.js` và dùng biến môi trường được cấp bởi nơi triển khai. Script dev tải thêm `server/.env`.
 
 ## Thành phần
 

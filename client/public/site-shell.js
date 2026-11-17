@@ -1,4 +1,27 @@
 (() => {
+  const warn = () => {
+    if (document.getElementById('lp-storage-warning')) return;
+    const note = document.createElement('div');
+    note.id = 'lp-storage-warning';
+    note.className = 'lp-storage-warning';
+    note.setAttribute('role', 'alert');
+    note.textContent = 'Trình duyệt không đọc hoặc lưu được dữ liệu. Tiến độ có thể chưa được lưu; bạn vẫn có thể đọc bài học. Hãy kiểm tra quyền lưu trữ của website.';
+    document.body.appendChild(note);
+  };
+  window.addEventListener('lp-storage-error', warn);
+  try { localStorage.getItem('theme'); } catch { warn(); }
+  document.querySelectorAll('table').forEach(table => {
+    if (table.parentElement.classList.contains('lp-table-scroll')) return;
+    const region = document.createElement('div');
+    region.className = 'lp-table-scroll';
+    region.tabIndex = 0;
+    region.setAttribute('role', 'region');
+    region.setAttribute('aria-label', 'Bảng nội dung, cuộn ngang nếu cần');
+    table.before(region);
+    region.appendChild(table);
+  });
+})();
+(() => {
   const libraryHome = document.querySelector('.idx-topbar');
   if (libraryHome) {
     const actions = libraryHome.querySelector('.idx-topbar-btns');

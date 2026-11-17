@@ -226,7 +226,7 @@
       plans.forEach((plan) => {
         const first = plan.items[0];
         const parent = first.parentElement;
-        const fresh = plan.selected.map((question, index) => {
+        plan.selected.forEach((question, index) => {
           const node = createQuestion(question, index + 1, plan.slots[index]);
           node.dataset.quizBankId = question.id;
           parent.insertBefore(node, first);

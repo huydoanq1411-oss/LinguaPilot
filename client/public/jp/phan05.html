@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Phần 05 — N2 Hoàn Thiện & Mở Rộng — JLPT N2→N1</title>
+<title>Phần 05 — N2 Hoàn Thiện & Mở Rộng · LinguaPilot</title>
 <style>
 /* ============ DESIGN TOKENS ============ */
 :root{
@@ -438,6 +438,7 @@ footer.lesson-nav{
 </style>
 <link rel="stylesheet" href="/site-shell.css">
 <link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="/app-icon.svg">
 </head>
 <body>
 <div class="chapter-header">
@@ -1786,11 +1787,11 @@ document.addEventListener('click', ()=>{
 });
 
 /* ===== THEO DÕI TIẾN ĐỘ HỌC TẬP ===== */
-function pSafeGet(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
-function pSafeSet(key, val){ try{ localStorage.setItem(key, val); }catch(e){} }
+function pSafeGet(key){ try{ return localStorage.getItem(key); }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return null; } }
+function pSafeSet(key, val){ try{ localStorage.setItem(key, val); return true; }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return false; } }
 
 function isLessonDone(baiId){ return pSafeGet('done_'+baiId) === '1'; }
-function setLessonDone(baiId, done){ pSafeSet('done_'+baiId, done ? '1' : '0'); }
+function setLessonDone(baiId, done){ return pSafeSet('done_'+baiId, done ? '1' : '0'); }
 
 function updateProgressSummary(){
   const sections = document.querySelectorAll('.section[id^="bai"]');
@@ -1809,7 +1810,7 @@ function updateProgressSummary(){
 
 function toggleLessonDone(btn, baiId){
   const nowDone = !isLessonDone(baiId);
-  setLessonDone(baiId, nowDone);
+  if (!setLessonDone(baiId, nowDone)) return;
   btn.classList.toggle('done', nowDone);
   btn.textContent = nowDone ? '✓ Đã học' : '☐ Đánh dấu đã học';
   const section = document.getElementById(baiId);

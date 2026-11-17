@@ -800,8 +800,8 @@ footer.lesson-nav{
 
 <script>
 // Safe localStorage wrapper (một số trình duyệt chặn localStorage khi mở file trực tiếp)
-function safeGet(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
-function safeSet(key,val){ try{ localStorage.setItem(key,val); }catch(e){} }
+function safeGet(key){ try{ return localStorage.getItem(key); }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return null; } }
+function safeSet(key,val){ try{ localStorage.setItem(key,val); return true; }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return false; } }
 
 // Dark mode
 const saved=safeGet('theme')||'light';
@@ -823,7 +823,7 @@ setTimeout(()=>{
 document.querySelectorAll('.idx-check').forEach((el,i)=>{
   if(safeGet('ch_done_'+i)==='1') el.classList.add('done');
   el.addEventListener('click',()=>{
-    safeSet('ch_done_'+i, el.classList.contains('done')?'1':'0');
+    if (!safeSet('ch_done_'+i, el.classList.contains('done')?'1':'0')) el.classList.toggle('done');
   });
 });
 

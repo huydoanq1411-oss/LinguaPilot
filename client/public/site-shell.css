@@ -27,3 +27,13 @@
 @media(max-width:600px){.idx-topbar-btns .idx-home-link{padding:7px 9px;gap:5px;font-size:.72rem}.idx-topbar-btns .idx-home-icon{width:15px;height:15px}.idx-topbar-btns .idx-home-icon svg{width:14px;height:14px}}
 .idx-card.alphabet-card{background:var(--washi);border-color:var(--line);border-top:4px solid var(--line)}
 .idx-card.alphabet-card:hover{background:var(--washi);border-color:var(--ai)}
+
+/* Keep wide learning content inside its own scroll area on phones. */
+.lp-table-scroll { max-width:100%; overflow-x:auto; }
+.lp-storage-warning { position:fixed; bottom:12px; left:12px; right:12px; z-index:5000; padding:12px; background:#fff3cd; color:#513d00; border:1px solid #967000; border-radius:8px; }
+.kanji-search input { min-width:0; }
+@media(max-width:600px) {
+  pre code { white-space:pre-wrap; overflow-wrap:anywhere; }
+  .kanji-search { flex-wrap:wrap; }
+  .kanji-search input { width:100%; flex-basis:100%!important; box-sizing:border-box; }
+}
