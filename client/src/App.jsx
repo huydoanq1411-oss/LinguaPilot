@@ -53,7 +53,7 @@ function App() {
 
   function openLesson(event) {
     const link = event.target.closest('a[href]')
-    const href = link?.getAttribute('href')
+    const href = link?.dataset.lesson || link?.getAttribute('href')
     if (user || !href?.startsWith('/jp/') || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button > 0) return
     event.preventDefault()
     pendingLesson.current = lessonDestination(`?next=${encodeURIComponent(href)}`)
@@ -95,6 +95,10 @@ function App() {
 
   useEffect(() => {
     window.bindLinguaPilotInstallButton?.(document.getElementById('installAppButton'))
+    if (window.location.hash === '#account') {
+      authForm.current?.scrollIntoView({ block: 'center', behavior: 'instant' })
+      emailInput.current?.focus({ preventScroll: true })
+    }
   }, [])
 
   async function submit(event) {
@@ -145,11 +149,11 @@ function App() {
           <img className="brand-app-icon" src="/app-icon.svg" alt="" /><span>lingua<span className="brand-light">pilot</span></span>
         </a>
         <nav aria-label="Điều hướng chính">
-          <a href="/jp/index.html">Khám phá</a>
-          <a href="/jp/cau-truc-jlpt.html">Kỳ thi JLPT</a>
+          <a href={user ? '/jp/index.html' : '#account'} data-lesson="/jp/index.html">Khám phá</a>
+          <a href={user ? '/jp/cau-truc-jlpt.html' : '#account'} data-lesson="/jp/cau-truc-jlpt.html">Kỳ thi JLPT</a>
         </nav>
         <button id="installAppButton" className="install-app-button" type="button" aria-label="Thêm LinguaPilot vào màn hình chính" title="Thêm LinguaPilot vào màn hình chính" hidden>＋ Cài app</button>
-        {user ? <div className="account"><span className="avatar">{(user.displayName || user.email).slice(0, 1).toUpperCase()}</span><span className="account-name">{user.displayName || user.email}</span><button className="text-button" onClick={signOut}>Đăng xuất</button></div> : <a className="nav-cta" href="/jp/index.html">Bắt đầu học <span>↗</span></a>}
+        {user ? <div className="account"><span className="avatar">{(user.displayName || user.email).slice(0, 1).toUpperCase()}</span><span className="account-name">{user.displayName || user.email}</span><button className="text-button" onClick={signOut}>Đăng xuất</button></div> : <a className="nav-cta" href="#account" data-lesson="/jp/index.html">Bắt đầu học <span>↗</span></a>}
       </header>
 
       <main id="home">
@@ -159,7 +163,7 @@ function App() {
             <div className="eyebrow"><span className="eyebrow-dot" /> KHÔNG GIAN HỌC NGOẠI NGỮ CỦA BẠN</div>
             <h1>Học ngôn ngữ,<br /><span>mở lối tương lai.</span></h1>
             <p className="hero-description">Từng bước vững chắc trên hành trình chinh phục tiếng Nhật. Bài học, công cụ tra cứu và luyện thi JLPT luôn ở ngay đây.</p>
-            <div className="hero-actions"><a className="primary-button" href="/jp/index.html">Bắt đầu bài học <span>→</span></a><a className="secondary-link" href="/jp/kiem-tra-thang-cap.html">Kiểm tra trình độ <span>↗</span></a></div>
+            <div className="hero-actions"><a className="primary-button" href={user ? '/jp/index.html' : '#account'} data-lesson="/jp/index.html">Bắt đầu bài học <span>→</span></a><a className="secondary-link" href={user ? '/jp/kiem-tra-thang-cap.html' : '#account'} data-lesson="/jp/kiem-tra-thang-cap.html">Kiểm tra trình độ <span>↗</span></a></div>
             <div className="hero-note"><div className="mini-avatars"><span>あ</span><span>日</span><span>語</span></div><span>Học theo nhịp độ của riêng bạn</span></div>
           </div>
           <div className="hero-art" aria-label="Minh họa học tiếng Nhật" role="img">
@@ -175,8 +179,8 @@ function App() {
         <section className="stats-strip" aria-label="Thông tin nền tảng"><div><strong>10<span>+</span></strong><small>PHẦN HỌC CÓ LỘ TRÌNH</small></div><div><strong>5</strong><small>CẤP ĐỘ JLPT</small></div><div><strong>∞</strong><small>LUÔN SẴN SÀNG ĐỂ ÔN TẬP</small></div><div className="stats-caption">Bắt đầu từ những điều nhỏ,<br />tiến xa theo cách của bạn.</div></section>
 
         <section className="learning-section" id="learning">
-          <div className="section-heading"><div><div className="eyebrow">CHỌN ĐIỀU BẠN MUỐN HỌC</div><h2>Mỗi ngày tiến thêm<br />một bước nhỏ.</h2></div><a href="/jp/index.html" className="all-lessons">Tất cả nội dung <span>↗</span></a></div>
-          <div className="lesson-grid">{lessons.map((lesson, index) => <a className="lesson-card" href={lesson.href} key={lesson.title}><div className={`lesson-icon ${lesson.tone}`}>{lesson.icon}</div><div className="lesson-index">0{index + 1} <span>↗</span></div><h3>{lesson.title}</h3><p>{lesson.detail}</p><div className="lesson-bottom"><span>Khám phá</span><span className="lesson-arrow">→</span></div></a>)}</div>
+          <div className="section-heading"><div><div className="eyebrow">CHỌN ĐIỀU BẠN MUỐN HỌC</div><h2>Mỗi ngày tiến thêm<br />một bước nhỏ.</h2></div><a href={user ? '/jp/index.html' : '#account'} data-lesson="/jp/index.html" className="all-lessons">Tất cả nội dung <span>↗</span></a></div>
+          <div className="lesson-grid">{lessons.map((lesson, index) => <a className="lesson-card" href={user ? lesson.href : '#account'} data-lesson={lesson.href} key={lesson.title}><div className={`lesson-icon ${lesson.tone}`}>{lesson.icon}</div><div className="lesson-index">0{index + 1} <span>↗</span></div><h3>{lesson.title}</h3><p>{lesson.detail}</p><div className="lesson-bottom"><span>Khám phá</span><span className="lesson-arrow">→</span></div></a>)}</div>
         </section>
 
         <section className="account-section" id="account"><div className="account-intro"><div className="eyebrow">TÀI KHOẢN LINGUAPILOT</div><h2>{user ? `Chào mừng trở lại${user.displayName ? `, ${user.displayName}` : ''}!` : 'Học theo nhịp độ của bạn.'}</h2><p>Tiến độ hiện lưu trên trình duyệt này, chưa đồng bộ với tài khoản hoặc thiết bị khác.</p><div className={`service-status ${apiStatus}`}><span />{apiStatus === 'up' ? 'Máy chủ đang hoạt động' : apiStatus === 'down' ? 'Máy chủ chưa kết nối' : 'Đang kiểm tra máy chủ'}</div></div>
@@ -191,7 +195,7 @@ function App() {
           </form>}
         </section>
       </main>
-      <footer className="footer"><a className="brand" href="#home"><img className="brand-app-icon" src="/app-icon.svg" alt="" /><span>lingua<span className="brand-light">pilot</span></span></a><span>Học một chút mỗi ngày, tiến xa hơn mỗi chặng đường.</span><a href="/jp/index.html">Thư viện tiếng Nhật ↗</a></footer>
+      <footer className="footer"><a className="brand" href="#home"><img className="brand-app-icon" src="/app-icon.svg" alt="" /><span>lingua<span className="brand-light">pilot</span></span></a><span>Học một chút mỗi ngày, tiến xa hơn mỗi chặng đường.</span><a href={user ? '/jp/index.html' : '#account'} data-lesson="/jp/index.html">Thư viện tiếng Nhật ↗</a></footer>
     </div>
   )
 }

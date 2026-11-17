@@ -11,7 +11,7 @@ body { margin: 0; background: var(--loading-bg); color: var(--loading-fg); font:
 .lesson-loading button { border: 0; border-radius: 6px; padding: 11px 24px; background: var(--loading-accent); color: var(--loading-bg); font: inherit; cursor: pointer; }
 .lesson-loading a { color: var(--loading-muted); font-size: 14px; text-underline-offset: 4px; }
 .lesson-loading :focus-visible { outline: 2px solid var(--loading-accent); outline-offset: 5px; }
-.lesson-loading [hidden] { display: none; }
+.lesson-loading[hidden], .lesson-loading [hidden] { display: none; }
 @keyframes lesson-loading { to { transform: translateX(100%) scaleX(.4); } }
 @media (prefers-color-scheme: dark) { :root { --loading-bg: #1e1f1c; --loading-fg: #d5e1d8; --loading-muted: #aab4a9; --loading-line: #393e36; --loading-accent: #a9c9ac; } }
 @media (prefers-reduced-motion: reduce) { .lesson-loading-track::after { animation: none; transform: scaleX(.4); opacity: .7; } }

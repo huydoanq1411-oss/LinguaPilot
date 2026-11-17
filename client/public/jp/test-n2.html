@@ -6,18 +6,24 @@
 <meta name="theme-color" content="#1d1d1b">
 <link rel="icon" href="/app-icon.svg">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="stylesheet" href="/lesson-loading.css">
+<link rel="stylesheet" href="/lesson-loading.css?v=20261117-2">
 <title>LinguaPilot · Bài học</title>
-</head>
+<script>
+(() => {
+  let token;
+  try { token = localStorage.getItem('linguapilot_token'); } catch {}
+  if (!token) location.replace('/?next=' + encodeURIComponent(location.pathname + location.search + location.hash) + '#account');
+})();
+</script></head>
 <body>
-<main class="lesson-loading" aria-busy="true">
+<main class="lesson-loading" aria-busy="true" hidden>
 <img class="lesson-loading-logo" src="/app-icon.svg" alt="" width="52" height="52">
 <div><h1>Một chút nữa, vào bài thôi.</h1><p id="lesson-status" role="status">Đang xác minh phiên học của bạn…</p></div>
 <div class="lesson-loading-track" aria-hidden="true"></div>
 <button id="lesson-retry" type="button" hidden>Thử lại</button>
 <a href="/#account">Về trang đăng nhập</a>
-<noscript>Vui lòng bật JavaScript để đăng nhập và mở bài học.</noscript>
-</main>
-<script src="/lesson-auth.js"></script>
+
+</main><noscript>Vui lòng bật JavaScript. <a href="/#account">Về trang đăng nhập</a></noscript>
+<script src="/lesson-auth.js?v=20261117-2"></script>
 </body>
 </html>

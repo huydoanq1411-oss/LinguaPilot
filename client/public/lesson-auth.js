@@ -7,6 +7,7 @@
     location.replace(loginUrl());
     return;
   }
+  document.querySelector('.lesson-loading')?.removeAttribute('hidden');
 
   async function load() {
     const status = document.getElementById('lesson-status');
