@@ -43,6 +43,8 @@ test('authenticated lesson includes quiz bank; paths outside lesson HTML are ref
   const response = await fetch(`${base}test-n5.html`, { headers: headers() });
   assert.equal(response.status, 200);
   const { html } = await response.json();
+  assert.ok(html.includes('src="/learning-progress.js?v=20261119" data-user-id="1"'));
+  assert.ok(html.indexOf('/learning-progress.js') < html.indexOf('window.JP_QUIZ_BANKS ='));
   assert.ok(html.includes('window.JP_QUIZ_BANKS ='));
   assert.ok(html.includes('function runSingleQuiz()'));
   assert.equal(html.includes('<script src="quiz-bank.js"></script>'), false);

@@ -1,0 +1,2215 @@
+{
+ "url": "http://127.0.0.1:5173",
+ "at": "2026-11-19T11:09:02.034Z",
+ "allow": [],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 3,
+   "filled": [
+    0.34,
+    0.82,
+    0.78
+   ],
+   "motion": {
+    "elements": 4,
+    "css": 0,
+    "transitions": 4,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 1880,
+     "screens": 2.1,
+     "words": 285,
+     "img": 2,
+     "video": 0,
+     "canvas": 0,
+     "svg": 0,
+     "sections": 4,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [
+      "✦",
+      "✳"
+     ],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "夢",
+     "words": 1,
+     "chars": 1,
+     "lines": 1,
+     "size": 68,
+     "vw": 4.7,
+     "font": "Georgia",
+     "weight": 400,
+     "tracking": 0,
+     "leading": 1.1,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "center",
+     "position": "right",
+     "widthRatio": 0.13,
+     "top": 283,
+     "tag": "div",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Học ngôn ngữ, mở lối tương lai.",
+     "words": 7,
+     "lines": 2,
+     "size": 64,
+     "font": "Manrope"
+    },
+    "headings": [
+     {
+      "text": "Học ngôn ngữ, mở lối tương lai.",
+      "words": 7,
+      "chars": 31,
+      "lines": 2,
+      "size": 64,
+      "vw": 4.4,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": -0.034,
+      "leading": 1.14,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.4,
+      "top": 207,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "夢",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 68,
+      "vw": 4.7,
+      "font": "Georgia",
+      "weight": 400,
+      "tracking": 0,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.13,
+      "top": 283,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "Mỗi ngày tiến thêm một bước nhỏ.",
+      "words": 7,
+      "chars": 32,
+      "lines": 2,
+      "size": 36,
+      "vw": 2.5,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": -0.05,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.2,
+      "top": 846,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Học theo nhịp độ của bạn.",
+      "words": 6,
+      "chars": 25,
+      "lines": 1,
+      "size": 31,
+      "vw": 2.2,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": -0.058,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.28,
+      "top": 1484,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 4,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 1,
+     "medianWords": 7,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "DM Sans",
+       "share": 0.8,
+       "mono": false
+      },
+      {
+       "family": "Manrope",
+       "share": 0.14,
+       "mono": false
+      },
+      {
+       "family": "Georgia",
+       "share": 0.05,
+       "mono": false
+      }
+     ],
+     "familyCount": 3,
+     "sizes": [
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      18,
+      22,
+      25,
+      27,
+      31,
+      36,
+      64,
+      68
+     ],
+     "sizeCount": 17,
+     "notLoaded": [],
+     "body": {
+      "font": "DM Sans",
+      "size": 16,
+      "leading": 1.65,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 6.1
+     },
+     "measureChars": 58,
+     "max": {
+      "size": 68,
+      "vw": 4.7,
+      "font": "Georgia",
+      "text": "夢"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 1,
+     "microLabelShare": 0.013,
+     "microSamples": [
+      "TỪ VỰNG HÔM NAY"
+     ],
+     "upperShare": 0.13,
+     "centerShare": 0.15,
+     "smallText": 3
+    },
+    "eyebrows": [
+     {
+      "text": "KHÔNG GIAN HỌC NGOẠI NGỮ CỦA BẠN",
+      "above": "Học ngôn ngữ, mở lối tương lai.",
+      "upper": true,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 166
+     },
+     {
+      "text": "TỪ VỰNG HÔM NAY",
+      "above": "夢",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": false,
+      "size": 7,
+      "top": 239
+     },
+     {
+      "text": "CHỌN ĐIỀU BẠN MUỐN HỌC",
+      "above": "Mỗi ngày tiến thêm một bước nhỏ.",
+      "upper": true,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 814
+     },
+     {
+      "text": "TÀI KHOẢN LINGUAPILOT",
+      "above": "Học theo nhịp độ của bạn.",
+      "upper": true,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 1452
+     }
+    ],
+    "numbered": [
+     {
+      "text": "01 / 12",
+      "size": 8,
+      "top": 462
+     },
+     {
+      "text": "01",
+      "size": 13,
+      "top": 995
+     },
+     {
+      "text": "02",
+      "size": 13,
+      "top": 995
+     },
+     {
+      "text": "03",
+      "size": 13,
+      "top": 995
+     },
+     {
+      "text": "04",
+      "size": 13,
+      "top": 995
+     }
+    ],
+    "color": {
+     "bodyBg": "#faf9f6",
+     "bodyBgHsl": {
+      "h": 45,
+      "s": 0.29,
+      "l": 0.97
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#faf9f6",
+       "top": 0,
+       "hsl": {
+        "h": 45,
+        "s": 0.29,
+        "l": 0.97
+       }
+      },
+      {
+       "color": "#eff1e9",
+       "top": 1284,
+       "hsl": {
+        "h": 75,
+        "s": 0.22,
+        "l": 0.93
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#526257",
+       "share": 0.3
+      },
+      {
+       "color": "#59665c",
+       "share": 0.25
+      },
+      {
+       "color": "#526c58",
+       "share": 0.07
+      },
+      {
+       "color": "#435e4b",
+       "share": 0.06
+      },
+      {
+       "color": "#26372d",
+       "share": 0.06
+      }
+     ],
+     "button": {
+      "bg": "#345d43",
+      "hsl": {
+       "h": 142,
+       "s": 0.28,
+       "l": 0.28
+      },
+      "fg": "#ffffff"
+     },
+     "lowContrast": [
+      {
+       "text": "01 / 12",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 8,
+       "fg": "#9a9e92",
+       "bg": "#fffefa"
+      },
+      {
+       "text": "Đang học",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 8,
+       "fg": "#9a9e92",
+       "bg": "#fffefa"
+      },
+      {
+       "text": "mỗi ngày một chút",
+       "ratio": 2.8,
+       "need": 4.5,
+       "size": 9,
+       "fg": "#83917d",
+       "bg": "#eceee5"
+      },
+      {
+       "text": "TỪ VỰNG HÔM NAY",
+       "ratio": 3.2,
+       "need": 4.5,
+       "size": 7,
+       "fg": "#899182",
+       "bg": "#fffefa"
+      },
+      {
+       "text": "pilot",
+       "ratio": 3.3,
+       "need": 4.5,
+       "size": 18,
+       "fg": "#72907b",
+       "bg": "#faf9f6"
+      },
+      {
+       "text": "pilot",
+       "ratio": 3.3,
+       "need": 4.5,
+       "size": 15,
+       "fg": "#72907b",
+       "bg": "#faf9f6"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 4,
+     "inHero": 3,
+     "radius": 6,
+     "height": 48,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "＋ Cài app",
+      "Bắt đầu học ↗",
+      "Bắt đầu bài học →"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 5,
+     "shadowOverlay": 0,
+     "shadowSamples": [
+      "div.art-card.card-back → rgba(51, 75, 53, 0.09) 0px 18px 48px 0px",
+      "div.art-card.card-front → rgba(51, 75, 53, 0.09) 0px 18px 48px 0px",
+      "div.float-tag.tag-top → rgba(36, 55, 33, 0.07) 0px 8px 24px 0px",
+      "div.float-tag.tag-bottom → rgba(36, 55, 33, 0.07) 0px 8px 24px 0px"
+     ],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 3,
+     "hairlineSamples": [
+      "header.topbar 1440px",
+      "section.stats-strip 1440px",
+      "div.auth-tabs 314px"
+     ],
+     "outlinedBoxes": 9,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 10,
+     "boxRadius": 6,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 4,
+       "iconTopped": true,
+       "rounded": true,
+       "top": 969
+      }
+     ]
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 4,
+     "fixed": false,
+     "height": 86,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "dm sans",
+     "manrope"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 1880,
+    "margins": {
+     "left": 162,
+     "right": 158
+    },
+    "sections": [
+     {
+      "sel": "section.hero-section",
+      "tag": "section",
+      "top": 86,
+      "height": 540,
+      "words": 75,
+      "media": 0,
+      "middle": 187,
+      "heading": {
+       "text": "Học ngôn ngữ,",
+       "size": 64,
+       "tag": "h1"
+      },
+      "left": 166,
+      "right": 164,
+      "textLeft": 166,
+      "textRight": 164,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#learning.learning-section",
+      "tag": "section",
+      "top": 726,
+      "height": 558,
+      "words": 58,
+      "media": 0,
+      "middle": 137,
+      "heading": {
+       "text": "Mỗi ngày tiến thêm",
+       "size": 36,
+       "tag": "h2"
+      },
+      "left": 166,
+      "right": 188,
+      "textLeft": 166,
+      "textRight": 188,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#account.account-section",
+      "tag": "section",
+      "top": 1284,
+      "height": 513,
+      "words": 60,
+      "media": 0,
+      "middle": 407,
+      "heading": {
+       "text": "Học theo nhịp độ của bạn.",
+       "size": 31,
+       "tag": "h2"
+      },
+      "left": 166,
+      "right": 189,
+      "textLeft": 166,
+      "textRight": 197,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Học ngôn ngữ, mở lối tương lai.",
+      "size": 64,
+      "top": 207,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 166,
+      "n": 7
+     },
+     {
+      "x": 184,
+      "n": 1
+     },
+     {
+      "x": 464,
+      "n": 1
+     },
+     {
+      "x": 745,
+      "n": 1
+     },
+     {
+      "x": 1025,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 11,
+    "bodySize": 13,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0.13,
+    "voidBox": {
+     "x": 480,
+     "y": 720,
+     "w": 960,
+     "h": 180
+    }
+   },
+   "app": null,
+   "consoleErrors": []
+  },
+  {
+   "width": 768,
+   "height": 1024,
+   "load": "load",
+   "screens": 2,
+   "filled": [
+    0.51,
+    0.79
+   ],
+   "motion": {
+    "elements": 4,
+    "css": 0,
+    "transitions": 4,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "page": {
+     "height": 1849,
+     "screens": 1.8,
+     "words": 285,
+     "img": 2,
+     "video": 0,
+     "canvas": 0,
+     "svg": 0,
+     "sections": 4,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [
+      "✦",
+      "✳"
+     ],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "夢",
+     "words": 1,
+     "chars": 1,
+     "lines": 1,
+     "size": 68,
+     "vw": 8.9,
+     "font": "Georgia",
+     "weight": 400,
+     "tracking": 0,
+     "leading": 1.1,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "center",
+     "position": "right",
+     "widthRatio": 0.21,
+     "top": 286,
+     "tag": "div",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Học ngôn ngữ, mở lối tương lai.",
+     "words": 7,
+     "lines": 2,
+     "size": 43,
+     "font": "Manrope"
+    },
+    "headings": [
+     {
+      "text": "Học ngôn ngữ, mở lối tương lai.",
+      "words": 7,
+      "chars": 31,
+      "lines": 2,
+      "size": 43,
+      "vw": 5.6,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": -0.051,
+      "leading": 1.14,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.44,
+      "top": 211,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "夢",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 68,
+      "vw": 8.9,
+      "font": "Georgia",
+      "weight": 400,
+      "tracking": 0,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "right",
+      "widthRatio": 0.21,
+      "top": 286,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "10+",
+      "words": 1,
+      "chars": 3,
+      "lines": 1,
+      "size": 27,
+      "vw": 3.5,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.05,
+      "top": 662,
+      "tag": "strong",
+      "kind": "heading"
+     },
+     {
+      "text": "5",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 27,
+      "vw": 3.5,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.02,
+      "top": 662,
+      "tag": "strong",
+      "kind": "heading"
+     },
+     {
+      "text": "∞",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 27,
+      "vw": 3.5,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.03,
+      "top": 662,
+      "tag": "strong",
+      "kind": "heading"
+     },
+     {
+      "text": "Mỗi ngày tiến thêm một bước nhỏ.",
+      "words": 7,
+      "chars": 32,
+      "lines": 2,
+      "size": 36,
+      "vw": 4.7,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": -0.05,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.38,
+      "top": 835,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Học theo nhịp độ của bạn.",
+      "words": 6,
+      "chars": 25,
+      "lines": 2,
+      "size": 31,
+      "vw": 4,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": -0.058,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.39,
+      "top": 1443,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 7,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 1,
+     "medianWords": 6,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "DM Sans",
+       "share": 0.8,
+       "mono": false
+      },
+      {
+       "family": "Manrope",
+       "share": 0.14,
+       "mono": false
+      },
+      {
+       "family": "Georgia",
+       "share": 0.05,
+       "mono": false
+      }
+     ],
+     "familyCount": 3,
+     "sizes": [
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      18,
+      22,
+      25,
+      27,
+      31,
+      36,
+      43,
+      68
+     ],
+     "sizeCount": 17,
+     "notLoaded": [],
+     "body": {
+      "font": "DM Sans",
+      "size": 16,
+      "leading": 1.65,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 6.1
+     },
+     "measureChars": 42,
+     "max": {
+      "size": 68,
+      "vw": 8.9,
+      "font": "Georgia",
+      "text": "夢"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 1,
+     "microLabelShare": 0.013,
+     "microSamples": [
+      "TỪ VỰNG HÔM NAY"
+     ],
+     "upperShare": 0.13,
+     "centerShare": 0.15,
+     "smallText": 3
+    },
+    "eyebrows": [
+     {
+      "text": "KHÔNG GIAN HỌC NGOẠI NGỮ CỦA BẠN",
+      "above": "Học ngôn ngữ, mở lối tương lai.",
+      "upper": true,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 170
+     },
+     {
+      "text": "TỪ VỰNG HÔM NAY",
+      "above": "夢",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": false,
+      "size": 7,
+      "top": 247
+     },
+     {
+      "text": "CHỌN ĐIỀU BẠN MUỐN HỌC",
+      "above": "Mỗi ngày tiến thêm một bước nhỏ.",
+      "upper": true,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 803
+     },
+     {
+      "text": "TÀI KHOẢN LINGUAPILOT",
+      "above": "Học theo nhịp độ của bạn.",
+      "upper": true,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 1411
+     }
+    ],
+    "numbered": [
+     {
+      "text": "01 / 12",
+      "size": 8,
+      "top": 444
+     },
+     {
+      "text": "01",
+      "size": 13,
+      "top": 984
+     },
+     {
+      "text": "02",
+      "size": 13,
+      "top": 984
+     },
+     {
+      "text": "03",
+      "size": 13,
+      "top": 984
+     },
+     {
+      "text": "04",
+      "size": 13,
+      "top": 984
+     }
+    ],
+    "color": {
+     "bodyBg": "#faf9f6",
+     "bodyBgHsl": {
+      "h": 45,
+      "s": 0.29,
+      "l": 0.97
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#faf9f6",
+       "top": 0,
+       "hsl": {
+        "h": 45,
+        "s": 0.29,
+        "l": 0.97
+       }
+      },
+      {
+       "color": "#eff1e9",
+       "top": 1271,
+       "hsl": {
+        "h": 75,
+        "s": 0.22,
+        "l": 0.93
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#526257",
+       "share": 0.3
+      },
+      {
+       "color": "#59665c",
+       "share": 0.25
+      },
+      {
+       "color": "#526c58",
+       "share": 0.07
+      },
+      {
+       "color": "#435e4b",
+       "share": 0.06
+      },
+      {
+       "color": "#26372d",
+       "share": 0.06
+      }
+     ],
+     "button": {
+      "bg": "#345d43",
+      "hsl": {
+       "h": 142,
+       "s": 0.28,
+       "l": 0.28
+      },
+      "fg": "#ffffff"
+     },
+     "lowContrast": [
+      {
+       "text": "01 / 12",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 8,
+       "fg": "#9a9e92",
+       "bg": "#fffefa"
+      },
+      {
+       "text": "Đang học",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 8,
+       "fg": "#9a9e92",
+       "bg": "#fffefa"
+      },
+      {
+       "text": "mỗi ngày một chút",
+       "ratio": 2.8,
+       "need": 4.5,
+       "size": 9,
+       "fg": "#83917d",
+       "bg": "#eceee5"
+      },
+      {
+       "text": "TỪ VỰNG HÔM NAY",
+       "ratio": 3.2,
+       "need": 4.5,
+       "size": 7,
+       "fg": "#899182",
+       "bg": "#fffefa"
+      },
+      {
+       "text": "pilot",
+       "ratio": 3.3,
+       "need": 4.5,
+       "size": 18,
+       "fg": "#72907b",
+       "bg": "#faf9f6"
+      },
+      {
+       "text": "pilot",
+       "ratio": 3.3,
+       "need": 4.5,
+       "size": 15,
+       "fg": "#72907b",
+       "bg": "#faf9f6"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 4,
+     "inHero": 3,
+     "radius": 6,
+     "height": 48,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "＋ Cài app",
+      "Bắt đầu học ↗",
+      "Bắt đầu bài học →"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 5,
+     "shadowOverlay": 0,
+     "shadowSamples": [
+      "div.art-card.card-back → rgba(51, 75, 53, 0.09) 0px 18px 48px 0px",
+      "div.art-card.card-front → rgba(51, 75, 53, 0.09) 0px 18px 48px 0px",
+      "div.float-tag.tag-top → rgba(36, 55, 33, 0.07) 0px 8px 24px 0px",
+      "div.float-tag.tag-bottom → rgba(36, 55, 33, 0.07) 0px 8px 24px 0px"
+     ],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 3,
+     "hairlineSamples": [
+      "header.topbar 768px",
+      "section.stats-strip 768px",
+      "div.auth-tabs 284px"
+     ],
+     "outlinedBoxes": 9,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 10,
+     "boxRadius": 6,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 4,
+       "iconTopped": true,
+       "rounded": true,
+       "top": 958
+      }
+     ]
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 4,
+     "fixed": false,
+     "height": 86,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "dm sans",
+     "manrope"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 768,
+     "h": 1024
+    },
+    "pageH": 1849,
+    "margins": {
+     "left": 54,
+     "right": 61
+    },
+    "sections": [
+     {
+      "sel": "section.hero-section",
+      "tag": "section",
+      "top": 86,
+      "height": 540,
+      "words": 75,
+      "media": 0,
+      "middle": 70,
+      "heading": {
+       "text": "Học ngôn ngữ,",
+       "size": 43,
+       "tag": "h1"
+      },
+      "left": 54,
+      "right": 88,
+      "textLeft": 54,
+      "textRight": 88,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#learning.learning-section",
+      "tag": "section",
+      "top": 735,
+      "height": 536,
+      "words": 58,
+      "media": 0,
+      "middle": 71,
+      "heading": {
+       "text": "Mỗi ngày tiến thêm",
+       "size": 36,
+       "tag": "h2"
+      },
+      "left": 54,
+      "right": 76,
+      "textLeft": 54,
+      "textRight": 76,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#account.account-section",
+      "tag": "section",
+      "top": 1271,
+      "height": 495,
+      "words": 60,
+      "media": 0,
+      "middle": 59,
+      "heading": {
+       "text": "Học theo nhịp độ của bạn.",
+       "size": 31,
+       "tag": "h2"
+      },
+      "left": 54,
+      "right": 77,
+      "textLeft": 54,
+      "textRight": 83,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Học ngôn ngữ, mở lối tương lai.",
+      "size": 43,
+      "top": 211,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 54,
+      "n": 7
+     },
+     {
+      "x": 72,
+      "n": 1
+     },
+     {
+      "x": 240,
+      "n": 1
+     },
+     {
+      "x": 409,
+      "n": 1
+     },
+     {
+      "x": 577,
+      "n": 1
+     }
+    ],
+    "leftBlocks": 11,
+    "bodySize": 13,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": null,
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 3,
+   "filled": [
+    0.49,
+    0.84,
+    0.88
+   ],
+   "motion": {
+    "elements": 4,
+    "css": 0,
+    "transitions": 4,
+    "scripted": 0,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 2159,
+     "screens": 2.6,
+     "words": 251,
+     "img": 2,
+     "video": 0,
+     "canvas": 0,
+     "svg": 0,
+     "sections": 4,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [
+      "✦",
+      "✳"
+     ],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "夢",
+     "words": 1,
+     "chars": 1,
+     "lines": 1,
+     "size": 68,
+     "vw": 17.4,
+     "font": "Georgia",
+     "weight": 400,
+     "tracking": 0,
+     "leading": 1.1,
+     "upper": false,
+     "italic": false,
+     "mono": false,
+     "align": "center",
+     "position": "center",
+     "widthRatio": 0.24,
+     "top": 437,
+     "tag": "div",
+     "kind": "heading"
+    },
+    "h1": {
+     "text": "Học ngôn ngữ, mở lối tương lai.",
+     "words": 7,
+     "lines": 2,
+     "size": 33.2,
+     "font": "Manrope"
+    },
+    "headings": [
+     {
+      "text": "Học ngôn ngữ, mở lối tương lai.",
+      "words": 7,
+      "chars": 31,
+      "lines": 2,
+      "size": 33.2,
+      "vw": 8.5,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": -0.045,
+      "leading": 1.14,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.86,
+      "top": 132,
+      "tag": "h1",
+      "kind": "heading"
+     },
+     {
+      "text": "夢",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 68,
+      "vw": 17.4,
+      "font": "Georgia",
+      "weight": 400,
+      "tracking": 0,
+      "leading": 1.1,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "center",
+      "position": "center",
+      "widthRatio": 0.24,
+      "top": 437,
+      "tag": "div",
+      "kind": "heading"
+     },
+     {
+      "text": "✳",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 22,
+      "vw": 5.6,
+      "font": "DM Sans",
+      "weight": 400,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "right",
+      "widthRatio": 0.03,
+      "top": 471,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "日本語",
+      "words": 1,
+      "chars": 3,
+      "lines": 1,
+      "size": 25,
+      "vw": 6.4,
+      "font": "Georgia",
+      "weight": 400,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.1,
+      "top": 472,
+      "tag": "span",
+      "kind": "heading"
+     },
+     {
+      "text": "10+",
+      "words": 1,
+      "chars": 3,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.09,
+      "top": 618,
+      "tag": "strong",
+      "kind": "heading"
+     },
+     {
+      "text": "5",
+      "words": 1,
+      "chars": 1,
+      "lines": 1,
+      "size": 24,
+      "vw": 6.2,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": 0,
+      "leading": 1.2,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.04,
+      "top": 618,
+      "tag": "strong",
+      "kind": "heading"
+     },
+     {
+      "text": "Mỗi ngày tiến thêm một bước nhỏ.",
+      "words": 7,
+      "chars": 32,
+      "lines": 2,
+      "size": 28,
+      "vw": 7.2,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": -0.064,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "left",
+      "widthRatio": 0.57,
+      "top": 748,
+      "tag": "h2",
+      "kind": "heading"
+     },
+     {
+      "text": "Học theo nhịp độ của bạn.",
+      "words": 6,
+      "chars": 25,
+      "lines": 1,
+      "size": 29,
+      "vw": 7.4,
+      "font": "Manrope",
+      "weight": 600,
+      "tracking": -0.062,
+      "leading": 1.25,
+      "upper": false,
+      "italic": false,
+      "mono": false,
+      "align": "left",
+      "position": "center",
+      "widthRatio": 0.86,
+      "top": 1442,
+      "tag": "h2",
+      "kind": "heading"
+     }
+    ],
+    "headingSummary": {
+     "count": 8,
+     "maxLines": 2,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 1,
+     "medianWords": 1,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "DM Sans",
+       "share": 0.83,
+       "mono": false
+      },
+      {
+       "family": "Manrope",
+       "share": 0.16,
+       "mono": false
+      },
+      {
+       "family": "Georgia",
+       "share": 0.01,
+       "mono": false
+      }
+     ],
+     "familyCount": 3,
+     "sizes": [
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      18,
+      22,
+      24,
+      25,
+      28,
+      29,
+      33,
+      68
+     ],
+     "sizeCount": 17,
+     "notLoaded": [],
+     "body": {
+      "font": "DM Sans",
+      "size": 16,
+      "leading": 1.65,
+      "weight": 400,
+      "tracking": 0,
+      "contrast": 6.1
+     },
+     "measureChars": 42,
+     "max": {
+      "size": 68,
+      "vw": 17.4,
+      "font": "Georgia",
+      "text": "夢"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 1,
+     "microLabelShare": 0.015,
+     "microSamples": [
+      "TỪ VỰNG HÔM NAY"
+     ],
+     "upperShare": 0.12,
+     "centerShare": 0.17,
+     "smallText": 3
+    },
+    "eyebrows": [
+     {
+      "text": "KHÔNG GIAN HỌC NGOẠI NGỮ CỦA BẠN",
+      "above": "Học ngôn ngữ, mở lối tương lai.",
+      "upper": true,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 98
+     },
+     {
+      "text": "TỪ VỰNG HÔM NAY",
+      "above": "夢",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": false,
+      "size": 7,
+      "top": 415
+     },
+     {
+      "text": "TỪ VỰNG HÔM NAY",
+      "above": "日本語",
+      "upper": true,
+      "tracked": true,
+      "mono": false,
+      "pill": false,
+      "size": 7,
+      "top": 415
+     },
+     {
+      "text": "CHỌN ĐIỀU BẠN MUỐN HỌC",
+      "above": "Mỗi ngày tiến thêm một bước nhỏ.",
+      "upper": true,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 720
+     },
+     {
+      "text": "TÀI KHOẢN LINGUAPILOT",
+      "above": "Học theo nhịp độ của bạn.",
+      "upper": true,
+      "tracked": false,
+      "mono": false,
+      "pill": false,
+      "size": 13,
+      "top": 1410
+     }
+    ],
+    "numbered": [
+     {
+      "text": "01 / 12",
+      "size": 8,
+      "top": 527
+     },
+     {
+      "text": "01",
+      "size": 13,
+      "top": 917
+     },
+     {
+      "text": "02",
+      "size": 13,
+      "top": 917
+     },
+     {
+      "text": "03",
+      "size": 13,
+      "top": 1139
+     },
+     {
+      "text": "04",
+      "size": 13,
+      "top": 1139
+     }
+    ],
+    "color": {
+     "bodyBg": "#faf9f6",
+     "bodyBgHsl": {
+      "h": 45,
+      "s": 0.29,
+      "l": 0.97
+     },
+     "dark": false,
+     "sectionBgs": [
+      {
+       "color": "#faf9f6",
+       "top": 0,
+       "hsl": {
+        "h": 45,
+        "s": 0.29,
+        "l": 0.97
+       }
+      },
+      {
+       "color": "#eff1e9",
+       "top": 1367,
+       "hsl": {
+        "h": 75,
+        "s": 0.22,
+        "l": 0.93
+       }
+      },
+      {
+       "color": "#fffefa",
+       "top": 1610,
+       "hsl": {
+        "h": 48,
+        "s": 1,
+        "l": 0.99
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#59665c",
+       "share": 0.25
+      },
+      {
+       "color": "#526257",
+       "share": 0.24
+      },
+      {
+       "color": "#526c58",
+       "share": 0.07
+      },
+      {
+       "color": "#435e4b",
+       "share": 0.07
+      },
+      {
+       "color": "#26372d",
+       "share": 0.07
+      }
+     ],
+     "button": {
+      "bg": "#345d43",
+      "hsl": {
+       "h": 142,
+       "s": 0.28,
+       "l": 0.28
+      },
+      "fg": "#ffffff"
+     },
+     "lowContrast": [
+      {
+       "text": "01 / 12",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 8,
+       "fg": "#9a9e92",
+       "bg": "#fffefa"
+      },
+      {
+       "text": "Đang học",
+       "ratio": 2.7,
+       "need": 4.5,
+       "size": 8,
+       "fg": "#9a9e92",
+       "bg": "#fffefa"
+      },
+      {
+       "text": "mỗi ngày một chút",
+       "ratio": 2.8,
+       "need": 4.5,
+       "size": 9,
+       "fg": "#83917d",
+       "bg": "#eceee5"
+      },
+      {
+       "text": "TỪ VỰNG HÔM NAY",
+       "ratio": 3.2,
+       "need": 4.5,
+       "size": 7,
+       "fg": "#899182",
+       "bg": "#fffefa"
+      },
+      {
+       "text": "pilot",
+       "ratio": 3.3,
+       "need": 4.5,
+       "size": 14,
+       "fg": "#72907b",
+       "bg": "#faf9f6"
+      },
+      {
+       "text": "pilot",
+       "ratio": 3.3,
+       "need": 4.5,
+       "size": 15,
+       "fg": "#72907b",
+       "bg": "#faf9f6"
+      }
+     ]
+    },
+    "buttons": {
+     "count": 4,
+     "inHero": 3,
+     "radius": 6,
+     "height": 48,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "＋ Cài app",
+      "Bắt đầu học ↗",
+      "Bắt đầu bài học →"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 3,
+     "shadowOverlay": 0,
+     "shadowSamples": [
+      "div.art-card.card-back → rgba(51, 75, 53, 0.09) 0px 18px 48px 0px",
+      "div.art-card.card-front → rgba(51, 75, 53, 0.09) 0px 18px 48px 0px",
+      "form.auth-card → rgba(46, 61, 45, 0.04) 0px 12px 30px 0px"
+     ],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 3,
+     "hairlineSamples": [
+      "header.topbar 390px",
+      "section.stats-strip 390px",
+      "div.auth-tabs 289px"
+     ],
+     "outlinedBoxes": 7,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 7,
+     "boxRadius": 6,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": [
+      {
+       "count": 4,
+       "iconTopped": true,
+       "rounded": true,
+       "top": 896
+      }
+     ]
+    },
+    "heroMedia": [],
+    "nav": {
+     "links": 2,
+     "fixed": false,
+     "height": 70,
+     "floatingPill": false,
+     "blur": false
+    },
+    "fontsLoaded": [
+     "dm sans",
+     "manrope"
+    ]
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 2159,
+    "margins": {
+     "left": 27,
+     "right": 39
+    },
+    "sections": [
+     {
+      "sel": "section.hero-section",
+      "tag": "section",
+      "top": 70,
+      "height": 514,
+      "words": 68,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Học ngôn ngữ,",
+       "size": 33,
+       "tag": "h1"
+      },
+      "left": 27,
+      "right": 39,
+      "textLeft": 27,
+      "textRight": 39,
+      "fullBleed": false,
+      "footer": false,
+      "hero": true,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#learning.learning-section",
+      "tag": "section",
+      "top": 684,
+      "height": 683,
+      "words": 58,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Mỗi ngày tiến thêm",
+       "size": 28,
+       "tag": "h2"
+      },
+      "left": 27,
+      "right": 43,
+      "textLeft": 27,
+      "textRight": 43,
+      "fullBleed": false,
+      "footer": false,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     },
+     {
+      "sel": "section#account.account-section",
+      "tag": "section",
+      "top": 1367,
+      "height": 685,
+      "words": 60,
+      "media": 0,
+      "middle": 0,
+      "heading": {
+       "text": "Học theo nhịp độ của bạn.",
+       "size": 29,
+       "tag": "h2"
+      },
+      "left": 27,
+      "right": 50,
+      "textLeft": 27,
+      "textRight": 51,
+      "fullBleed": false,
+      "footer": true,
+      "hero": false,
+      "continues": false,
+      "pinned": false
+     }
+    ],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Học ngôn ngữ, mở lối tương lai.",
+      "size": 33,
+      "top": 132,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [
+     {
+      "x": 27,
+      "n": 7
+     },
+     {
+      "x": 40,
+      "n": 2
+     },
+     {
+      "x": 213,
+      "n": 2
+     }
+    ],
+    "leftBlocks": 11,
+    "bodySize": 13,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": null,
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "FAIL",
+   "id": "eyebrow",
+   "width": 1440,
+   "message": "4 eyebrow/kicker label(s) above headings: \"KHÔNG GIAN HỌC NGOẠI NGỮ CỦA BẠN\" above \"Học ngôn ngữ, mở lối tương lai.\"; \"TỪ VỰNG HÔM NAY\" above \"夢\"; \"CHỌN ĐIỀU BẠN MUỐN HỌC\" above \"Mỗi ngày tiến thêm một bước nhỏ.\"; \"TÀI KHOẢN LINGUAPILOT\" above \"Học theo nhịp độ của bạn.\"",
+   "fix": "Delete them. If the label carried real information, fold it into the headline or the supporting sentence.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "numbering",
+   "width": 1440,
+   "message": "Decorative index numbers: \"01 / 12\", \"01\", \"02\", \"03\", \"04\"",
+   "fix": "Remove them. If order truly matters, write it into the words (\"First, …\") or use a real <ol>.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "micro-label",
+   "width": 1440,
+   "message": "1 tiny uppercase letter-spaced label(s): \"TỪ VỰNG HÔM NAY\"",
+   "fix": "Prefer sentence case at body size.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "emoji",
+   "width": 1440,
+   "message": "Emoji in the page: ✦ ✳",
+   "fix": "Remove. Use words or real imagery.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "shadow",
+   "width": 1440,
+   "message": "5 box-shadow(s) on elements at rest: div.art-card.card-back → rgba(51, 75, 53, 0.09) 0px 18px 48px 0px | div.art-card.card-front → rgba(51, 75, 53, 0.09) 0px 18px 48px 0px | div.float-tag.tag-top → rgba(36, 55, 33, 0.07) 0px 8px 24px 0px",
+   "fix": "Remove. Separate surfaces with a tone step or space. Shadows are for things that really float (menus, dialogs, sticky bars).",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "hairline",
+   "width": 1440,
+   "message": "3 thin rule(s)/divider line(s): header.topbar 1440px | section.stats-strip 1440px | div.auth-tabs 314px",
+   "fix": "Delete. Separate with space, a tone change, or scale. Lines are only for real tables and form fields.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "outlined-box",
+   "width": 1440,
+   "message": "9 boxes drawn with a 1px outline.",
+   "fix": "Define a surface by its fill (one tone step from the page) or leave the content unboxed.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "icon-cards",
+   "width": 1440,
+   "message": "1 row(s) of identical cards each topped with a small icon (4 cards).",
+   "fix": "Replace with one composed section from the direction: a narrative split, a list set in large type, or real imagery per item.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "palette-cream",
+   "width": 1440,
+   "message": "Yellow-cream background (page background #faf9f6, section #faf9f6).",
+   "fix": "Use the drawn palette. If you want warmth, take a low-chroma stone or bone, not a yellow cream.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "contrast",
+   "width": 1440,
+   "message": "Low-contrast text: \"01 / 12\" 2.7:1 needs 4.5:1; \"Đang học\" 2.7:1 needs 4.5:1; \"mỗi ngày một chút\" 2.8:1 needs 4.5:1; \"TỪ VỰNG HÔM NAY\" 3.2:1 needs 4.5:1",
+   "fix": "Darken or lighten the text colour.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "font-count",
+   "width": 1440,
+   "message": "3 typefaces in use (DM Sans, Manrope, Georgia).",
+   "fix": "Two at most.",
+   "alsoAt": [
+    768
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "size-count",
+   "width": 1440,
+   "message": "17 different font sizes (7, 8, 9, 11, 12, 13, 14, 15, 16, 18, 22, 25, 27, 31, 36, 64, 68).",
+   "fix": "A page needs about five: display, heading, lead, body, small.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "WARN",
+   "id": "grey-body",
+   "width": 1440,
+   "message": "The running text is a soft grey on its ground (6.1:1).",
+   "fix": "Set body copy in the full ink (7:1 or more). Keep the muted ink for secondary notes; pages read thin and unfinished when everything is grey.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "few-pictures",
+   "width": 1440,
+   "message": "Only 0 picture(s) on the page (0 photographs, footage or raster images, 0 interface fragments). Drawings in SVG do not count.",
+   "fix": "Find real pictures of the subject's world with scripts/assets.mjs (photographs, archival images, maps, engravings, footage), download them to assets/ and give them room: a hero picture, one per section that has a subject, a full-width band. At least four, usually six to twelve."
+  },
+  {
+   "level": "WARN",
+   "id": "no-footage",
+   "width": 1440,
+   "message": "No video anywhere on the page.",
+   "fix": "Look for one honest clip with scripts/assets.mjs --video (the place, the material, the process) and use it as a muted loop with a poster frame. Defend its absence only if no clip fits the subject."
+  },
+  {
+   "level": "WARN",
+   "id": "small-text",
+   "width": 1440,
+   "message": "3 text block(s) under 13px.",
+   "fix": "Nothing meant to be read goes below 13px.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "covered-text",
+   "width": 1440,
+   "message": "Large text lies under another element at some scroll position: \"日本語\" (screen 1, 100% hidden)",
+   "fix": "Nothing may sit on top of a headline or statement. Move the picture, shorten the pinned run, or raise the text above it (z-index) and give it a ground.",
+   "alsoAt": [
+    768,
+    390
+   ]
+  },
+  {
+   "level": "FAIL",
+   "id": "still-page",
+   "width": 1440,
+   "message": "Only 4 element(s) moved while the page loaded and scrolled.",
+   "fix": "Build the motion layer (SKILL.md step 9, references/motion.md): the signature move, an entrance for the parts of every section, feedback on every control, and one moving picture. Transform and opacity only, with a reduced-motion fallback."
+  },
+  {
+   "level": "WARN",
+   "id": "off-centre",
+   "width": 390,
+   "message": "The margins differ: 27px on the left, 39px on the right, at 390px.",
+   "fix": "Put the navigation and the content on one pair of margins; check for padding on one side only, a scrollbar gutter, or a header on another inset than the page."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "F:\\Quoc_Huy\\Go\\Git\\LinguaPilot\\.taste-skill\\after\\desktop-fold.jpg",
+   "pages": [
+    "F:\\Quoc_Huy\\Go\\Git\\LinguaPilot\\.taste-skill\\after\\desktop-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "tablet",
+   "width": 768,
+   "fold": "F:\\Quoc_Huy\\Go\\Git\\LinguaPilot\\.taste-skill\\after\\tablet-fold.jpg",
+   "pages": [
+    "F:\\Quoc_Huy\\Go\\Git\\LinguaPilot\\.taste-skill\\after\\tablet-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "F:\\Quoc_Huy\\Go\\Git\\LinguaPilot\\.taste-skill\\after\\mobile-fold.jpg",
+   "pages": [
+    "F:\\Quoc_Huy\\Go\\Git\\LinguaPilot\\.taste-skill\\after\\mobile-page-01.jpg"
+   ],
+   "film": []
+  }
+ ]
+}

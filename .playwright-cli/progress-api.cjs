@@ -1,0 +1,13 @@
+const path = require('node:path');
+const root = path.resolve(__dirname, '..');
+const express = require(path.join(root, 'server/node_modules/express'));
+const cors = require(path.join(root, 'server/node_modules/cors'));
+const jwt = require(path.join(root, 'server/node_modules/jsonwebtoken'));
+process.env.JWT_SECRET = 'local-progress-review-fixture-only';
+const dbPath = require.resolve(path.join(root, 'server/src/db'));
+require.cache[dbPath] = {id:dbPath, filename:dbPath, loaded:true, exports:{user:{findUnique:async ({where}) => [1,2].includes(where.id)?{id:where.id}:null}}};
+const app=express();
+app.use(cors());
+app.get('/fixture/token/:id',(req,res)=>res.json({token:jwt.sign({sub:Number(req.params.id)},process.env.JWT_SECRET,{expiresIn:'1h'})}));
+app.use('/api/lessons',require(path.join(root,'server/src/routes/lessons')));
+app.listen(3099,'127.0.0.1',()=>console.log('Local progress fixture API: 3099 (mock users, no database)'));

@@ -5,7 +5,8 @@
   const prefix = `linguapilot_progress:${userId}:`;
   const importedKey = 'linguapilot_progress:legacy-imported-by';
   const progressKey = /^(done_bai\d+|ch_done_\d+)$/;
-  const token = localStorage.getItem('linguapilot_token');
+  let token;
+  try { token = localStorage.getItem('linguapilot_token'); } catch { /* Reads and writes report storage failure below. */ }
 
   function requireSession() {
     if (!token || localStorage.getItem('linguapilot_token') !== token) {

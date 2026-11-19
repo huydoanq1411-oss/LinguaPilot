@@ -30,6 +30,10 @@
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Không tải được bài học.');
       if (typeof data.html !== 'string') throw new Error('Dữ liệu bài học không hợp lệ.');
+      if (localStorage.getItem(tokenKey) !== token) {
+        location.replace(loginUrl());
+        return;
+      }
       // Only authenticated API responses contain lesson HTML and quiz data.
       document.open();
       document.write(data.html);

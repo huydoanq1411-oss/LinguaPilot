@@ -187,7 +187,7 @@ function App() {
           <div className="lesson-grid">{lessons.map((lesson, index) => <a className="lesson-card" href={user ? lesson.href : '#account'} data-lesson={lesson.href} key={lesson.title}><div className={`lesson-icon ${lesson.tone}`}>{lesson.icon}</div><div className="lesson-index">0{index + 1} <span>↗</span></div><h3>{lesson.title}</h3><p>{lesson.detail}</p><div className="lesson-bottom"><span>Khám phá</span><span className="lesson-arrow">→</span></div></a>)}</div>
         </section>
 
-        <section className="account-section" id="account"><div className="account-intro"><div className="eyebrow">TÀI KHOẢN LINGUAPILOT</div><h2>{user ? `Chào mừng trở lại${user.displayName ? `, ${user.displayName}` : ''}!` : 'Học theo nhịp độ của bạn.'}</h2><p>Tiến độ hiện lưu trên trình duyệt này, chưa đồng bộ với tài khoản hoặc thiết bị khác.</p><div className={`service-status ${apiStatus}`}><span />{apiStatus === 'up' ? 'Máy chủ đang hoạt động' : apiStatus === 'down' ? 'Máy chủ chưa kết nối' : 'Đang kiểm tra máy chủ'}</div></div>
+        <section className="account-section" id="account"><div className="account-intro"><div className="eyebrow">TÀI KHOẢN LINGUAPILOT</div><h2>{user ? `Chào mừng trở lại${user.displayName ? `, ${user.displayName}` : ''}!` : 'Học theo nhịp độ của bạn.'}</h2><p>Tiến độ lưu riêng cho từng tài khoản trên trình duyệt này, chưa đồng bộ sang thiết bị khác.</p><div className={`service-status ${apiStatus}`}><span />{apiStatus === 'up' ? 'Máy chủ đang hoạt động' : apiStatus === 'down' ? 'Máy chủ chưa kết nối' : 'Đang kiểm tra máy chủ'}</div></div>
           {user ? <div className="signed-in-card"><div className="signed-icon">✓</div><h3>Bạn đã đăng nhập</h3><p>{user.email}</p><span>Hãy chọn một mục học phía trên để tiếp tục.</span></div> : <form className="auth-card" ref={authForm} onSubmit={submit} aria-busy={busy}>
             <div className="auth-tabs"><button type="button" disabled={busy} className={authMode === 'login' ? 'active' : ''} onClick={() => { setAuthMode('login'); setError('') }}>Đăng nhập</button><button type="button" disabled={busy} className={authMode === 'register' ? 'active' : ''} onClick={() => { setAuthMode('register'); setError('') }}>Tạo tài khoản</button></div>
             {authMode === 'register' && <label>Tên hiển thị<input autoComplete="name" value={form.displayName} onChange={e => setForm({ ...form, displayName: e.target.value })} placeholder="Tên của bạn" maxLength="60" /></label>}
@@ -195,7 +195,7 @@ function App() {
             <label>Mật khẩu<input type="password" autoComplete={authMode === 'login' ? 'current-password' : 'new-password'} required minLength="8" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="8 ký tự trở lên, tối đa 72 byte" /></label>
             {error && <p className="form-error" role="alert">{error}</p>}
             <button className="primary-button auth-submit" disabled={busy}>{busy ? <><span className="loading-dots" aria-hidden="true"><i /><i /><i /></span><span role="status">{authMode === 'login' ? 'Đang đăng nhập…' : 'Đang tạo tài khoản…'}</span></> : <>{authMode === 'login' ? 'Đăng nhập' : 'Tạo tài khoản'} <span>→</span></>}</button>
-            <p className="privacy-note">Đăng nhập để mở bài học. Tiến độ học vẫn lưu riêng trên trình duyệt này.</p>
+            <p className="privacy-note">Đăng nhập để mở bài học và lưu tiến độ riêng cho tài khoản trên trình duyệt này.</p>
           </form>}
         </section>
       </main>
