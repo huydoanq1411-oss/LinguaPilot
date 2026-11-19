@@ -1,0 +1,133 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - link "LinguaPilot trang chủ" [ref=e5] [cursor=pointer]:
+      - /url: "#home"
+      - generic [ref=e6]: linguapilot
+    - navigation "Điều hướng chính" [ref=e7]:
+      - link "Khám phá" [ref=e8] [cursor=pointer]:
+        - /url: "#account"
+      - link "Kỳ thi JLPT" [ref=e9] [cursor=pointer]:
+        - /url: "#account"
+    - button "Thêm LinguaPilot vào màn hình chính" [ref=e10] [cursor=pointer]: ＋ Cài app
+    - link "Bắt đầu học ↗" [ref=e11] [cursor=pointer]:
+      - /url: "#account"
+  - main [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]: KHÔNG GIAN HỌC NGOẠI NGỮ CỦA BẠN
+        - heading "Học ngôn ngữ, mở lối tương lai." [level=1] [ref=e17]: Học ngôn ngữ,mở lối tương lai.
+        - paragraph [ref=e18]: Từng bước vững chắc trên hành trình chinh phục tiếng Nhật. Bài học, công cụ tra cứu và luyện thi JLPT luôn ở ngay đây.
+        - generic [ref=e19]:
+          - link "Bắt đầu bài học →" [ref=e20] [cursor=pointer]:
+            - /url: "#account"
+            - text: Bắt đầu bài học
+            - generic [ref=e21]: →
+          - link "Kiểm tra trình độ ↗" [ref=e22] [cursor=pointer]:
+            - /url: "#account"
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - generic [ref=e25]: あ
+            - generic [ref=e26]: 日
+            - generic [ref=e27]: 語
+          - generic [ref=e28]: Học theo nhịp độ của riêng bạn
+      - img "Minh họa học tiếng Nhật" [ref=e29]:
+        - generic [ref=e33]:
+          - generic [ref=e34]: 日本語
+          - generic [ref=e35]: mỗi ngày một chút
+        - generic [ref=e36]:
+          - generic [ref=e37]:
+            - text: TỪ VỰNG HÔM NAY
+            - generic [ref=e38]: ✦
+          - generic [ref=e39]: 夢
+          - generic [ref=e40]: ゆめ · yume
+          - generic [ref=e41]: giấc mơ
+          - generic [ref=e44]:
+            - generic [ref=e45]: 01 / 12
+            - generic [ref=e46]: Đang học
+        - generic [ref=e47]: 今日も一歩 ✦
+        - generic [ref=e48]: Hành trình N5 → N1
+        - generic [ref=e50]: ✳
+        - generic [ref=e51]: ✦
+    - region "Thông tin nền tảng" [ref=e52]:
+      - generic [ref=e53]:
+        - strong [ref=e54]: 10+
+        - generic [ref=e55]: PHẦN HỌC CÓ LỘ TRÌNH
+      - generic [ref=e56]:
+        - strong [ref=e57]: "5"
+        - generic [ref=e58]: CẤP ĐỘ JLPT
+      - generic [ref=e59]:
+        - strong [ref=e60]: ∞
+        - generic [ref=e61]: LUÔN SẴN SÀNG ĐỂ ÔN TẬP
+      - generic [ref=e62]: Bắt đầu từ những điều nhỏ,tiến xa theo cách của bạn.
+    - generic [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]: CHỌN ĐIỀU BẠN MUỐN HỌC
+          - heading "Mỗi ngày tiến thêm một bước nhỏ." [level=2] [ref=e67]: Mỗi ngày tiến thêmmột bước nhỏ.
+        - link "Tất cả nội dung ↗" [ref=e68] [cursor=pointer]:
+          - /url: "#account"
+      - generic [ref=e69]:
+        - link "あ 01 ↗ Bảng chữ cái Hiragana, Katakana và Kanji Khám phá →" [ref=e70] [cursor=pointer]:
+          - /url: "#account"
+          - generic [ref=e71]: あ
+          - generic [ref=e72]: 01 ↗
+          - heading "Bảng chữ cái" [level=3] [ref=e73]
+          - paragraph [ref=e74]: Hiragana, Katakana và Kanji
+          - generic [ref=e75]:
+            - generic [ref=e76]: Khám phá
+            - generic [ref=e77]: →
+        - link "文 02 ↗ Lộ trình học 10 phần từ nền tảng đến N1 Khám phá →" [ref=e78] [cursor=pointer]:
+          - /url: "#account"
+          - generic [ref=e79]: 文
+          - generic [ref=e80]: 02 ↗
+          - heading "Lộ trình học" [level=3] [ref=e81]
+          - paragraph [ref=e82]: 10 phần từ nền tảng đến N1
+          - generic [ref=e83]:
+            - generic [ref=e84]: Khám phá
+            - generic [ref=e85]: →
+        - link "試 03 ↗ Luyện thi JLPT Bài kiểm tra N5 đến N1 Khám phá →" [ref=e86] [cursor=pointer]:
+          - /url: "#account"
+          - generic [ref=e87]: 試
+          - generic [ref=e88]: 03 ↗
+          - heading "Luyện thi JLPT" [level=3] [ref=e89]
+          - paragraph [ref=e90]: Bài kiểm tra N5 đến N1
+          - generic [ref=e91]:
+            - generic [ref=e92]: Khám phá
+            - generic [ref=e93]: →
+        - link "漢 04 ↗ Tra cứu Kanji Tìm chữ và cách đọc Khám phá →" [ref=e94] [cursor=pointer]:
+          - /url: "#account"
+          - generic [ref=e95]: 漢
+          - generic [ref=e96]: 04 ↗
+          - heading "Tra cứu Kanji" [level=3] [ref=e97]
+          - paragraph [ref=e98]: Tìm chữ và cách đọc
+          - generic [ref=e99]:
+            - generic [ref=e100]: Khám phá
+            - generic [ref=e101]: →
+    - generic [ref=e102]:
+      - generic [ref=e103]:
+        - generic [ref=e104]: TÀI KHOẢN LINGUAPILOT
+        - heading "Học theo nhịp độ của bạn." [level=2] [ref=e105]
+        - paragraph [ref=e106]: Tiến độ hiện lưu trên trình duyệt này, chưa đồng bộ với tài khoản hoặc thiết bị khác.
+        - generic [ref=e107]: Máy chủ chưa kết nối
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - button "Đăng nhập" [ref=e111] [cursor=pointer]
+          - button "Tạo tài khoản" [ref=e112] [cursor=pointer]
+        - generic [ref=e113]:
+          - text: Email
+          - textbox "Email" [ref=e114]:
+            - /placeholder: ban@email.com
+        - generic [ref=e115]:
+          - text: Mật khẩu
+          - textbox "Mật khẩu" [ref=e116]:
+            - /placeholder: 8 ký tự trở lên, tối đa 72 byte
+        - button "Đăng nhập →" [ref=e117] [cursor=pointer]:
+          - text: Đăng nhập
+          - generic [ref=e118]: →
+        - paragraph [ref=e119]: Đăng nhập để mở bài học. Tiến độ học vẫn lưu riêng trên trình duyệt này.
+  - contentinfo [ref=e120]:
+    - link "linguapilot" [ref=e121] [cursor=pointer]:
+      - /url: "#home"
+    - generic [ref=e123]: Học một chút mỗi ngày, tiến xa hơn mỗi chặng đường.
+    - link "Thư viện tiếng Nhật ↗" [ref=e124] [cursor=pointer]:
+      - /url: "#account"
