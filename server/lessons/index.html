@@ -800,8 +800,8 @@ footer.lesson-nav{
 
 <script>
 // Safe localStorage wrapper (một số trình duyệt chặn localStorage khi mở file trực tiếp)
-function safeGet(key){ try{ return localStorage.getItem(key); }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return null; } }
-function safeSet(key,val){ try{ localStorage.setItem(key,val); return true; }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return false; } }
+function safeGet(key){ try{ return window.LinguaPilotProgress.getItem(key); }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return null; } }
+function safeSet(key,val){ try{ window.LinguaPilotProgress.setItem(key,val); return true; }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return false; } }
 
 // Dark mode
 const saved=safeGet('theme')||'light';
@@ -830,12 +830,8 @@ document.querySelectorAll('.idx-check').forEach((el,i)=>{
 /* Tổng tiến độ học tập (đọc từ toàn bộ localStorage key done_bai*) */
 function renderMyProgress(){
   let done = 0;
-  try{
-    for(let i=0;i<localStorage.length;i++){
-      const key = localStorage.key(i);
-      if(key && key.startsWith('done_bai') && localStorage.getItem(key)==='1') done++;
-    }
-  }catch(e){}
+  try{ done = window.LinguaPilotProgress.completedCount(); }
+  catch(e){ window.dispatchEvent(new Event("lp-storage-error")); }
   const total = 382;
   const pct = Math.round(done/total*100);
   const bar = document.getElementById('myProgressBar');

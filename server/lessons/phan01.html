@@ -2107,8 +2107,8 @@ document.addEventListener('click', ()=>{
 });
 
 /* ===== THEO DÕI TIẾN ĐỘ HỌC TẬP ===== */
-function pSafeGet(key){ try{ return localStorage.getItem(key); }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return null; } }
-function pSafeSet(key, val){ try{ localStorage.setItem(key, val); return true; }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return false; } }
+function pSafeGet(key){ try{ return window.LinguaPilotProgress.getItem(key); }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return null; } }
+function pSafeSet(key, val){ try{ window.LinguaPilotProgress.setItem(key, val); return true; }catch(e){ window.dispatchEvent(new Event("lp-storage-error")); return false; } }
 
 function isLessonDone(baiId){ return pSafeGet('done_'+baiId) === '1'; }
 function setLessonDone(baiId, done){ return pSafeSet('done_'+baiId, done ? '1' : '0'); }
