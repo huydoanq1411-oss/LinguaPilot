@@ -6,7 +6,7 @@
       "headers": [{ "key": "Cache-Control", "value": "no-store" }]
     },
     {
-      "source": "/(lesson-auth.js|lesson-loading.css|app-config.json)",
+      "source": "/(lesson-auth.js|learning-progress.js|lesson-loading.css|app-config.json)",
       "headers": [{ "key": "Cache-Control", "value": "no-store" }]
     }
   ]

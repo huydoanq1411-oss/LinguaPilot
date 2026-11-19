@@ -19,6 +19,8 @@ router.get('/:page', async (req, res) => {
   if (!user) return res.status(401).json({ error: 'Phiên không còn hợp lệ. Vui lòng đăng nhập lại.' });
   try {
     let html = await fs.readFile(path.join(lessonRoot, req.params.page), 'utf8');
+    html = html.replace(/<head\b[^>]*>/i, (head) =>
+      `${head}<script src="/learning-progress.js?v=20261119" data-user-id="${encodeURIComponent(String(user.id))}"></script>`);
     if (html.includes('<script src="quiz-bank.js"></script>')) {
       const bank = await fs.readFile(path.join(lessonRoot, 'quiz-bank.js'), 'utf8');
       html = html.replace('<script src="quiz-bank.js"></script>',

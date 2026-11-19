@@ -7,7 +7,9 @@
 - Mọi liên kết bài học trên trang chủ dùng `#account` khi chưa đăng nhập. Mở URL bài trực tiếp khi chưa có token chuyển về form từ đầu trang, không hiện loading; HTML trang tải và tài nguyên xác thực dùng `Cache-Control: no-store`.
 - API không xác minh được phiên hoặc mất mạng: không tải nội dung bài học; có nút thử lại.
 - Nội dung HTML và ngân hàng câu hỏi nằm trong `server/lessons`, không có trong bản build frontend công khai. `GET /api/lessons/:page` yêu cầu Bearer JWT và kiểm tra tài khoản còn tồn tại; trả `Cache-Control: private, no-store`.
-- Các URL cũ giữ nguyên; trang công khai chỉ là màn hình tải và đăng nhập. Tiến độ tiếp tục dùng localStorage, chưa đồng bộ tài khoản.
+- Các URL cũ giữ nguyên; trang công khai chỉ là màn hình tải và đăng nhập. Tiến độ bài học và dấu hoàn thành phần học lưu trong localStorage theo ID tài khoản do API xác minh; không đọc chéo giữa các tài khoản, chưa đồng bộ thiết bị. Giao diện sáng/tối vẫn dùng chung trên trình duyệt.
+- Giữ nguyên tiến độ cũ không có chủ sở hữu; không tự gán cho tài khoản. Thư viện cho phép chủ động nhập một lần vào tài khoản hiện tại, không ghi đè tiến độ đã có và không xóa bản cũ.
+- Trang chủ: chữ nội dung chính 16px, chữ phụ tối thiểu 13px (trừ chi tiết minh họa); tăng tương phản chữ thường lên tối thiểu 4,5:1. Mobile thu gọn minh họa và thống kê để danh mục xuất hiện sớm hơn; không tràn ngang từ 320px.
 - Client và API tiếp tục là hai dự án Vercel. Client lấy URL API từ `VITE_API_URL`; bản build tạo `/app-config.json` cho trang tải bài học. Server build tạo Prisma Client và áp dụng migration trước khi phục vụ bản mới.
 - Giới hạn đăng nhập giữ nguyên: tối đa 10 lần sai theo email trong cửa sổ 15 phút, lần tiếp theo trả 429; đăng nhập đúng xóa bộ đếm.
 - Mật khẩu đăng ký vẫn cần ít nhất 8 ký tự; cả đăng ký và đăng nhập từ chối mật khẩu vượt 72 byte UTF-8 trước khi gọi bcrypt/DB. Frontend kiểm cùng giới hạn theo byte, không cắt hoặc chuẩn hóa mật khẩu. Hash đang có không thay đổi; mật khẩu cũ vượt giới hạn cần được đặt lại qua quy trình hỗ trợ, không tự cắt ngắn để đăng nhập.
